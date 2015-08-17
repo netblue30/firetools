@@ -14,9 +14,12 @@ AC_PROG_RANLIB
 AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 
-# checking qt4 library
+# checking qt4/qt5 library
+if test -f /usr/lib/x86_64-linux-gnu/libQt5Core.so
+then
+	echo "Found qt5 library in /usr/lib/x86_64-linux-gnu directory"
 # Gentoo 64bit
-if test -f /usr/lib64/qt4/libQtCore.so
+elif test -f /usr/lib64/qt4/libQtCore.so
 then
 	echo "Found qt4 library in /usr/lib64/qt4 directory"
 # Gentoo 32bit
