@@ -1,0 +1,67 @@
+all: src firetools.1
+
+datarootdir=@datarootdir@
+PREFIX=@prefix@
+prefix=@prefix@
+VERSION=@PACKAGE_VERSION@
+NAME=@PACKAGE_NAME@
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
+DOCDIR=@docdir@
+
+.PHONY: src
+src:
+	$(MAKE) -C $@ $(MFLAGS)
+
+
+firetools.1: src/man/firetools.txt
+	./mkman.sh $(VERSION) src/man/firetools.txt firetools.1
+
+clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
+
+distclean: clean
+	rm -f `find src/firetools -name Makefile`
+	rm -f firetools_config.h Makefile config.status config.log firetools_prefix.h
+	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
+	rm -fr autom4te.cache
+	rm -f sanitizer.sh
+
+	
+install: all
+	cd build; strip *; cd ..
+	mkdir -p $(DESTDIR)/$(PREFIX)/bin
+	mkdir -p $(DESTDIR)/$(PREFIX)/share/applications
+	mkdir -p $(DESTDIR)/$(PREFIX)/share/pixmaps
+	mkdir -p $(DESTDIR)/$(DOCDIR)
+	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
+	install -c -m 0755 build/firetools $(DESTDIR)/$(PREFIX)/bin/.
+	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
+	install -c -m 0644 src/firetools/resources/firetools.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
+	install -c -m 0644 COPYING $(DESTDIR)/$(DOCDIR)/.
+	install -c -m 0644 README $(DESTDIR)/$(DOCDIR)/.
+	install -c -m 0644 RELNOTES $(DESTDIR)/$(DOCDIR)/.
+	rm -f firetools.1.gz
+	gzip -n9 firetools.1
+	install -c -m 0644 firetools.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
+
+uninstall:;
+	rm -f $(DESTDIR)/$(PREFIX)/bin/firetools
+	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
+	rm -f $(DESTDIR)/$(PREFIX)/share/applications/firetools.desktop
+	rm -fr $(DESTDIR)/$(PREFIX)/share/doc/firetools
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firetools.1*
+
+dist:
+	make distclean
+	rm -fr $(NAME)-$(VERSION) $(NAME)-$(VERSION).tar.bz2
+	mkdir $(NAME)-$(VERSION)
+	cd $(NAME)-$(VERSION); cp -a ../src .; cp -a ../platform .; rm -fr src/firejail-lkm;
+	cd $(NAME)-$(VERSION); cp -a ../configure .; cp -a ../configure.ac .; cp -a ../Makefile.in .; cp -a ../install.sh .; cp -a ../mkman.sh .;cd ..
+	cd $(NAME)-$(VERSION); cp -a ../COPYING .; cp -a ../README .; cp -a ../RELNOTES .; cd ..
+	cd $(NAME)-$(VERSION); rm -fr `find . -name .svn`; rm -fr $(NAME)-$(VERSION); cd ..
+	tar -cjvf $(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
+	rm -fr $(NAME)-$(VERSION)
+
+
+deb: dist
+	./mkdeb.sh $(NAME) $(VERSION)
+

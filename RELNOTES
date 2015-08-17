@@ -1,0 +1,12 @@
+firetools (0.9.26.1) baseline; urgency=low
+  * RPM package support
+  * bugfixes
+ -- netblue30 <netblue30@yahoo.com>  Tue, 10 Jun 2015 08:00:00 -0500
+
+firetools (0.9.26) baseline; urgency=low
+
+  * first version
+
+ -- netblue30 <netblue30@yahoo.com>  Tue, 19 May 2015 08:00:00 -0500
+
+

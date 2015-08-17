@@ -1,0 +1,16 @@
+Package: firetools
+Version: FIRETOOLSVER-1
+Architecture: amd64
+Maintainer: netblue30 <netblue30@yahoo.com>
+Installed-Size: 284
+Depends: libqtgui4, xterm, libc6
+Section: admin
+Priority: extra
+Homepage: http://firejail.sourceforge.net
+Description: Firejail graphical user interface program.
+ Firejail  is  a  SUID sandbox program that reduces the risk of security
+ breaches by restricting the running environment of untrusted applications
+ using Linux namespaces, seccmp-bpf and Linux capabilities.
+ .
+ Firetools is the graphical interface of Firejail. Built using Qt4 library,
+ it provides a sandbox launcher, editing, management and statistics.

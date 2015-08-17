@@ -1,0 +1,41 @@
+.TH man 1 "MONTH YEAR" "VERSION" "firetools man page"
+.SH NAME
+Firetools \- Graphical user interface for Firejail security sandbox
+.SH SYNOPSIS
+firetools [OPTIONS]
+.SH DESCRIPTION
+This  manual  page  documents  briefly Firetools, a graphical user interface for 
+Firejail security sandbox.
+.SH OPTIONS
+.TP
+\fB\-\-autostart\fR
+Configure Firetools to run automatically in system tray when X11 session is started.
+.TP
+\fB\-\-debug\fR
+Print debug messages.
+.TP
+\fB\-?\fR, \fB\-\-help\fR
+Print options end exit.
+.TP
+\fB\-\-minimize\fR
+Start the program minimized in system tray.
+.TP
+\fB\-\-version\fR
+Print software version and exit.
+.SH ABOUT FIREJAIL
+Firejail is a SUID sandbox program that reduces the risk of security breaches by
+restricting the running environment of untrusted applications using Linux
+namespaces, seccomp-bpf and Linux capabilities.
+It allows a process and all its descendants to have their own private view of the
+globally shared kernel resources, such as the network stack, process table, mount table.
+Firejail can work in a SELinux or AppArmor environment,
+and it is integrated with Linux Control Groups.
+.SH LICENSE
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+.PP
+Homepage: http://firejail.sourceforge.net
+.SH SEE ALSO
+\&\flfirejail\fR\|(1),
+
+
+
