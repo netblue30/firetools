@@ -24,8 +24,8 @@ elif test -f /usr/lib/qt4/libQtCore.so
 then
 	echo "Found qt4 library in /usr/lib/qt4 directory"
 else
-	AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install QT4 first ***]))
-	AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install QT4 first ***]))
+	AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+	AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
 fi
 
 # testing qmake
@@ -39,7 +39,7 @@ then
 	
 	if test -z "$QMAKE"
 	then
-		AC_MSG_ERROR([qmake is missing, please install QT4 development packages.])
+		AC_MSG_ERROR([qmake is missing, please install Qt4 or Qt5 development packages.])
 	fi
 fi
 echo "Found $QMAKE"
