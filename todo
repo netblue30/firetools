@@ -1,3 +1,5 @@
-1. Qt5 packages needed on Debian Jessie: qt5-default, libqt5svg5
-Detect libqt5svg5 in configure.ac
+1. Documentation: Qt5 packages needed on Debian Jessie: qt5-default, libqt5svg5
 
+2. Pressing quit in launcher will crash the program
+$ build/firetools 
+Segmentation fault

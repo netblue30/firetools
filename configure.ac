@@ -18,10 +18,25 @@ AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed 
 if test -f /usr/lib/x86_64-linux-gnu/libQt5Core.so
 then
 	echo "Found qt5 library in /usr/lib/x86_64-linux-gnu directory"
+	# check libqt5svg5 library
+	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqsvg.so
+	then
+		echo "Found qt5 svg library"
+	else
+		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
+	fi
+	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/iconengines/libqsvgicon.so
+	then
+		echo "Found qt5 svg icon library"
+	else
+		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
+	fi
+	
 # Gentoo 64bit
 elif test -f /usr/lib64/qt4/libQtCore.so
 then
 	echo "Found qt4 library in /usr/lib64/qt4 directory"
+
 # Gentoo 32bit
 elif test -f /usr/lib/qt4/libQtCore.so
 then

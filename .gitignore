@@ -1,6 +1,7 @@
 *.o
 *.so
 *~
+autom4te.cache/
 firetools_config.h
 sanitizer.sh
 Makefile
