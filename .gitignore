@@ -1,0 +1,16 @@
+*.o
+*.so
+*~
+firetools_config.h
+sanitizer.sh
+Makefile
+config.log
+config.status
+build/
+firetools.1
+src/firetools/moc_edit_dialog.cpp
+src/firetools/moc_mainwindow.cpp
+src/firetools/moc_pid_thread.cpp
+src/firetools/moc_stats_dialog.cpp
+src/firetools/qrc_firetools.cpp
+
