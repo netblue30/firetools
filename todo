@@ -1,0 +1,3 @@
+1. Qt5 packages needed on Debian Jessie: qt5-default, libqt5svg5
+Detect libqt5svg5 in configure.ac
+
