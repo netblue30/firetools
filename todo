@@ -1,4 +1,4 @@
-1. Documentation: Qt5 packages needed on Debian Jessie: qt5-default, libqt5svg5
+1. Documentation: packages needed on Debian Jessie: qt5-default, libqt5svg5, firejail, xterm
 
 2. Pressing quit in launcher will crash the program
 $ build/firetools 
