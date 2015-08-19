@@ -51,6 +51,7 @@ private slots:
 	void run();
 	void runTools();
 	void help();
+	void main_quit();
 
 signals:
 	void cycleReadySignal();

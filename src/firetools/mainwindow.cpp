@@ -348,7 +348,7 @@ void MainWindow::createTrayActions() {
 //	connect(restoreAction, SIGNAL(triggered()), stats_, SLOT(show()));
 
 	quitAction = new QAction(tr("&Quit"), this);
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(quitAction, SIGNAL(triggered()), this, SLOT(main_quit()));
 }
 
 void MainWindow::createLocalActions() {
@@ -387,7 +387,7 @@ void MainWindow::createLocalActions() {
 
 	QAction *qquit = new QAction(tr("&Quit"), this);
 	//	qa->setShortcut(tr("Ctrl+Q"));
-	connect(qquit, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(qquit, SIGNAL(triggered()), this, SLOT(main_quit()));
 	addAction(qquit);
 }
 
@@ -414,5 +414,16 @@ void MainWindow::help() {
 	txt += "<br/><br/>";
 
 	QMessageBox::about(this, tr("Firejail Launcher"), txt);
+}
+
+void MainWindow::main_quit() {
+	printf("exiting...\n");
+
+	// delete application list
+	QList<Application>::iterator it = applist.begin();
+	while (it !=applist.end())
+		it = applist.erase(it);
+
+	qApp->quit();
 }
 
