@@ -8,5 +8,3 @@
 --net detected in pid_thread.cpp (strstr(pids[pid].cmd, "--net")), it might pick it up from the
 params of the sandboxed program
 
-5. On Debian where iceweasel is installed, firetools should not allow a new sandbox named firefox to be created
-

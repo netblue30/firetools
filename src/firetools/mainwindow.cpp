@@ -76,7 +76,7 @@ void MainWindow::edit() {
 			if (QDialog::Accepted == edit->exec()) {
 				// check if the sandbox already exists
 				QString name = edit->getName();
-				if (applist_check(name) == false) {
+				if (applist_check(name) == false && applications_check_default(name.toLocal8Bit().constData()) == false) {
 					Application app(edit->getName(), edit->getDescription(), edit->getCommand(), edit->getName());
 					app.saveConfig();
 					applist.append(app);
