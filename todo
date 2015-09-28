@@ -1,5 +1,12 @@
 1. Documentation: packages needed on Debian Jessie: qt5-default, libqt5svg5, firejail, xterm
 
-2. Pressing quit in launcher will crash the program
-$ build/firetools 
-Segmentation fault
+2. If a program is uninstalled, do not leave it in the launcher
+
+3. On debian i386, open new xterm sandbox, join it, shut down the join process - it does not shut down!
+
+4. Detecting sandbox features from command line params:
+--net detected in pid_thread.cpp (strstr(pids[pid].cmd, "--net")), it might pick it up from the
+params of the sandboxed program
+
+5. On Debian where iceweasel is installed, firetools should not allow a new sandbox named firefox to be created
+

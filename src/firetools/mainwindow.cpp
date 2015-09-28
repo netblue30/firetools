@@ -74,9 +74,21 @@ void MainWindow::edit() {
 		if (active_index_ == -1) {
 			edit = new EditDialog("", "", "");
 			if (QDialog::Accepted == edit->exec()) {
-				Application app(edit->getName(), edit->getDescription(), edit->getCommand(), edit->getName());
-				app.saveConfig();
-				applist.append(app);
+				// check if the sandbox already exists
+				QString name = edit->getName();
+				if (applist_check(name) == false) {
+					Application app(edit->getName(), edit->getDescription(), edit->getCommand(), edit->getName());
+					app.saveConfig();
+					applist.append(app);
+					if (arg_debug) {
+						printf("Application added:\n");
+						applist_print();
+					}
+				}
+				else
+					QMessageBox::critical(this, tr("Firejail Tools"),
+						tr("<br/>Sandbox already defined.<br/><br/><br/>"));
+				
 			}
 		}
 		
@@ -108,6 +120,10 @@ void MainWindow::remove() {
 	if (fname) {
 		unlink(fname);
 		applist.removeAt(active_index_);
+		if (arg_debug) {
+			printf("Application removed:\n");
+			applist_print();
+		}
 		
 		// update
 		hide();

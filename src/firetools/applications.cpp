@@ -219,7 +219,8 @@ QIcon Application::loadIcon(QString name) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
-				printf("icon %s: /usr/share/pixmaps\n", name.toLocal8Bit().data());
+				if (arg_debug)
+					printf("icon %s: /usr/share/pixmaps\n", name.toLocal8Bit().data());
 				QIcon icon = QIcon(fi.canonicalFilePath());
 #if 0 // scale				
 				QSize sz = icon.actualSize(QSize(64, 64));
@@ -265,19 +266,30 @@ struct DefaultApp {
 };
 
 DefaultApp dapps[] = {
+	// browser
 	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", "iceweasel" },
 	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", "firefox"},
+	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", "icecat"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
 	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
 	{ "opera", "", "Opera Web Browser", "firejail opera", "opera" },
+
+	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
 	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":resources/icedove.png" },
+
+	// pdf etc.
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
+	{ "fbreader", "", "eBook reader", "firejail fbreader", "FBReader" },
+
+	// bittorrent
 	{ "transmission-gtk", "", "Transmission BitTorrent Client", "firejail transmission-gtk", "transmission" },
 	{ "transmission-qt", "transmission-gtk", "Transmission BitTorrent Client", "firejail transmission-qt", "transmission" },
 	{ "deluge", "", "Deluge BitTorrent Client", "firejail deluge", "deluge" },
 	{ "qbittorrent", "", "qBittorrent Client", "firejail qbittorrent", "qbittorrent" },
+
+	// media player
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
 	{ "rhythmbox", "", "Rhythmbox", "firejail rhythmbox", "rhythmbox" },
 	{ "totem", "", "Totem", "firejail totem", "totem" },
@@ -285,12 +297,16 @@ DefaultApp dapps[] = {
 	{ "gnome-mplayer", "", "GNOME MPlayer", "firejail gnome-mplayer", "gnome-mplayer" },
 	{ "clementine", "", "Clementine", "firejail clementine", "application-x-clementine" },
 	{ "deadbeef", "", "DeaDBeeF", "firejail deadbeef", "deadbeef" },
+
+	// chat
 	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },
 	{ "xchat", "", "XChat", "firejail xchat", "xchat" },
 	{ "quassel", "", "Quassel IRC", "firejail quassel", "quassel" },
 	{ "empathy", "", "Empathy", "firejail empathy", "empathy" },
+	
+	// etc
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
-	{ "xterm", "", "xterm", "firejail --profile=/etc/firejail/generic.profile xterm", ":resources/gnome-terminal" },
+	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal" },
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -304,6 +320,31 @@ bool applications_check_default(const char *name) {
 	
 	return false;
 }
+
+bool applist_check(QString name) {
+	QList<Application>::iterator it;
+	for (it = applist.begin(); it != applist.end(); ++it) {
+		if (it->name_ == name)
+			return true;
+	}
+	
+	return false;
+}
+
+void applications_print() {
+	DefaultApp *app = &dapps[0];
+	while (app->name != NULL) {
+		printf("\t%s\n", app->name);
+		app++;
+	}
+}
+
+void applist_print() {
+	QList<Application>::iterator it;
+	for (it = applist.begin(); it != applist.end(); ++it)
+		printf("\t%s\n", it->name_.toLocal8Bit().constData());
+}
+
 
 void applications_init() {
 	// load default apps

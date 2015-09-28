@@ -29,6 +29,7 @@
 #define ADELAY 20		// animation delay
 #define ROWS 6
 
+// applications.cpp
 struct Application {
 	QString name_;
 	QString description_;
@@ -49,5 +50,8 @@ void applications_init();
 int applications_get_index(QPoint pos);
 int applications_get_position(QPoint pos);
 bool applications_check_default(const char *name);
+bool applist_check(QString name);
+void applications_print();
+void applist_print();
 
 #endif
