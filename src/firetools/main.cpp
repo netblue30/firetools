@@ -105,6 +105,22 @@ int main(int argc, char *argv[]) {
 		}		
 	}
 	
+	// create firetools directory if it doesn't exist
+	struct stat s;
+	char *path;
+	char *homedir = get_home_directory();
+	if (asprintf(&path, "%s/.config/firetools", homedir) == -1)
+		errExit("asprintf");
+	free(homedir);
+	if (stat(path, &s) == -1) {
+		int rv = mkdir(path, 0755);
+		if (rv == -1) {
+			fprintf(stderr, "Error: cannot create %s directory\n", path);
+			exit(1);
+		}
+	}
+	free(path);	
+	
 	// initialize resources
 	Q_INIT_RESOURCE(firetools);
 
