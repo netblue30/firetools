@@ -113,6 +113,7 @@ int main(int argc, char *argv[]) {
 		errExit("asprintf");
 	free(homedir);
 	if (stat(path, &s) == -1) {
+		/* coverity[toctou] */
 		int rv = mkdir(path, 0755);
 		if (rv == -1) {
 			fprintf(stderr, "Error: cannot create %s directory\n", path);

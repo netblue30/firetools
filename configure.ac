@@ -31,6 +31,24 @@ then
 	else
 		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
 	fi
+
+# Arch Linux 64bit
+elif test -f /usr/lib/libQt5Core.so
+then
+        echo "Found qt5 library in /usr/lib directory"
+        # check libqt5svg5 library
+        if test -f /usr/lib/qt/plugins/imageformats/libqsvg.so
+        then
+                echo "Found qt5 svg library"
+        else
+                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
+        fi
+        if test -f /usr/lib/qt/plugins/iconengines/libqsvgicon.so
+        then
+                echo "Found qt5 svg icon library"
+        else
+                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
+        fi
 	
 # Gentoo 64bit
 elif test -f /usr/lib64/qt4/libQtCore.so
@@ -44,6 +62,7 @@ then
 else
 	AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
 	AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+
 fi
 
 # testing qmake
