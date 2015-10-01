@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT(firetools, 0.9.26.2-devel, netblue30@yahoo.com, , http://firejail.sourceforge.net)
+AC_INIT(firetools, 0.9.30, netblue30@yahoo.com, , http://firejail.sourceforge.net)
 AC_CONFIG_SRCDIR([src/firetools/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
 
