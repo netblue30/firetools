@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.26.1"
+VER="0.9.30"
 
 cd ~
 rm -fr rpmbuild
@@ -83,17 +83,17 @@ rm -rf %{buildroot}
  
 
 %changelog
-* Mon Jun 15 2014  netblue30 <netblue30@yahoo.com> 0.9.26.1
+* Sat Oct 3 2015 netblue30 <netblue30@yahoo.com> 0.9.30-1
+ - 1h and 12h statistics support
+ - user namespaces support
+ - QT5 support
+ - applist update
+ - bugfixes
+
+* Mon Jun 15 2015  netblue30 <netblue30@yahoo.com> 0.9.26.1
  - First rpm package release
 
 EOF
-
-
-echo "here3 *********"
-pwd
-ls -l
-echo "here3 *********"
-
 
 
 rpmbuild -ba SPECS/firetools.spec
