@@ -15,70 +15,42 @@ AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not i
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 
 # checking qt4/qt5 library
-if test -f /usr/lib/x86_64-linux-gnu/libQt5Core.so
-then
-	echo "Found qt5 library in /usr/lib/x86_64-linux-gnu directory"
-	# check libqt5svg5 library
-	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqsvg.so
-	then
-		echo "Found qt5 svg library"
-	else
-		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
-	fi
-	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/iconengines/libqsvgicon.so
-	then
-		echo "Found qt5 svg icon library"
-	else
-		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
-	fi
+AC_ARG_WITH([qt4],
+    AS_HELP_STRING([--with-qt4], [Enable qt4 support]),
+    if test "x$with_qt4" == xno; then
+        with_qt5=yes
+    fi
+    )
+AC_ARG_WITH([qt5],
+    AS_HELP_STRING([--with-qt5], [Enable qt5 support [default]]),
+    if test "x$with_qt5" == xno; then
+        with_qt4=yes
+    fi
+    )
 
-# Arch Linux 64bit
-elif test -f /usr/lib/libQt5Core.so
-then
-        echo "Found qt5 library in /usr/lib directory"
-        # check libqt5svg5 library
-        if test -f /usr/lib/qt/plugins/imageformats/libqsvg.so
-        then
-                echo "Found qt5 svg library"
-        else
-                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
-        fi
-        if test -f /usr/lib/qt/plugins/iconengines/libqsvgicon.so
-        then
-                echo "Found qt5 svg icon library"
-        else
-                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
-        fi
-	
-# Gentoo 64bit
-elif test -f /usr/lib64/qt4/libQtCore.so
-then
-	echo "Found qt4 library in /usr/lib64/qt4 directory"
+AS_IF([test "x$with_qt4" = "x$with_qt5" ],
+    AC_MSG_ERROR([*** Choose one of QT version ***])
+    )
 
-# Gentoo 32bit
-elif test -f /usr/lib/qt4/libQtCore.so
-then
-	echo "Found qt4 library in /usr/lib/qt4 directory"
-else
-	AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
-	AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+if test "x$with_qt4" = xyes; then
+    eval $(qtchooser --qt=4 --print-env)
+    export QT_SELECT
+    LDFLAGS="${LDFLAGS} -L${QTLIBDIR} "
+    AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+    AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+fi
 
+if test "x$with_qt5" = xyes; then
+    eval $(qtchooser --qt=5 --print-env)
+    export QT_SELECT
+    LDFLAGS="${LDFLAGS} -L${QTLIBDIR} "
+    AC_CHECK_LIB([Qt5Core], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+    AC_CHECK_LIB([Qt5Gui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
+    AC_CHECK_LIB([Qt5Svg], [main], [], AC_MSG_ERROR([*** Qt5Svg library not installed ***]))
 fi
 
 # testing qmake
 QMAKE=`which qmake`
-if test -z "$QMAKE"
-then
-	# fix for Fedora
-	if test -f /usr/lib64/qt4/bin/qmake; then
-		QMAKE=/usr/lib64/qt4/bin/qmake
-	fi
-	
-	if test -z "$QMAKE"
-	then
-		AC_MSG_ERROR([qmake is missing, please install Qt4 or Qt5 development packages.])
-	fi
-fi
 echo "Found $QMAKE"
 $QMAKE -v
 
