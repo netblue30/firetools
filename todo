@@ -7,5 +7,3 @@
 4. Detecting sandbox features from command line params:
 --net detected in pid_thread.cpp (strstr(pids[pid].cmd, "--net")), it might pick it up from the
 params of the sandboxed program
-
-5. add mkdeb.sh to source code archive
