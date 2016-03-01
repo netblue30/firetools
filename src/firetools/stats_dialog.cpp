@@ -40,6 +40,7 @@ extern bool data_ready;
 
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
+	pid_cpu_cores_(QString("")), pid_protocol_(QString("")),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN) {
 	
 	procView_ = new QTextBrowser;
@@ -337,12 +338,15 @@ void StatsDialog::updateDns() {
 void StatsDialog::kernelSecuritySettings() {
 	if (arg_debug)
 		printf("Checking security settings for pid %d\n", pid_);
-		
+	
+	// reset all
 	pid_seccomp_ = false;
 	pid_caps_ = QString("");
+	pid_cpu_cores_ = QString("");
+	pid_protocol_ = QString("");
 
+	// caps
 	char *cmd;
-	
 	if (asprintf(&cmd, "firemon --caps %d", pid_) == -1)
 		return;
 	char *str = run_program(cmd);
@@ -355,6 +359,7 @@ void StatsDialog::kernelSecuritySettings() {
 	}
 	free(cmd);
 
+	// seccomp
 	if (asprintf(&cmd, "firemon --seccomp %d", pid_) == -1)
 		return;
 	str = run_program(cmd);
@@ -365,8 +370,30 @@ void StatsDialog::kernelSecuritySettings() {
 				pid_seccomp_ = true;
 		}
 	}
-
 	free(cmd);
+	
+	// cpu cores
+	if (asprintf(&cmd, "firemon --cpu %d", pid_) == -1)
+		return;
+	str = run_program(cmd);
+	if (str) {
+		char *ptr = strstr(str, "Cpus_allowed_list:");
+		if (ptr) {
+			ptr += 18;
+			pid_cpu_cores_ = QString(ptr);
+		}
+	}
+	free(cmd);
+
+	// protocols
+	if (asprintf(&cmd, "firejail --protocol.print=%d", pid_) == -1)
+		return;
+	str = run_program(cmd);
+	if (str) {
+		pid_protocol_ = QString(str);
+	}
+	free(cmd);
+
 }
 
 
@@ -501,6 +528,10 @@ void StatsDialog::updatePid() {
 		msg += "enabled";
 	else
 		msg += "disabled";
+	msg += "</td></tr>";
+
+	msg += QString("<tr><td></td><td><b>CPU Cores:</b> ") + pid_cpu_cores_ + "</td>";
+	msg += QString("<td><b>Protocols:</b> ") + pid_protocol_ + "</td>";
 	msg += "</td></tr>";
 
 	// graph type
