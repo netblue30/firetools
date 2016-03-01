@@ -65,3 +65,8 @@ dist:
 deb: dist
 	./mkdeb.sh $(NAME) $(VERSION)
 
+cppcheck: clean
+	cppcheck --force .
+
+scan-build: clean
+	scan-build make
