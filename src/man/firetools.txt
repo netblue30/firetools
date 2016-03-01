@@ -1,4 +1,4 @@
-.TH man 1 "MONTH YEAR" "VERSION" "firetools man page"
+.TH FIRETOOLS 1 "MONTH YEAR" "VERSION" "firetools man page"
 .SH NAME
 Firetools \- Graphical user interface for Firejail security sandbox
 .SH SYNOPSIS
