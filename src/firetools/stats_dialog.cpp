@@ -97,6 +97,7 @@ QString StatsDialog::header() {
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
+		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
 		msg += "</td></tr></table>";
@@ -110,6 +111,7 @@ QString StatsDialog::header() {
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
+		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
 		msg += "</td></tr></table>";
@@ -660,7 +662,16 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	else if (linkstr == "join") {
 		// join the process in a new xterm
 		char *cmd;
-		if (asprintf(&cmd, "xterm -T firejail-%d -e firejail --join=%d&", pid_, pid_) != -1) {
+		if (asprintf(&cmd, "xterm -T \"Firejail Sandbox %d\" -e firejail --join=%d&", pid_, pid_) != -1) {
+			int rv = system(cmd);
+			(void) rv;
+			free(cmd);
+		}
+	}
+	else if (linkstr == "fmgr") {
+		// join the process in a new xterm
+		char *cmd;
+		if (asprintf(&cmd, "firemgr %d&", pid_) != -1) {
 			int rv = system(cmd);
 			(void) rv;
 			free(cmd);

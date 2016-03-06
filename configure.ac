@@ -83,6 +83,7 @@ echo "Found $QMAKE"
 $QMAKE -v
 
 cd src/firetools && $QMAKE && cd ../..
+cd src/firemgr && $QMAKE && cd ../..
 
 # build sanitizer.sh file
 echo "#!/bin/bash" >sanitizer.sh

@@ -1,4 +1,4 @@
-APPS = firetools
+APPS = firetools firemgr
 .PHONY: apps $(APPS)
 apps: $(APPS)
 $(APPS):

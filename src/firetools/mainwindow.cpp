@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	
 	if (!which("firejail")) {
 		QMessageBox::warning(this, tr("Firejail Tools"),
-			tr("<br/><b>Firejail</b> sandbox not found.<br/><br/><br/>"));
+			tr("<br/><b>Firejail</b> software not found. Please install it.<br/><br/><br/>"));
 		exit(1);
 	}
 	applications_init();

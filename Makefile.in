@@ -1,4 +1,4 @@
-all: src firetools.1
+all: src firetools.1 firemgr.1
 
 datarootdir=@datarootdir@
 PREFIX=@prefix@
@@ -16,12 +16,17 @@ src:
 firetools.1: src/man/firetools.txt
 	./mkman.sh $(VERSION) src/man/firetools.txt firetools.1
 
+firemgr.1: src/man/firemgr.txt
+	./mkman.sh $(VERSION) src/man/firemgr.txt firemgr.1
+
 clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 
 distclean: clean
 	rm -f `find src/firetools -name Makefile`
+	rm -f `find src/firemgr -name Makefile`
 	rm -f firetools_config.h Makefile config.status config.log firetools_prefix.h
 	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
+	rm -f  src/firemgr/config.log src/firemgr/config.status #fedora fix
 	rm -fr autom4te.cache
 	rm -f sanitizer.sh
 
@@ -34,6 +39,7 @@ install: all
 	mkdir -p $(DESTDIR)/$(DOCDIR)
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
 	install -c -m 0755 build/firetools $(DESTDIR)/$(PREFIX)/bin/.
+	install -c -m 0755 build/firemgr $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
 	install -c -m 0644 src/firetools/resources/firetools.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	install -c -m 0644 COPYING $(DESTDIR)/$(DOCDIR)/.
@@ -42,19 +48,24 @@ install: all
 	rm -f firetools.1.gz
 	gzip -n9 firetools.1
 	install -c -m 0644 firetools.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
+	rm -f firemgr.1.gz
+	gzip -n9 firemgr.1
+	install -c -m 0644 firemgr.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
 
 uninstall:;
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firetools
+	rm -f $(DESTDIR)/$(PREFIX)/bin/firemgr
 	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	rm -f $(DESTDIR)/$(PREFIX)/share/applications/firetools.desktop
 	rm -fr $(DESTDIR)/$(PREFIX)/share/doc/firetools
 	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firetools.1*
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firemgr.1*
 
 dist:
 	make distclean
 	rm -fr $(NAME)-$(VERSION) $(NAME)-$(VERSION).tar.bz2
 	mkdir $(NAME)-$(VERSION)
-	cd $(NAME)-$(VERSION); cp -a ../src .; cp -a ../platform .; rm -fr src/firejail-lkm;
+	cd $(NAME)-$(VERSION); cp -a ../src .; cp -a ../platform .;
 	cd $(NAME)-$(VERSION); cp -a ../configure .; cp -a ../configure.ac .; cp -a ../Makefile.in .; cp -a ../install.sh .; cp -a ../mkdeb.sh .; cp -a ../mkman.sh .;cd ..
 	cd $(NAME)-$(VERSION); cp -a ../COPYING .; cp -a ../README .; cp -a ../RELNOTES .; cd ..
 	cd $(NAME)-$(VERSION); rm -fr `find . -name .svn`; rm -fr $(NAME)-$(VERSION); cd ..

@@ -17,28 +17,37 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+#include <QMainWindow>
 
-// run a user program using popen; returns static memory
-char *run_program(const char *prog);
+class QLineEdit;
+class QTableWidget;
+class TopWidget;
 
-// returns true or false if the program was found using "which" shell command
-bool which(const char *prog);
+class MainWindow : public QMainWindow {
+Q_OBJECT
 
-// check if a name.desktop file exists in config home directory
-bool have_config_file(const char *name);
+public:
+	MainWindow(pid_t pid, QWidget *parent = 0);
 
-// get a coniguration file path based on the name; returns allocated memory
-char *get_config_file_name(const char *name);
+private slots:
+	void handleUp();
+	void handleHome();
+	void handleRoot();
+	void handleRefresh();
+	void cellClicked(int row, int column);
 
-// get the full path of the home directory; returns allocated memory
-char *get_home_directory();
-
-// split a line into words
-#define SARG_MAX 128
-extern int sargc;
-extern char *sargv[SARG_MAX];
-void split_command(char *cmd);
-
+private:
+	void print_files(const char *path);
+	QString build_path();
+	QString build_line();
+	
+private:
+	pid_t pid_;
+	TopWidget *top_;
+	QLineEdit *line_;
+	QTableWidget *table_;
+	QStringList path_;
+};
 #endif

@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+   <file>resources/go-top.png</file>
+   <file>resources/go-up.png</file>
+   <file>resources/user-home.png</file>
+   <file>resources/gnome-fs-directory.png</file>
+   <file>resources/empty.png</file>
+   <file>resources/emblem-symbolic-link.png</file>
+   <file>resources/refresh.png</file>
+</qresource>
+</RCC>
