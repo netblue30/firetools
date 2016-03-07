@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 netblue30 (netblue30@yahoo.com)
+ * Copyright (C) 2016 netblue30 (netblue30@yahoo.com)
  *
  * This file is part of firetools project
  *
@@ -17,39 +17,27 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-#include <QMainWindow>
+#ifndef FS_H
+#define FS_H
+#include <unistd.h>
+#include <sys/types.h>
+#include <QStringList>
 
-class QLineEdit;
-class QTableWidget;
-class TopWidget;
-class FS;
-
-class MainWindow : public QMainWindow {
-Q_OBJECT
-
+class FS {
 public:
-	MainWindow(pid_t pid, QWidget *parent = 0);
-
-private slots:
-	void handleUp();
-	void handleHome();
-	void handleRoot();
-	void handleRefresh();
-	void cellClicked(int row, int column);
-
-private:
-	void print_files(const char *path);
-	QString build_path();
-	QString build_line();
+	FS(pid_t pid);
+	QString getType(QString path, QString file);
+	void checkPath(QString path);
+	QString checkFile(QString file);
 	
 private:
+	void initialize(pid_t pid);
+
 	pid_t pid_;
-	TopWidget *top_;
-	QLineEdit *line_;
-	QTableWidget *table_;
-	QStringList path_;
-	FS *fs_;
+	QStringList paths_;
+	QStringList ops_;
+	
+	QString path_;
 };
+
 #endif

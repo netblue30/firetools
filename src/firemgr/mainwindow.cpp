@@ -18,8 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "firemgr.h"
-#include "../common/utils.h"
-#include "../common/common.h"
+#include "fs.h"
 
 #include <QtGlobal>
 #if QT_VERSION >= 0x050000
@@ -55,6 +54,9 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 		}
 	}
 	
+	// initialize FS
+	fs_ = new FS(pid);
+	
 	top_ = new TopWidget(this);
 	connect(top_, SIGNAL(upClicked()), this, SLOT(handleUp()));
 	connect(top_, SIGNAL(rootClicked()), this, SLOT(handleRoot()));
@@ -62,16 +64,15 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	connect(top_, SIGNAL(homeClicked()), this, SLOT(handleHome()));
 	
 	line_ = new QLineEdit(this);
-//	QString txt;
 	QString txt = build_line();
 	line_->setText(txt);
-//	txt.sprintf("%d:///", pid_);
-//	line_->setText(txt);
+	line_->setReadOnly(true);
 	
-	table_ = new QTableWidget(0, 5, this);
+	table_ = new QTableWidget(0, 6, this);
 	QStringList header;
 	header.append(" ");
 	header.append(" ");
+	header.append("Mount");
 	header.append("Owner");
 	header.append("Size");
 	header.append("Name");
@@ -79,9 +80,10 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	table_->verticalHeader()->setVisible(false);
 	table_->setColumnWidth(0, 20);
 	table_->setColumnWidth(1, 26);
-	table_->setColumnWidth(2, 100);
+	table_->setColumnWidth(2, 50);
 	table_->setColumnWidth(3, 100);
-	table_->setColumnWidth(4, 500);
+	table_->setColumnWidth(4, 100);
+	table_->setColumnWidth(5, 500);
 	table_->horizontalHeader()->setStretchLastSection(true);	
 	table_->setShowGrid(false);
 	table_->setColumnHidden(0, true);
@@ -138,6 +140,9 @@ void MainWindow::print_files(const char *path) {
 		return;
 	}
 
+	// fs flags
+	fs_->checkPath(path);
+	
 	char *ptr = strtok(out, "\n");
 	rows = 0;
 	while (ptr) {
@@ -145,6 +150,8 @@ void MainWindow::print_files(const char *path) {
 		if (sargc == 5) {
 			if (strcmp(sargv[4], "..") != 0 && strcmp(sargv[4], ".") != 0) {
 				table_->setRowCount(rows + 1);
+				
+				// image
 				if (*sargv[0] == 'd') {
 					table_->setItem(rows, 0, new QTableWidgetItem("D"));
 					QImage *img = new QImage(":resources/gnome-fs-directory.png");
@@ -167,17 +174,23 @@ void MainWindow::print_files(const char *path) {
 					table_->setItem(rows, 1, new QTableWidgetItem(*timage));
 				}
 				
-				QTableWidgetItem *item =  new QTableWidgetItem(sargv[1]);
+				// fs flags
+				QString s = fs_->checkFile(QString(sargv[4]));
+				QTableWidgetItem *item =  new QTableWidgetItem(s);
 				item->setTextAlignment(Qt::AlignCenter);					
 				table_->setItem(rows, 2, item);
+				
+				item =  new QTableWidgetItem(sargv[1]);
+				item->setTextAlignment(Qt::AlignCenter);					
+				table_->setItem(rows, 3, item);
 
 				item =  new QTableWidgetItem(sargv[3]);
 				item->setTextAlignment(Qt::AlignCenter);
-				table_->setItem(rows, 3, item);
+				table_->setItem(rows, 4, item);
 				
 				item =  new QTableWidgetItem(QString("  ") + QString(sargv[4]));
 //				item->setTextAlignment(Qt::AlignHorizontal_Mask);
-				table_->setItem(rows, 4, item);
+				table_->setItem(rows, 5, item);
 				rows++;				
 			}
 		}
@@ -250,7 +263,7 @@ void MainWindow::cellClicked(int row, int column) {
 	QString type =  table_->item(row, 0)->text();
 	if (type != "D")
 		return;
-	QString dir =  table_->item(row, 4)->text();
+	QString dir =  table_->item(row, 5)->text();
 	dir = dir.mid(2);
 	path_.append(dir);
 
