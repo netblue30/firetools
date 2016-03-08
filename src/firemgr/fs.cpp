@@ -65,13 +65,17 @@ void FS::initialize(pid_t pid) {
 
 		ptr = strtok(NULL, "\n");
 	}
+	paths_.replaceInStrings(" ", "\\ ");
 }
  
 void FS::checkPath(QString path) {
+	if (arg_debug)
+		printf("checkPath %s\n", path.toUtf8().constData());
 	path_ = path;
 }
 
 QString FS::checkFile(QString file) {
+	file = file.replace(" ", "\\ ");
 	QString full_path = path_ + file;
 	if (arg_debug) 
 		printf("checkFile full path %s\n", full_path.toUtf8().constData());

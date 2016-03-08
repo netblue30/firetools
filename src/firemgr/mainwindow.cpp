@@ -119,6 +119,14 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 
 
 void MainWindow::print_files(const char *path) {
+	// replace ' ' with '\ '
+	QString qpath(path);
+	if (strchr(path, ' '))
+		qpath.replace(" ", "\\ ");
+	path =  qpath.toUtf8().constData();
+	if (arg_debug)
+		printf("print_files path %s\n", path); 
+	
 	char *cmd;
 	if (asprintf(&cmd, "firejail --ls=%d %s 2>&1", pid_, path) == -1)
 		errExit("asprintf");
@@ -141,12 +149,25 @@ void MainWindow::print_files(const char *path) {
 	}
 
 	// fs flags
-	fs_->checkPath(path);
+	fs_->checkPath(qpath);
 	
 	char *ptr = strtok(out, "\n");
 	rows = 0;
 	while (ptr) {
 		split_command(ptr);
+		
+		// adjust the list in order to accept file names with spaces
+		if (sargc > 5) {
+			char *ptr = sargv[4];
+			// replace '\0' with ' ' (sargc - 5) times
+			for (int i = sargc - 5; i > 0; i--) {
+				while (*ptr != '\0')
+					ptr++;
+				*ptr = ' ';
+			}
+			sargc = 5;
+		}	
+				
 		if (sargc == 5) {
 			if (strcmp(sargv[4], "..") != 0 && strcmp(sargv[4], ".") != 0) {
 				table_->setRowCount(rows + 1);
@@ -241,13 +262,13 @@ QString  MainWindow::build_path() {
 		retval += path_.at(i);
 		retval += QString("/");
 	}
-	
+
 	return retval;
 }
 
 QString  MainWindow::build_line() {
-	QString retval;
-	retval.sprintf("%d:///", pid_);
+	QString retval = "/";
+//	retval.sprintf("%d:///", pid_);
 	
 	for (int i = 0; i < path_.size(); ++i) {
 		retval += path_.at(i);
