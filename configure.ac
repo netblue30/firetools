@@ -3,6 +3,7 @@ AC_INIT(firetools, 0.9.39, netblue30@yahoo.com, , http://firejail.sourceforge.ne
 AC_CONFIG_SRCDIR([src/firetools/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
 
+m4_include([pkg.m4])
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -14,56 +15,13 @@ AC_PROG_RANLIB
 AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 
-# checking qt4/qt5 library
-if test -f /usr/lib/x86_64-linux-gnu/libQt5Core.so
+# testing pkg-config
+PKGCONFIG=`which pkg-config`
+if test -z "$PKGCONFIG"
 then
-	echo "Found qt5 library in /usr/lib/x86_64-linux-gnu directory"
-	# check libqt5svg5 library
-	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqsvg.so
-	then
-		echo "Found qt5 svg library"
-	else
-		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
-	fi
-	if test -f /usr/lib/x86_64-linux-gnu/qt5/plugins/iconengines/libqsvgicon.so
-	then
-		echo "Found qt5 svg icon library"
-	else
-		AC_MSG_ERROR([*** Please install Qt5 svg support - apt-get install libqt5svg5 ***])
-	fi
-
-# Arch Linux 64bit
-elif test -f /usr/lib/libQt5Core.so
-then
-        echo "Found qt5 library in /usr/lib directory"
-        # check libqt5svg5 library
-        if test -f /usr/lib/qt/plugins/imageformats/libqsvg.so
-        then
-                echo "Found qt5 svg library"
-        else
-                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
-        fi
-        if test -f /usr/lib/qt/plugins/iconengines/libqsvgicon.so
-        then
-                echo "Found qt5 svg icon library"
-        else
-                AC_MSG_ERROR([*** Please install Qt5 svg support - pacman -S qt5-svg ***])
-        fi
-	
-# Gentoo 64bit
-elif test -f /usr/lib64/qt4/libQtCore.so
-then
-	echo "Found qt4 library in /usr/lib64/qt4 directory"
-
-# Gentoo 32bit
-elif test -f /usr/lib/qt4/libQtCore.so
-then
-	echo "Found qt4 library in /usr/lib/qt4 directory"
-else
-	AC_CHECK_LIB([QtCore], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
-	AC_CHECK_LIB([QtGui], [main], [], AC_MSG_ERROR([*** QtCore library not installed - please install Qt4 or Qt5 first ***]))
-
+	AC_MSG_ERROR([pkg-config is missing, please install it (https://www.freedesktop.org/wiki/Software/pkg-config/).])
 fi
+PKG_CHECK_MODULES(QT5, [Qt5Widgets], [], AC_MSG_ERROR([*** Qt5 not installed]))
 
 # testing qmake
 QMAKE=`which qmake`
