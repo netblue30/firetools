@@ -1,9 +1,7 @@
 AC_PREREQ([2.68])
-AC_INIT(firetools, 0.9.39, netblue30@yahoo.com, , http://firejail.sourceforge.net)
+AC_INIT(firetools, 0.9.39, netblue30@yahoo.com, , http://firejail.wordpress.com)
 AC_CONFIG_SRCDIR([src/firetools/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
-
-m4_include([pkg.m4])
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -14,14 +12,6 @@ AC_PROG_RANLIB
 # checking pthread library
 AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
-
-# testing pkg-config
-PKGCONFIG=`which pkg-config`
-if test -z "$PKGCONFIG"
-then
-	AC_MSG_ERROR([pkg-config is missing, please install it (https://www.freedesktop.org/wiki/Software/pkg-config/).])
-fi
-PKG_CHECK_MODULES(QT5, [Qt5Widgets], [], AC_MSG_ERROR([*** Qt5 not installed]))
 
 # testing qmake
 QMAKE=`which qmake`
@@ -34,7 +24,7 @@ then
 	
 	if test -z "$QMAKE"
 	then
-		AC_MSG_ERROR([qmake is missing, please install Qt4 or Qt5 development packages.])
+		AC_MSG_ERROR([qmake and/or Qt5 is missing, please install them.])
 	fi
 fi
 echo "Found $QMAKE"
@@ -55,7 +45,7 @@ chmod +x sanitizer.sh
 FIREJAIL=`which firejail`
 if test -z "$FIREJAIL"
 then
-	AC_MSG_WARN([Firejail is required for running firetools, please install it (http://firejail.sf.net/).])
+	AC_MSG_WARN([Firejail is required for running firetools, please install it (http://firejail.wordpress.com/).])
 else
 	echo "Found $FIREJAIL"
 fi
