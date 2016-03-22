@@ -582,20 +582,18 @@ void StatsDialog::updatePid() {
 }
 
 void StatsDialog::cycleReady() {
-	if (isVisible()) {
-		if (mode_ == MODE_TOP)
-			updateTop();
-		else if (mode_ == MODE_PID)
-			updatePid();
-		else if (mode_ == MODE_TREE)
-			updateTree();
-		else if (mode_ == MODE_SECCOMP)
-			updateSeccomp();
-		else if (mode_ == MODE_DNS)
-			updateDns();
-		else if (mode_ == MODE_CAPS)
-			updateCaps();
-	}
+	if (mode_ == MODE_TOP)
+		updateTop();
+	else if (mode_ == MODE_PID)
+		updatePid();
+	else if (mode_ == MODE_TREE)
+		updateTree();
+	else if (mode_ == MODE_SECCOMP)
+		updateSeccomp();
+	else if (mode_ == MODE_DNS)
+		updateDns();
+	else if (mode_ == MODE_CAPS)
+		updateCaps();
 }
 
 void StatsDialog::anchorClicked(const QUrl & link) {

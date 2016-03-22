@@ -41,23 +41,9 @@ echo "export LDFLAGS=-lasan" >> sanitizer.sh
 echo "cd src/firetools && $QMAKE && cd ../.." >> sanitizer.sh
 chmod +x sanitizer.sh
 
-# testing firejail
-FIREJAIL=`which firejail`
-if test -z "$FIREJAIL"
-then
-	AC_MSG_WARN([Firejail is required for running firetools, please install it (http://firejail.wordpress.com/).])
-else
-	echo "Found $FIREJAIL"
-fi
-
-# testing xterm
-XTERM=`which xterm`
-if test -z "$XTERM"
-then
-	AC_MSG_WARN([xterm is required for running firetools, please install it.])
-else
-	echo "Found $XTERM"
-fi
-
 cp confdefs.h firetools_config.h
 AC_OUTPUT(Makefile)
+
+echo
+echo "Required run time packages: firejail, Qt5 SVG icon library (libqt5svg5)"
+echo

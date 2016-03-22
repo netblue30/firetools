@@ -3820,26 +3820,6 @@ echo "export LDFLAGS=-lasan" >> sanitizer.sh
 echo "cd src/firetools && $QMAKE && cd ../.." >> sanitizer.sh
 chmod +x sanitizer.sh
 
-# testing firejail
-FIREJAIL=`which firejail`
-if test -z "$FIREJAIL"
-then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Firejail is required for running firetools, please install it (http://firejail.wordpress.com/)." >&5
-$as_echo "$as_me: WARNING: Firejail is required for running firetools, please install it (http://firejail.wordpress.com/)." >&2;}
-else
-	echo "Found $FIREJAIL"
-fi
-
-# testing xterm
-XTERM=`which xterm`
-if test -z "$XTERM"
-then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: xterm is required for running firetools, please install it." >&5
-$as_echo "$as_me: WARNING: xterm is required for running firetools, please install it." >&2;}
-else
-	echo "Found $XTERM"
-fi
-
 cp confdefs.h firetools_config.h
 ac_config_files="$ac_config_files Makefile"
 
@@ -5005,3 +4985,7 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+echo
+echo "Required run time packages: firejail, Qt5 SVG icon library (libqt5svg5)"
+echo

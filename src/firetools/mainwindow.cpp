@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 }
 
 void MainWindow::cycleReady() {
-	if (stats_->isVisible()) {
+	if (isVisible()) {
 		emit cycleReadySignal();
 	}
 }

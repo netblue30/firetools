@@ -29,5 +29,6 @@ typedef enum {
 	
 
 extern int arg_debug;
+extern int svg_not_found;
 
 #endif

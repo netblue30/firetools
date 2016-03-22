@@ -152,16 +152,16 @@ QIcon Application::loadIcon(QString name) {
 			printf("icon %s: local config dir\n", name.toLocal8Bit().data());
 		return QIcon(conf);
 	}
-	conf = QDir::homePath() + "/.config/firetools/" + name + ".svg";
-	QFileInfo checkFile3(conf);
-	if (checkFile3.exists() && checkFile3.isFile()) {
-		if (arg_debug)
-			printf("icon %s: local config dir\n", name.toLocal8Bit().data());
-		return QIcon(conf);
-	}
 	
-	
-	{
+	if (!svg_not_found) {
+		conf = QDir::homePath() + "/.config/firetools/" + name + ".svg";
+		QFileInfo checkFile3(conf);
+		if (checkFile3.exists() && checkFile3.isFile()) {
+			if (arg_debug)
+				printf("icon %s: local config dir\n", name.toLocal8Bit().data());
+			return QIcon(conf);
+		}
+
 		QDirIterator it("/usr/share/icons/hicolor/scalable", QDirIterator::Subdirectories);
 		while (it.hasNext()) {
 			it.next();
@@ -222,14 +222,14 @@ QIcon Application::loadIcon(QString name) {
 				if (arg_debug)
 					printf("icon %s: /usr/share/pixmaps\n", name.toLocal8Bit().data());
 				QIcon icon = QIcon(fi.canonicalFilePath());
-#if 0 // scale				
+//#if 0 // scale				
 				QSize sz = icon.actualSize(QSize(64, 64));
 				if (sz.height() < 64 && sz.width() < 64) {
 					QPixmap pix = icon.pixmap(sz.height(), sz.width());
 					QPixmap newpix = pix.scaled(50, 50);
 					return QIcon(newpix);
 				}
-#endif
+//#endif
 				return icon;
 				
 			}
@@ -278,10 +278,12 @@ DefaultApp dapps[] = {
 	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
 	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":resources/icedove.png" },
+	{ "kmail", "", "KMail", "firejail kmail", "kmail" },
 
 	// pdf etc.
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
 	{ "fbreader", "", "eBook reader", "firejail fbreader", "FBReader" },
+	{ "cherrytree", "", "CherryTree note taking application", "firejail cherrytree", "cherrytree"},
 
 	// bittorrent
 	{ "transmission-gtk", "", "Transmission BitTorrent Client", "firejail transmission-gtk", "transmission" },
@@ -301,12 +303,16 @@ DefaultApp dapps[] = {
 	// chat
 	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },
 	{ "xchat", "", "XChat", "firejail xchat", "xchat" },
+	{ "hexchat", "", "HexChat", "firejail hexchat", "hexchat" },
 	{ "quassel", "", "Quassel IRC", "firejail quassel", "quassel" },
 	{ "empathy", "", "Empathy", "firejail empathy", "empathy" },
 	
 	// etc
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal" },
+	{ "lxterminal", "", "LXDE terminal", "firejail lxterminal", "lxterminal" },
+	{ "konsole", "", "KDE Konsole", "firejail konsole", "konsole" },
+	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
 	{ 0, 0, 0, 0, 0 }
 };
 

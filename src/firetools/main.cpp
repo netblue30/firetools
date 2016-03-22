@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QLibraryInfo>
 
 #include "firetools.h"
 #include "mainwindow.h"
@@ -27,6 +28,7 @@
 #include "../../firetools_config.h"
 
 int arg_debug = 0;
+int svg_not_found = 0;
 
 // desktop file content for autostart
 static const char *deskfile_minimize = 
@@ -105,8 +107,24 @@ int main(int argc, char *argv[]) {
 		}		
 	}
 	
-	// create firetools directory if it doesn't exist
+#if QT_VERSION >= 0x050000
+	// test run time dependencies - print warning and continue program
+	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
+	ppath += "/imageformats/libqsvg.so";
 	struct stat s;
+	if (stat(ppath.toUtf8().constData(), &s) == -1) {
+		fprintf(stderr, "Warning: QT5 SVG support not installed, please install libqt5svg5 package\n");
+		svg_not_found = 1;
+	}
+#endif
+	
+	// test run time dependencies - exit
+	if (!which("firejail")) {
+		fprintf(stderr, "Error: firejail package not found, please install it!\n");
+		exit(1);
+	}
+	
+	// create firetools directory if it doesn't exist
 	char *path;
 	char *homedir = get_home_directory();
 	if (asprintf(&path, "%s/.config/firetools", homedir) == -1)
