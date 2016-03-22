@@ -278,7 +278,6 @@ DefaultApp dapps[] = {
 	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
 	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":resources/icedove.png" },
-	{ "kmail", "", "KMail", "firejail kmail", "kmail" },
 
 	// pdf etc.
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
@@ -311,7 +310,6 @@ DefaultApp dapps[] = {
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal" },
 	{ "lxterminal", "", "LXDE terminal", "firejail lxterminal", "lxterminal" },
-	{ "konsole", "", "KDE Konsole", "firejail konsole", "konsole" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
 	{ 0, 0, 0, 0, 0 }
 };

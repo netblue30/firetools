@@ -106,12 +106,12 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}		
 	}
-	
+
+	struct stat s;	
 #if QT_VERSION >= 0x050000
 	// test run time dependencies - print warning and continue program
 	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
 	ppath += "/imageformats/libqsvg.so";
-	struct stat s;
 	if (stat(ppath.toUtf8().constData(), &s) == -1) {
 		fprintf(stderr, "Warning: QT5 SVG support not installed, please install libqt5svg5 package\n");
 		svg_not_found = 1;
