@@ -148,6 +148,7 @@ void MainWindow::run() {
 
 void MainWindow::runTools() {
 	stats_->show();
+	emit cycleReadySignal();
 }
 
 

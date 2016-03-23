@@ -8,11 +8,14 @@ Makefile
 config.log
 config.status
 build/
-firetools.1
-firetools.1.gz
+*.1
+*.1.gz
 src/firetools/moc_edit_dialog.cpp
 src/firetools/moc_mainwindow.cpp
 src/firetools/moc_pid_thread.cpp
 src/firetools/moc_stats_dialog.cpp
 src/firetools/qrc_firetools.cpp
+src/firemgr/moc_mainwindow.cpp
+src/firemgr/moc_topwidget.cpp
+src/firemgr/qrc_firemgr.cpp
 

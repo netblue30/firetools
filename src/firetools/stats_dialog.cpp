@@ -533,7 +533,10 @@ void StatsDialog::updatePid() {
 	msg += "</td></tr>";
 
 	msg += QString("<tr><td></td><td><b>CPU Cores:</b> ") + pid_cpu_cores_ + "</td>";
-	msg += QString("<td><b>Protocols:</b> ") + pid_protocol_ + "</td>";
+	if (pid_seccomp_)
+		msg += QString("<td><b>Protocols:</b> ") + pid_protocol_ + "</td>";
+	else
+		msg += QString("<td><b>Protocols:</b> disabled</td>");
 	msg += "</td></tr>";
 
 	// graph type

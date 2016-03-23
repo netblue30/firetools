@@ -80,7 +80,7 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	table_->verticalHeader()->setVisible(false);
 	table_->setColumnWidth(0, 20);
 	table_->setColumnWidth(1, 26);
-	table_->setColumnWidth(2, 50);
+	table_->setColumnWidth(2, 100);
 	table_->setColumnWidth(3, 100);
 	table_->setColumnWidth(4, 100);
 	table_->setColumnWidth(5, 500);
@@ -110,6 +110,7 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 
 	setCentralWidget(mainWidget);
 	setMinimumWidth(500);
+	resize(500, 500);
 	char *title;
 	if (asprintf(&title, "Firejail Sandbox %d", pid) == -1)
 		errExit("asprintf");
@@ -197,6 +198,16 @@ void MainWindow::print_files(const char *path) {
 				
 				// fs flags
 				QString s = fs_->checkFile(QString(sargv[4]));
+				if (s == "B")
+					s = "Blacklist";
+				else if ( s == "T")
+					s = "Temporary";
+				else if ( s== "R")
+					s = "Read-only";
+				else if ( s== "C")
+					s = "Clone";
+				else if ( s== "W")
+					s = "Whitelist";
 				QTableWidgetItem *item =  new QTableWidgetItem(s);
 				item->setTextAlignment(Qt::AlignCenter);					
 				table_->setItem(rows, 2, item);
