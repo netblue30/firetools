@@ -72,6 +72,7 @@ private:
 	bool have_join_;
 	int caps_cnt_;
 	GraphType graph_type_;
+	bool no_network_;
 };
 
 

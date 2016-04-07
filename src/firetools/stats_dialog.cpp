@@ -41,7 +41,7 @@ extern bool data_ready;
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")),
-	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN) {
+	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
 	
 	procView_ = new QTextBrowser;
 	procView_->setOpenLinks(false);
@@ -80,6 +80,10 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 			printf("%d capabilities supported by the kernel\n", val);
 		caps_cnt_ = val;
 	}
+	
+	struct stat s;
+	if (getuid() != 0 && stat("/proc/sys/kernel/grsecurity", &s) == 0) 
+		no_network_ = true;
 }
 
 QString StatsDialog::header() {
@@ -492,13 +496,13 @@ void StatsDialog::updatePid() {
 
 	msg += "<table>";
 	msg += QString("<tr><td width=\"5\"></td><td><b>PID:</b> ") +  QString::number(pid_) + "</td>";
-	if (ptr->networkDisabled())
+	if (ptr->networkDisabled() || no_network_)
 		msg += "<td><b>RX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>RX:</b> ") + QString::number(st->rx_) + " KB/s</td></tr>";
 	
 	msg += QString("<tr><td></td><td><b>User:</b> ") + pw->pw_name  + "</td>";
-	if (ptr->networkDisabled())
+	if (ptr->networkDisabled() || no_network_)
 		msg += "<td><b>TX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>TX:</b> ") + QString::number(st->tx_) + " KB/s</td></tr>";
@@ -557,13 +561,13 @@ void StatsDialog::updatePid() {
 	// graphs
 	msg += "<tr></tr>";
 	msg += "<tr><td></td><td>"+ graph(0, ptr, cycle, graph_type_) + "</td><td>" + graph(1, ptr, cycle, graph_type_) + "</td></tr>";
-	if (ptr->networkDisabled() == false)
+	if (ptr->networkDisabled() == false && no_network_ == false)
 		msg += "<tr><td></td><td>"+ graph(2, ptr, cycle, graph_type_) + "</td><td>" + graph(3, ptr, cycle, graph_type_) + "</td></tr>";
 
 	msg += QString("</table><br/>");
 	
 	// bandwidth limits
-	if (ptr->networkDisabled() == false) {
+	if (ptr->networkDisabled() == false && no_network_ == false) {
 		char *fname;
 		if (asprintf(&fname, "/dev/shm/firejail/%d-bandwidth", pid_) == -1)
 			errExit("asprintf");
