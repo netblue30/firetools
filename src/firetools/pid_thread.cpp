@@ -65,19 +65,29 @@ static void store(int pid, int interval, int clocktick) {
 	st->rx_ = ((float) pids[pid].rx) /( interval * 1000);
 	st->tx_ = ((float) pids[pid].tx) /( interval * 1000);
 
-
-//todo: do it only once, when dbpid is created	
-	dbpid->setUid(pids[pid].uid);
-
-//todo: do it only once, when dbpid is created	
-	if (strstr(pids[pid].cmd, "--net")) {
-		dbpid->setNetworkDisabled(false);
-	}		
-	else {
-		dbpid->setNetworkDisabled(true);
-	}	
-
-	dbpid->setCmd(pids[pid].cmd);
+	if (!dbpid->isConfigured()) {
+		if (arg_debug)
+			printf("configuring dbpid for sandbox %d\n", pid);		
+		// user id
+		dbpid->setUid(pids[pid].uid);
+		
+		// check network namespace
+		char *name;
+		if (asprintf(&name, "/run/firejail/network/%d-netmap", pid) == -1)
+			errExit("asprintf");
+		struct stat s;
+		if (stat(name, &s) == 0) {
+			dbpid->setNetworkDisabled(false);
+		}		
+		else {
+			dbpid->setNetworkDisabled(true);
+		}	
+		free(name);
+		
+		// command line			
+		dbpid->setCmd(pids[pid].cmd);
+		dbpid->setConfigured();
+	}
 }
 
 // remove closed processes from database
@@ -162,7 +172,10 @@ void PidThread::run() {
 				pids[i].shared = shared * pgsz / 1024;
 				
 				// network
-				if (pids[i].cmd && strstr(pids[i].cmd, "--net") != 0) {
+				// todo: speedup
+
+				DbPid *dbpid = Db::instance().findPid(i);
+				if (dbpid && dbpid->isConfigured() && dbpid->networkDisabled() == false) {
 					pid_get_netstats_sandbox(i, &rx, &tx);
 					if (rx >= pids[i].rx)
 						pids[i].rx = rx - pids[i].rx;
@@ -173,6 +186,7 @@ void PidThread::run() {
 						pids[i].tx = tx - pids[i].tx;
 					else
 						pids[i].tx = 0;
+				
 				}
 				else {
 					pids[i].rx = 0;

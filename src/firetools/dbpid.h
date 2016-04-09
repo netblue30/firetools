@@ -64,6 +64,14 @@ public:
 	void setUid(uid_t val) {
 		uid_ = val;
 	}
+	
+	bool isConfigured() {
+		return configured_;
+	}
+	
+	void setConfigured() {
+		configured_ = true;
+	}
 
 private:	
 	DbPid *next_;
@@ -71,6 +79,7 @@ private:
 	char *cmd_;
 	bool network_disabled_;
 	uid_t uid_;
+	bool configured_;
 };
 
 #endif

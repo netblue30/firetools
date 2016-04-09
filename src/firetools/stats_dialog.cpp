@@ -569,7 +569,7 @@ void StatsDialog::updatePid() {
 	// bandwidth limits
 	if (ptr->networkDisabled() == false && no_network_ == false) {
 		char *fname;
-		if (asprintf(&fname, "/dev/shm/firejail/%d-bandwidth", pid_) == -1)
+		if (asprintf(&fname, "/run/firejail/bandwidth/%d-bandwidth", pid_) == -1)
 			errExit("asprintf");
 		FILE *fp = fopen(fname, "r");
 		if (fp) {
