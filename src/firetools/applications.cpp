@@ -274,6 +274,7 @@ DefaultApp dapps[] = {
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
 	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
 	{ "opera", "", "Opera Web Browser", "firejail opera", "opera" },
+	{ "netsurf", "", "Netsurf Web Browser", "firejail netsurf", "netsurf" },
 
 	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
