@@ -39,11 +39,12 @@ extern bool data_ready;
 
 static QString getName(pid_t pid);
 static bool userNamespace(pid_t pid);
+static int getX11Display(pid_t pid);
 
 
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
-	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
+	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")), pid_x11_(0),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
 	
 	procView_ = new QTextBrowser;
@@ -451,6 +452,7 @@ void StatsDialog::updatePid() {
 		kernelSecuritySettings();
 		pid_noroot_ = userNamespace(pid_);
 		pid_name_ = getName(pid_);
+		pid_x11_ = getX11Display(pid_);
 		pid_initialized_ = true;
 	}
 
@@ -510,6 +512,11 @@ void StatsDialog::updatePid() {
 		msg += QString("<td><b>Protocols:</b> disabled</td>");
 	msg += "</td></tr>";
 
+	// X11 display
+	if (pid_x11_) {
+		msg += "<tr><td></td><td><b>X11 Dispaly:</b> " + QString::number(pid_x11_) + "</td></tr>";
+	}
+	
 	// graph type
 	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
@@ -670,6 +677,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		pid_initialized_ = false;
 		pid_caps_ = QString("");
 		pid_name_ = QString("");
+		pid_x11_ = 0;
 		mode_ = MODE_PID;
 	}
 	
@@ -730,6 +738,24 @@ static QString getName(pid_t pid) {
 		char name[50];
 		if (fgets(name, 50, fp))
 			retval = QString(name);
+		fclose(fp);
+	}
+	free(fname);
+	
+	return retval;
+}
+
+static int getX11Display(pid_t pid) {
+	int retval = 0;
+
+	char *fname;
+	if (asprintf(&fname, "/run/firejail/x11/%d", (int) pid) == -1)
+		errExit("asprintf");
+	FILE *fp = fopen(fname, "r");
+	if (fp) {
+		int val;
+		if (fscanf(fp, "%d", &val) == 1)
+			retval = val;
 		fclose(fp);
 	}
 	free(fname);
