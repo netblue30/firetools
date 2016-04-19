@@ -4,6 +4,7 @@ firetools (0.9.39) baseline; urgency=low
   * updated the default application list
   * sandbox file manager (firemgr) application
   * stats support for protocols and cpu cores
+  * stats support for sandbox name
   * bugfixes
  -- netblue30 <netblue30@yahoo.com>  Tue, 1 Mar 2016 08:00:00 -0500
 

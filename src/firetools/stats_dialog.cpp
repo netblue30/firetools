@@ -37,10 +37,13 @@
 #include "../../firetools_config.h"
 extern bool data_ready;
 
+static QString getName(pid_t pid);
+static bool userNamespace(pid_t pid);
+
 
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
-	pid_cpu_cores_(QString("")), pid_protocol_(QString("")),
+	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
 	
 	procView_ = new QTextBrowser;
@@ -417,46 +420,6 @@ static int find_child(int id) {
 
 
 
-bool userNamespace(pid_t pid) {
-	if (arg_debug)
-		printf("Checking user namespace for pid %d\n", pid);
-		
-	// test user namespaces available in the kernel
-	struct stat s1;
-	struct stat s2;
-	struct stat s3;
-	if (stat("/proc/self/ns/user", &s1) == 0 &&
-	    stat("/proc/self/uid_map", &s2) == 0 &&
-	    stat("/proc/self/gid_map", &s3) == 0);
-	else
-		return false;
-
-	pid = find_child(pid);
-	if (pid == -1)
-		return false;
-		
-	// read uid map
-	char *uidmap;
-	if (asprintf(&uidmap, "/proc/%u/uid_map", pid) == -1)
-		errExit("asprintf");
-	FILE *fp = fopen(uidmap, "r");
-	if (!fp) {
-		free(uidmap);
-		return false;
-	}
-
-	// check uid map
-	int u1;
-	int u2;
-	bool found = false;
-	if (fscanf(fp, "%d %d", &u1, &u2) == 2) {
-		if (u1 != 0 || u2 != 0)
-			found = true;
-	}
-	fclose(fp);
-	free(uidmap);
-	return found;	
-}
 	
 void StatsDialog::updatePid() {
 	QString msg = "";
@@ -483,6 +446,13 @@ void StatsDialog::updatePid() {
 		return;
 	}
 
+	// initialize static values
+	if (pid_initialized_ == false) {
+		kernelSecuritySettings();
+		pid_noroot_ = userNamespace(pid_);
+		pid_name_ = getName(pid_);
+		pid_initialized_ = true;
+	}
 
 	// get user name
 	DbStorage *st = &ptr->data_4min_[cycle];
@@ -492,7 +462,11 @@ void StatsDialog::updatePid() {
 	uid_ = pw->pw_uid;
 
 	msg += header() + "<hr>";
-	msg += "<table><tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr></table><br/>";
+	msg += "<table>";
+	if (!pid_name_.isEmpty())
+		msg += "<tr><td width=\"5\"></td><td><b>Sandbox name:</b> " + pid_name_ + "</td></tr>";
+	msg += "<tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr>";
+	msg += "</table><br/>";
 
 	msg += "<table>";
 	msg += QString("<tr><td width=\"5\"></td><td><b>PID:</b> ") +  QString::number(pid_) + "</td>";
@@ -506,13 +480,6 @@ void StatsDialog::updatePid() {
 		msg += "<td><b>TX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>TX:</b> ") + QString::number(st->tx_) + " KB/s</td></tr>";
-
-	// init seccomp and caps
-	if (pid_initialized_ == false) {
-		kernelSecuritySettings();
-		pid_initialized_ = true;
-		pid_noroot_ = userNamespace(pid_);	
-	}
 
 	msg += QString("<tr><td></td><td><b>CPU:</b> ") + QString::number(st->cpu_) + "%</td>";
 	msg += QString("<td><b>Seccomp:</b> ");
@@ -583,6 +550,7 @@ void StatsDialog::updatePid() {
 			fclose(fp);
 			msg += "</td></tr></table>";
 		}
+		free(fname);
 	}
 
 	procView_->setHtml(msg);
@@ -701,6 +669,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		pid_ = linkstr.toInt();
 		pid_initialized_ = false;
 		pid_caps_ = QString("");
+		pid_name_ = QString("");
 		mode_ = MODE_PID;
 	}
 	
@@ -708,3 +677,62 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		cycleReady();
 }
 	
+
+static bool userNamespace(pid_t pid) {
+	if (arg_debug)
+		printf("Checking user namespace for pid %d\n", pid);
+		
+	// test user namespaces available in the kernel
+	struct stat s1;
+	struct stat s2;
+	struct stat s3;
+	if (stat("/proc/self/ns/user", &s1) == 0 &&
+	    stat("/proc/self/uid_map", &s2) == 0 &&
+	    stat("/proc/self/gid_map", &s3) == 0);
+	else
+		return false;
+
+	pid = find_child(pid);
+	if (pid == -1)
+		return false;
+		
+	// read uid map
+	char *uidmap;
+	if (asprintf(&uidmap, "/proc/%u/uid_map", pid) == -1)
+		errExit("asprintf");
+	FILE *fp = fopen(uidmap, "r");
+	if (!fp) {
+		free(uidmap);
+		return false;
+	}
+
+	// check uid map
+	int u1;
+	int u2;
+	bool found = false;
+	if (fscanf(fp, "%d %d", &u1, &u2) == 2) {
+		if (u1 != 0 || u2 != 0)
+			found = true;
+	}
+	fclose(fp);
+	free(uidmap);
+	return found;	
+}
+
+static QString getName(pid_t pid) {
+	QString retval("");
+
+	char *fname;
+	if (asprintf(&fname, "/run/firejail/name/%d", (int) pid) == -1)
+		errExit("asprintf");
+	FILE *fp = fopen(fname, "r");
+	if (fp) {
+		char name[50];
+		if (fgets(name, 50, fp))
+			retval = QString(name);
+		fclose(fp);
+	}
+	free(fname);
+	
+	return retval;
+}

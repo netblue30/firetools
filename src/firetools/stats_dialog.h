@@ -68,6 +68,7 @@ private:
 	bool pid_noroot_;
 	QString pid_cpu_cores_;
 	QString pid_protocol_;
+	QString pid_name_;
 	
 	bool have_join_;
 	int caps_cnt_;
