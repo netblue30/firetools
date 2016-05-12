@@ -46,7 +46,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")), pid_x11_(0),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
-	
+
 	procView_ = new QTextBrowser;
 	procView_->setOpenLinks(false);
 	procView_->setOpenExternalLinks(false);

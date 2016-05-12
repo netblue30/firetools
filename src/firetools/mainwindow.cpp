@@ -40,12 +40,30 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	stats_ = new StatsDialog();
 	connect(this, SIGNAL(cycleReadySignal()), stats_, SLOT(cycleReady()));
 
-	
+	// check firejail
 	if (!which("firejail")) {
 		QMessageBox::warning(this, tr("Firejail Tools"),
 			tr("<br/><b>Firejail</b> software not found. Please install it.<br/><br/><br/>"));
 		exit(1);
 	}
+
+	// check svg support
+#if QT_VERSION >= 0x050000
+	QList<QByteArray> flist = QImageReader::supportedImageFormats();
+	bool svgfound = false;
+	for (int i = 0; i < flist.size(); i++) {
+		QByteArray a = flist.at(i);
+		const char *str = a.constData();
+		if (strcmp(str, "svg") == 0)
+			svgfound = true;
+	}
+	if (!svgfound) {
+		QMessageBox::warning(this, tr("Firejail Tools"),
+			tr("<br/>Qt5 SVG icon library not found. Please install it:<br/>"
+			    "sudo apt-get install libqt5svg5<br/><br/>"));
+	}
+#endif
+
 	applications_init();
 	createTrayActions();
 	createLocalActions();

@@ -3803,7 +3803,7 @@ then
 
 	if test -z "$QMAKE"
 	then
-		as_fn_error $? "qmake and/or Qt5 is missing, please install them." "$LINENO" 5
+		as_fn_error $? "qmake and/or Qt5 are missing, please install them." "$LINENO" 5
 	fi
 fi
 echo "Found $QMAKE"
@@ -4987,5 +4987,7 @@ fi
 
 
 echo
-echo "Required run time packages: firejail, Qt5 SVG icon library (libqt5svg5)"
+echo "Required run time packages:"
+echo "      firejail"
+echo "      libqt5svg5 (Qt5 SVG icon library) if the program was compiled for Qt5."
 echo

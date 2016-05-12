@@ -24,7 +24,7 @@ then
 	
 	if test -z "$QMAKE"
 	then
-		AC_MSG_ERROR([qmake and/or Qt5 is missing, please install them.])
+		AC_MSG_ERROR([qmake and/or Qt5 are missing, please install them.])
 	fi
 fi
 echo "Found $QMAKE"
@@ -45,5 +45,7 @@ cp confdefs.h firetools_config.h
 AC_OUTPUT(Makefile)
 
 echo
-echo "Required run time packages: firejail, Qt5 SVG icon library (libqt5svg5)"
+echo "Required run time packages:"
+echo "      firejail"
+echo "      libqt5svg5 (Qt5 SVG icon library) if the program was compiled for Qt5."
 echo

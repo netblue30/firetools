@@ -122,16 +122,18 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 void MainWindow::print_files(const char *path) {
 	// replace ' ' with '\ '
 	QString qpath(path);
-	if (strchr(path, ' '))
+	if (strchr(path, ' ')) {
 		qpath.replace(" ", "\\ ");
-	path =  qpath.toUtf8().constData();
+		path =  qpath.toUtf8().constData();
+	}
+	
 	if (arg_debug)
 		printf("print_files path %s\n", path); 
 	
 	char *cmd;
 	if (asprintf(&cmd, "firejail --ls=%d %s 2>&1", pid_, path) == -1)
 		errExit("asprintf");
-	
+
 	// clear table
 	int rows = table_->rowCount();
 	while (rows > 0) {
@@ -150,7 +152,7 @@ void MainWindow::print_files(const char *path) {
 	}
 
 	// fs flags
-	fs_->checkPath(qpath);
+	fs_->checkPath(QString(path));
 	
 	char *ptr = strtok(out, "\n");
 	rows = 0;
@@ -208,6 +210,9 @@ void MainWindow::print_files(const char *path) {
 					s = "Clone";
 				else if ( s== "W")
 					s = "Whitelist";
+				else if (s == "WR")
+					s = "Read-only";
+
 				QTableWidgetItem *item =  new QTableWidgetItem(s);
 				item->setTextAlignment(Qt::AlignCenter);					
 				table_->setItem(rows, 2, item);
