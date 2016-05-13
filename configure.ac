@@ -13,21 +13,39 @@ AC_PROG_RANLIB
 AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 
-# testing qmake
-QMAKE=`which qmake`
+QMAKE=""
+AC_ARG_WITH(
+    qmake,
+    AS_HELP_STRING(
+	[--with-qmake=PATH],
+	[Path to qmake executable]
+    ),
+    [
+	qmake="$withval"
+	QMAKE="$qmake"
+    ],
+    [
+	QMAKE=`which qmake`
+    ]
+)
+echo "trying $QMAKE"
+
+
+#if test -f /usr/lib64/qt4/bin/qmake; then
+#	QMAKE=/usr/lib64/qt4/bin/qmake
+#fi
+	
 if test -z "$QMAKE"
 then
-	# fix for Fedora
-	if test -f /usr/lib64/qt4/bin/qmake; then
-		QMAKE=/usr/lib64/qt4/bin/qmake
-	fi
-	
-	if test -z "$QMAKE"
-	then
-		AC_MSG_ERROR([qmake and/or Qt5 are missing, please install them.])
-	fi
+	AC_MSG_ERROR([qmake and/or Qt are missing, please install them.])
 fi
-echo "Found $QMAKE"
+if test -f "$QMAKE"
+then
+	echo "found $QMAKE"
+else
+	AC_MSG_ERROR([qmake and/or Qt are missing, please install them.])
+fi
+
 $QMAKE -v
 
 cd src/firetools && $QMAKE && cd ../..

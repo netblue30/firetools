@@ -683,6 +683,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_qmake
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1300,6 +1301,11 @@ if test -n "$ac_init_help"; then
      short | recursive ) echo "Configuration of firetools 0.9.39:";;
    esac
   cat <<\_ACEOF
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-qmake=PATH       Path to qmake executable
 
 Some influential environment variables:
   CC          C compiler command
@@ -3792,21 +3798,39 @@ fi
 
 
 
-# testing qmake
-QMAKE=`which qmake`
+QMAKE=""
+
+# Check whether --with-qmake was given.
+if test "${with_qmake+set}" = set; then :
+  withval=$with_qmake;
+	qmake="$withval"
+	QMAKE="$qmake"
+
+else
+
+	QMAKE=`which qmake`
+
+
+fi
+
+echo "trying $QMAKE"
+
+
+#if test -f /usr/lib64/qt4/bin/qmake; then
+#	QMAKE=/usr/lib64/qt4/bin/qmake
+#fi
+
 if test -z "$QMAKE"
 then
-	# fix for Fedora
-	if test -f /usr/lib64/qt4/bin/qmake; then
-		QMAKE=/usr/lib64/qt4/bin/qmake
-	fi
-
-	if test -z "$QMAKE"
-	then
-		as_fn_error $? "qmake and/or Qt5 are missing, please install them." "$LINENO" 5
-	fi
+	as_fn_error $? "qmake and/or Qt are missing, please install them." "$LINENO" 5
 fi
-echo "Found $QMAKE"
+if test -f "$QMAKE"
+then
+	echo "found $QMAKE"
+else
+	as_fn_error $? "qmake and/or Qt are missing, please install them." "$LINENO" 5
+fi
+
 $QMAKE -v
 
 cd src/firetools && $QMAKE && cd ../..
