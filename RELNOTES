@@ -6,7 +6,7 @@ firetools (0.9.40) baseline; urgency=low
   * sandbox name support
   * X11 dispaly support
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Tue, 29 May 2016 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Sun, 29 May 2016 08:00:00 -0500
 
 firetools (0.9.30) baseline; urgency=low
   * 1h and 12h statistics support
