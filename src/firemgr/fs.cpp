@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 netblue30 (netblue30@yahoo.com)
+ * Copyright (C) 2015-2016 Firetools Authors
  *
  * This file is part of firetools project
  *

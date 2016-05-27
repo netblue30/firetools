@@ -1,5 +1,4 @@
-firetools (0.9.39) baseline; urgency=low
-  * work in progress
+firetools (0.9.40) baseline; urgency=low
   * Grsecurity support
   * updated the default application list
   * sandbox file manager (firemgr) application
@@ -7,7 +6,7 @@ firetools (0.9.39) baseline; urgency=low
   * sandbox name support
   * X11 dispaly support
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Tue, 1 Mar 2016 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Tue, 29 May 2016 08:00:00 -0500
 
 firetools (0.9.30) baseline; urgency=low
   * 1h and 12h statistics support
