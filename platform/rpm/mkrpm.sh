@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.30"
+VER="0.9.40"
 
 cd ~
 rm -fr rpmbuild
@@ -14,9 +14,11 @@ cd ~/rpmbuild
 
 mkdir -p firetools-$VER/usr/bin
 install -m 755 /usr/bin/firetools firetools-$VER/usr/bin/.
+install -m 755 /usr/bin/firemgr firetools-$VER/usr/bin/.
 
 mkdir -p firetools-$VER/usr/share/man/man1
 install -m 644 /usr/share/man/man1/firetools.1.gz firetools-$VER/usr/share/man/man1/.
+install -m 644 /usr/share/man/man1/firemgr.1.gz firetools-$VER/usr/share/man/man1/.
 
 mkdir -p firetools-$VER/usr/share/doc/firetools
 install -m 644 /usr/share/doc/firetools/COPYING firetools-$VER/usr/share/doc/firetools/.
@@ -83,6 +85,15 @@ rm -rf %{buildroot}
  
 
 %changelog
+* Sun May 29 2016 netblue30 <netblue30@yahoo.com> 0.9.40-1
+ - Grsecurity support
+ - updated the default application list
+ - sandbox file manager (firemgr) application
+ - protocols and cpu cores support
+ - sandbox name support
+ - X11 dispaly support
+ - bugfixes
+
 * Sat Oct 3 2015 netblue30 <netblue30@yahoo.com> 0.9.30-1
  - 1h and 12h statistics support
  - user namespaces support
