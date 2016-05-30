@@ -30,6 +30,7 @@
 #include "mainwindow.h"
 #include "topwidget.h"
 #include <QtGui>
+#include <cstdlib>
 
 MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pid) {
 	// check firejail installed
@@ -255,9 +256,11 @@ void MainWindow::handleRefresh() {
 }
 
 void MainWindow::handleHome() {
+	const char* username = getenv("USER");
 	path_.clear();
 	path_.append(QString("home"));
-	path_.append(QString("netblue"));
+	if (username)
+		path_.append(QString(username));
 	QString full_path = build_path();		
 	print_files(full_path.toStdString().c_str());
 	QString txt = build_line();
