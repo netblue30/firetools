@@ -169,22 +169,33 @@ void MainWindow::runTools() {
 	emit cycleReadySignal();
 }
 
-
-void MainWindow::mousePressEvent(QMouseEvent *event) {
+void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
 
 	if (event->button() == Qt::LeftButton) {
 		int x = event->pos().x();
 		int y = event->pos().y();
+
 		if (x >= MARGIN * 2 + cols * 64 - 8 && x <= MARGIN * 2 + cols * 64 + 4 &&
 			   y >= 4 && y <= 15) {
-			hide();
-			stats_->hide();
+
+			showMinimized();
 		}
-		else if (x >= 0 && x < 64 &&
+		event->accept();
+		active_index_ = -1;
+	}
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+	if (event->button() == Qt::LeftButton) {
+		int x = event->pos().x();
+		int y = event->pos().y();
+
+		if (x >= 0 && x < 64 &&
 			   y >= 4 && y <= 15)
 			   runTools();
+
 		dragPosition_ = event->globalPos() - frameGeometry().topLeft();
 		event->accept();
 		active_index_ = -1;
@@ -392,8 +403,8 @@ void MainWindow::createLocalActions() {
 	addAction(runtools);
 
 	QAction *qminimize = new QAction(tr("&Minimize"), this);
-	connect(qminimize, SIGNAL(triggered()), this, SLOT(hide()));
-	connect(qminimize, SIGNAL(triggered()), stats_, SLOT(hide()));
+	connect(qminimize, SIGNAL(triggered()), this, SLOT(showMinimized()));
+//	connect(qminimize, SIGNAL(triggered()), stats_, SLOT(showMinimized()));
 	addAction(qminimize);
 
 	QAction *separator1 = new QAction(this);

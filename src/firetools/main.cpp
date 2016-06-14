@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 	MainWindow fc;
 	if (!arg_minimize)
 		fc.show();
-	
+
 	// configure system tray
 	QSystemTrayIcon icon(QIcon(":resources/firetools.png"));
 	icon.show();	
