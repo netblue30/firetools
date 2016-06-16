@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.40"
+VER="0.9.40.1"
 
 cd ~
 rm -fr rpmbuild
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
  
 
 %changelog
+* Wed Jun 15 2016 netblue30 <netblue30@yahoo.com> 0.9.40.1-1
+- bugfixes
+
 * Sun May 29 2016 netblue30 <netblue30@yahoo.com> 0.9.40-1
  - Grsecurity support
  - updated the default application list
