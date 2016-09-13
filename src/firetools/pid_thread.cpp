@@ -244,7 +244,6 @@ void PidThread::run() {
 			}
 		}
 
-
 		
 //		Db::instance().dbgprint();
 		emit cycleReady();

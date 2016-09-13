@@ -28,6 +28,7 @@
 #define PIDS_BUFLEN 4096
 Process *pids = 0;
 int max_pids = 32769;
+static int pid_proc_cmdline_x11(const pid_t pid);
 
 // get the memory associated with this pid
 void pid_getmem(unsigned pid, unsigned *rss, unsigned *shared) {
@@ -37,6 +38,7 @@ void pid_getmem(unsigned pid, unsigned *rss, unsigned *shared) {
 		perror("asprintf");
 		exit(1);
 	}
+
 	FILE *fp = fopen(file, "r");
 	if (!fp) {
 		free(file);
@@ -173,6 +175,7 @@ doexit:
 
 // mon_pid: pid of sandbox to be monitored, 0 if all sandboxes are included
 void pid_read(pid_t mon_pid) {
+printf("read pid\n");
 	if (pids == NULL) {
 		FILE *fp = fopen("/proc/sys/kernel/pid_max", "r");
 		if (fp) {
@@ -237,18 +240,12 @@ void pid_read(pid_t mon_pid) {
 					exit(1);
 				}
 
-				if (mon_pid == 0 && strncmp(ptr, "firejail", 8) == 0) {
-					pids[pid].level = 1;
+				if ((strncmp(ptr, "firejail", 8) == 0) && (mon_pid == 0 || mon_pid == pid)) {
+					if (pid_proc_cmdline_x11(pid))
+						pids[pid].level = -1;
+					else
+						pids[pid].level = 1;
 				}
-				else if (mon_pid == pid && strncmp(ptr, "firejail", 8) == 0) {
-					pids[pid].level = 1;
-				}
-//				else if (mon_pid == 0 && strncmp(ptr, "lxc-execute", 11) == 0) {
-//					pids[pid].level = 1;
-//				}
-//				else if (mon_pid == pid && strncmp(ptr, "lxc-execute", 11) == 0) {
-//					pids[pid].level = 1;
-//				}
 				else
 					pids[pid].level = -1;
 			}
@@ -370,7 +367,7 @@ char *pid_proc_comm(const pid_t pid) {
 	free(fname);
 
 	// read file
-	unsigned char buffer[BUFLEN];
+	char buffer[BUFLEN];
 	ssize_t len;
 	if ((len = read(fd, buffer, sizeof(buffer) - 1)) <= 0) {
 		close(fd);
@@ -379,8 +376,13 @@ char *pid_proc_comm(const pid_t pid) {
 	buffer[len] = '\0';
 	close(fd);
 
+	// remove \n
+	char *ptr = strchr(buffer, '\n');
+	if (ptr)
+		*ptr = '\0';
+
 	// return a malloc copy of the command line
-	char *rv = strdup((char *) buffer);
+	char *rv = strdup(buffer);
 	if (strlen(rv) == 0) {
 		free(rv);
 		return NULL;
@@ -522,4 +524,63 @@ void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long 
 	fclose(fp);
 	return;
 }
+
+// return 1 if firejail --x11 on command line
+static int pid_proc_cmdline_x11(const pid_t pid) {
+	// if comm is not firejail return 0
+	char *comm = pid_proc_comm(pid);
+	if (strcmp(comm, "firejail") != 0) {
+		free(comm);
+		return 0;
+	}
+	free(comm);
+
+	// open /proc/pid/cmdline file
+	char *fname;
+	int fd;
+	if (asprintf(&fname, "/proc/%d/cmdline", pid) == -1)
+		return 0;
+	if ((fd = open(fname, O_RDONLY)) < 0) {
+		free(fname);
+		return 0;
+	}
+	free(fname);
+
+	// read file
+	unsigned char buffer[BUFLEN];
+	ssize_t len;
+	if ((len = read(fd, buffer, sizeof(buffer) - 1)) <= 0) {
+		close(fd);
+		return 0;
+	}
+	buffer[len] = '\0';
+	close(fd);
+
+	// skip the first argument
+	int i;
+	for (i = 0; buffer[i] != '\0'; i++);
+
+	// parse remaining command line options
+	while (1) {
+		// extract argument
+		i++;
+		if (i >= len)
+			break;
+		char *arg = (char *)buffer + i;
+
+		// detect the last command line option
+		if (strcmp(arg, "--") == 0)
+			break;
+		if (strncmp(arg, "--", 2) != 0)
+			break;
+			
+		// check x11
+		if (strncmp(arg, "--x11", 5) == 0)
+			return 1;
+		i += strlen(arg);
+	}
+	return 0;
+}
+
+
 
