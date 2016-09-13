@@ -175,7 +175,6 @@ doexit:
 
 // mon_pid: pid of sandbox to be monitored, 0 if all sandboxes are included
 void pid_read(pid_t mon_pid) {
-printf("read pid\n");
 	if (pids == NULL) {
 		FILE *fp = fopen("/proc/sys/kernel/pid_max", "r");
 		if (fp) {
