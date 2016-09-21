@@ -19,3 +19,5 @@ src/firemgr/moc_mainwindow.cpp
 src/firemgr/moc_topwidget.cpp
 src/firemgr/qrc_firemgr.cpp
 
+src/firemgr/moc_predefs.h
+src/firetools/moc_predefs.h
