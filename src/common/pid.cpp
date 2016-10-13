@@ -28,7 +28,7 @@
 #define PIDS_BUFLEN 4096
 Process *pids = 0;
 int max_pids = 32769;
-static int pid_proc_cmdline_x11(const pid_t pid);
+static int pid_proc_cmdline_x11_xpra_xephyr(const pid_t pid);
 
 // get the memory associated with this pid
 void pid_getmem(unsigned pid, unsigned *rss, unsigned *shared) {
@@ -240,7 +240,7 @@ void pid_read(pid_t mon_pid) {
 				}
 
 				if ((strncmp(ptr, "firejail", 8) == 0) && (mon_pid == 0 || mon_pid == pid)) {
-					if (pid_proc_cmdline_x11(pid))
+					if (pid_proc_cmdline_x11_xpra_xephyr(pid))
 						pids[pid].level = -1;
 					else
 						pids[pid].level = 1;
@@ -525,7 +525,7 @@ void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long 
 }
 
 // return 1 if firejail --x11 on command line
-static int pid_proc_cmdline_x11(const pid_t pid) {
+static int pid_proc_cmdline_x11_xpra_xephyr(const pid_t pid) {
 	// if comm is not firejail return 0
 	char *comm = pid_proc_comm(pid);
 	if (strcmp(comm, "firejail") != 0) {
@@ -573,6 +573,9 @@ static int pid_proc_cmdline_x11(const pid_t pid) {
 		if (strncmp(arg, "--", 2) != 0)
 			break;
 			
+		if (strcmp(arg, "--x11=xorg") == 0)
+			return 0;
+
 		// check x11
 		if (strncmp(arg, "--x11", 5) == 0)
 			return 1;
