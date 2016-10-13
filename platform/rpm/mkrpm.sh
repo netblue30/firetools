@@ -1,118 +1,58 @@
 #!/bin/bash
-VER="0.9.40.1"
 
-cd ~
-rm -fr rpmbuild
+###
+###  mkrpm.sh
+###  NAME and VER are read from configure.ac.
+###  The VER git tag is exported into a tarball and built into an RPM package.
+###
 
-mkdir -p ~/rpmbuild/{RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp}
-cat <<EOF >~/.rpmmacros
-%_topdir   %(echo $HOME)/rpmbuild
-%_tmppath  %{_topdir}/tmp
-EOF
+set -e # stop upon non-zero return
+#set -x # print everything this script does
 
-cd ~/rpmbuild
+# Sanity check: necessary tools
+for CMD in git sed rpmbuild; do
+  if ! which $CMD > /dev/null 2>&1; then
+    echo "ERROR: Command not found: $CMD" && exit 255
+  fi
+done
+# Sanity check: base source directory is expected
+for DIRNAME in $(dirname $0)/../rpm $(dirname $0)/../../platform; do
+  if [ ! -d $DIRNAME ]; then
+    echo "ERROR: Unexpected directory, aborting."
+    exit 255
+  fi
+done
+PATH_TO_BASESRC=$(readlink -f $(dirname $0)/../../)
+NAME=$(grep AC_INIT $PATH_TO_BASESRC/configure.ac | sed -r 's/^AC_INIT\(([a-z]+),.*/\1/')
+ VER=$(grep AC_INIT $PATH_TO_BASESRC/configure.ac | sed -r 's/^AC_INIT\([a-z]+, ?([\.0-9]+),.*/\1/')
 
-mkdir -p firetools-$VER/usr/bin
-install -m 755 /usr/bin/firetools firetools-$VER/usr/bin/.
-install -m 755 /usr/bin/firemgr firetools-$VER/usr/bin/.
+# export tarball archive from git tag
+cd $PATH_TO_BASESRC
+mkdir -p build
+git -c tar.tar.xz.command="xz -c9" archive --prefix=$NAME-$VER/ -o build/$NAME-$VER.tar.xz $VER
+PATH_TO_TARBALL=$(readlink -f build/$NAME-$VER.tar.xz)
+PATH_TO_SPEC=$(readlink -f platform/rpm/$NAME.spec)
+cd -
 
-mkdir -p firetools-$VER/usr/share/man/man1
-install -m 644 /usr/share/man/man1/firetools.1.gz firetools-$VER/usr/share/man/man1/.
-install -m 644 /usr/share/man/man1/firemgr.1.gz firetools-$VER/usr/share/man/man1/.
+# fresh temporary rpmbuild _topdir for each build
+mkdir -p $HOME/tmprpmbuild
+export RPMTMPDIR=$(mktemp -d -p $HOME/tmprpmbuild)
+mkdir -p $RPMTMPDIR/{RPMS,SRPMS,BUILD,SOURCES,SPECS}
 
-mkdir -p firetools-$VER/usr/share/doc/firetools
-install -m 644 /usr/share/doc/firetools/COPYING firetools-$VER/usr/share/doc/firetools/.
-install -m 644 /usr/share/doc/firetools/README firetools-$VER/usr/share/doc/firetools/.
-install -m 644 /usr/share/doc/firetools/RELNOTES firetools-$VER/usr/share/doc/firetools/.
+# stage rpmbuild inputs
+cp $PATH_TO_TARBALL                                 $RPMTMPDIR/SOURCES/
+cp $PATH_TO_SPEC                                    $RPMTMPDIR/SPECS/
+sed -i "s/Version: FIRETOOLSVERSION/Version: $VER/" $RPMTMPDIR/SPECS/$NAME.spec
 
-mkdir -p firetools-$VER/usr/share/applications/
-install -m 644 /usr/share/applications/firetools.desktop firetools-$VER/usr/share/applications/.
-mkdir -p  firetools-$VER/usr/share/pixmaps
-install -m 644 /usr/share/pixmaps/firetools.png firetools-$VER/usr/share/pixmaps/.
+# build
+rpmbuild --define='_topdir %{getenv:RPMTMPDIR}' -ba $RPMTMPDIR/SPECS/$NAME.spec
 
-tar -czvf firetools-$VER.tar.gz firetools-$VER
-cp firetools-$VER.tar.gz SOURCES/.
+# copy rpmbuild outputs to build/ directory
+rm -rf $PATH_TO_BASESRC/build/*.rpm
+cp $(find $RPMTMPDIR -name '*.rpm') $PATH_TO_BASESRC/build/
 
-cat <<EOF > SPECS/firetools.spec
-%define        __spec_install_post %{nil}
-%define          debug_package %{nil}
-%define        __os_install_post %{_dbpath}/brp-compress
-
-Summary: Firejail user interface
-Name: firetools
-Version: $VER
-Release: 1
-License: GPL+
-Group: Development/Tools
-SOURCE0 : %{name}-%{version}.tar.gz
-URL: http://firejail.sourceforege.net
-
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-
-%description
-Firetools is the graphical user interface of Firejail.
-Firejail is a SUID sandbox program that reduces the risk of security breaches
-by restricting the running environment of untrusted applications using Linux
-namespaces, seccomp-bpf and Linux capabilities. It allows a process and all
-its descendants to have their  own  private view of the globally  shared  kernel
-resources, such as the network stack, process table, mount table.  Firejail can
-work in a SELinux or AppArmor environment, and it is integrated with Linux
-Control Groups.
-
-%prep
-%setup -q
-
-%build
-
-%install
-rm -rf %{buildroot}
-mkdir -p  %{buildroot}
-
-cp -a * %{buildroot}
-
-
-%clean
-rm -rf %{buildroot}
-
-
-%files
-%defattr(-,root,root,-)
-%{_bindir}/*
-%{_docdir}/*
-%{_mandir}/*
-/usr/share/applications/firetools.desktop
-/usr/share/pixmaps/firetools.png
- 
-
-%changelog
-* Wed Jun 15 2016 netblue30 <netblue30@yahoo.com> 0.9.40.1-1
-- bugfixes
-
-* Sun May 29 2016 netblue30 <netblue30@yahoo.com> 0.9.40-1
- - Grsecurity support
- - updated the default application list
- - sandbox file manager (firemgr) application
- - protocols and cpu cores support
- - sandbox name support
- - X11 dispaly support
- - bugfixes
-
-* Sat Oct 3 2015 netblue30 <netblue30@yahoo.com> 0.9.30-1
- - 1h and 12h statistics support
- - user namespaces support
- - QT5 support
- - applist update
- - bugfixes
-
-* Mon Jun 15 2015  netblue30 <netblue30@yahoo.com> 0.9.26.1
- - First rpm package release
-
-EOF
-
-
-rpmbuild -ba SPECS/firetools.spec
-rpm -qpl RPMS/x86_64/firetools-$VER-1.x86_64.rpm
-cd ..
-rm -f firetools-$VER-1.x86_64.rpm
-cp rpmbuild/RPMS/x86_64/firetools-$VER-1.x86_64.rpm .
-
+# success
+echo
+echo "    BUILD COMPLETE"
+echo
+find $PATH_TO_BASESRC/build/ -name '*.rpm'
