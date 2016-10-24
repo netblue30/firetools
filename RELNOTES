@@ -1,8 +1,7 @@
-firetools (0.9.43) baseline; urgency=low
-  * development version
+firetools (0.9.44) baseline; urgency=low
   * support for firejail --x11 detection
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Wed, 12 Oct 2016 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Mon, 24 Oct 2016 08:00:00 -0500
 
 firetools (0.9.40.1) baseline; urgency=low
   * bugfixes
