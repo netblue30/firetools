@@ -133,7 +133,7 @@ QIcon Application::loadIcon(QString name) {
 		printf("searching icon %s\n", name.toLocal8Bit().data());
 	if (name.startsWith('/') || name.startsWith(":resources")) {
 		if (arg_debug)
-			printf("icon %s: full path\n", name.toLocal8Bit().data());
+			printf("\t- full path\n");
 		return QIcon(name);
 	}
 	
@@ -142,14 +142,14 @@ QIcon Application::loadIcon(QString name) {
 	QFileInfo checkFile1(conf);
 	if (checkFile1.exists() && checkFile1.isFile()) {
 		if (arg_debug)
-			printf("icon %s: local config dir\n", name.toLocal8Bit().data());
+			printf("\t- local config dir, png file\n");
 		return QIcon(conf);
 	}
 	conf = QDir::homePath() + "/.config/firetools/" + name + ".jpg";
 	QFileInfo checkFile2(conf);
 	if (checkFile2.exists() && checkFile2.isFile()) {
 		if (arg_debug)
-			printf("icon %s: local config dir\n", name.toLocal8Bit().data());
+			printf("\t- local config dir, jpg file\n");
 		return QIcon(conf);
 	}
 	
@@ -158,7 +158,7 @@ QIcon Application::loadIcon(QString name) {
 		QFileInfo checkFile3(conf);
 		if (checkFile3.exists() && checkFile3.isFile()) {
 			if (arg_debug)
-				printf("icon %s: local config dir\n", name.toLocal8Bit().data());
+				printf("\t- local config dir, svg file\n");
 			return QIcon(conf);
 		}
 
@@ -168,7 +168,7 @@ QIcon Application::loadIcon(QString name) {
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
 				if (arg_debug)
-					printf("icon %s: scalable\n", name.toLocal8Bit().data());
+					printf("\t- svg\n");
 				return QIcon(fi.canonicalFilePath());
 			}
 		}
@@ -181,7 +181,7 @@ QIcon Application::loadIcon(QString name) {
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
 				if (arg_debug)
-					printf("icon %s: 64x64\n", name.toLocal8Bit().data());
+					printf("\t- /usr/share/icons/hicolor/64x64\n");
 				return QIcon(fi.canonicalFilePath());
 			}
 		}
@@ -194,7 +194,7 @@ QIcon Application::loadIcon(QString name) {
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
 				if (arg_debug)
-					printf("icon %s: 128x128\n", name.toLocal8Bit().data());
+					printf("\t- /usr/share/icons/hicolor/128x128\n");
 				return QIcon(fi.canonicalFilePath());
 			}
 		}
@@ -207,7 +207,7 @@ QIcon Application::loadIcon(QString name) {
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
 				if (arg_debug)
-					printf("icon %s: 256x256\n", name.toLocal8Bit().data());
+					printf("\t- /usr/share/icons/hicolor/256x256\n");
 				return QIcon(fi.canonicalFilePath());
 			}
 		}
@@ -220,7 +220,7 @@ QIcon Application::loadIcon(QString name) {
 			QFileInfo fi = it.fileInfo();
 			if (fi.isFile() && fi.baseName() == name) {
 				if (arg_debug)
-					printf("icon %s: /usr/share/pixmaps\n", name.toLocal8Bit().data());
+					printf("\t- /usr/share/pixmaps\n");
 				QIcon icon = QIcon(fi.canonicalFilePath());
 //#if 0 // scale				
 				QSize sz = icon.actualSize(QSize(64, 64));
@@ -238,13 +238,13 @@ QIcon Application::loadIcon(QString name) {
 	
 	if (QIcon::hasThemeIcon(name)) {
 		if (arg_debug)
-			printf("icon %s: fromTheme\n", name.toLocal8Bit().data());
+			printf("\t- fromTheme\n");
 		return QIcon::fromTheme(name);
 	}
 	
 	// create a new icon
 	if (arg_debug)
-		printf("icon %s: created\n", name.toLocal8Bit().data());
+		printf("\t- created\n");
 	QPixmap pix(64, 64);
 	pix.fill(Qt::red);
 	QPainter painter( &pix );
@@ -267,8 +267,8 @@ struct DefaultApp {
 
 DefaultApp dapps[] = {
 	// browser
-	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", "iceweasel" },
-	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", "firefox"},
+	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox.png" },
+	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", ":resources/firefox.png"},
 	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", "icecat"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
