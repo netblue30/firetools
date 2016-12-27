@@ -32,6 +32,7 @@
 #include <QLabel>
 #include "wizard.h"
 #include "home_widget.h"
+#include "help_widget.h"
 
 Wizard::Wizard(QWidget *parent)
 : QWizard(parent) {
@@ -39,10 +40,6 @@ Wizard::Wizard(QWidget *parent)
 	setPage(Page_StartSandbox, new StartSandboxPage);
 
 	setStartId(Page_Config);
-
-#ifndef Q_WS_MAC
-	setWizardStyle(ModernStyle);
-#endif
 	setOption(HaveHelpButton, true);
 	setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
 
@@ -53,6 +50,11 @@ Wizard::Wizard(QWidget *parent)
 
 
 void Wizard::showHelp() {
+
+	HelpWidget hw;
+	hw.exec();
+
+#if 0
 	static QString lastHelpMessage;
 
 	QString message;
@@ -87,41 +89,6 @@ void Wizard::showHelp() {
 			"<b>OverlayFS:</b> This option mounts an overlay filesystem on top of the sandbox. "
 			"Any filesystem modifications are discarded when the sandbox is closed. "
 			"A kernel 3.18 or newer is required by this option to work.<br/>"
-			
-			
-			"<br/>"
-			"Firejail secures your Linux applications using the latest sandboxing technologies available "
-			"in Linux kernel. Use this page to configure the sandbox, and "
-			"press Next when finished.<br/>"
-			"<br/>"
-			"<b>Restrict home directory:</b> Choose the directories visible inside the sandbox. "
-			"If disabled, all home files and directories are available inside the sandbox.<br/>"
-			"<b>Restrict /dev directory:</b> Only a small number of devices are visible insde the sandbox. "
-			"Sound and 3D acceleration should be available if this checkbox is set.<br/>"
-			"<b>Restrict /tmp directory:</b> Start with a clean /tmp directory, only X11 directory is available "
-			"under /tmp.<br/>"
-			"<b>Restrict /mnt and /media:</b> Blacklist /mnt and /media directories.<br/>"
-			"<b>System network:</b> Use the networking stack provided by the system.<br/>"
-			"<b>Network namespace:</b> Install a separate networking stack.<br/>"
-			"<b>Disable networking:</b> No network connectivity is available inside the sandbox.<br/>"
-			"<b>Disable sound:</b> The sound subsystem is not available inside the sandbox.<br/>"
-			"<b>Disable 3D acceleration:</b> Hardware acceleration drivers are disabled.<br/>"
-			"<b>Disable X11:</b> X11 graphical user interface subsystem is disabled. "
-			"Use this option when running console programs or servers.<br/>"
-			"<b>seccomp, capabilities, nonewprivs:</b> These are some very powerfull security features "
-			"implemented by the kernel. Try to use them allways. A Linux Kernel version 3.5 is required for this option to work.<br/>"
-			"<b>AppArmor:</b> If available on your platform, this option implements a number "
-			"of advanced security features currently available on GrSecurity kernels. Also, on "
-			"Ubuntu 16.04 or later, this option disabled dBus access.<br/>"
-			"<b>OverlayFS:</b> This option mounts an overlay filesystem on top of the sandbox. "
-			"Any filesystem modifications are discarded when the sandbox is closed. "
-			"A kernel 3.18 or newer is required by this option to work.<br/>"
-			
-			
-			
-			
-			
-			
 			);
 			
 			break;
@@ -139,6 +106,7 @@ void Wizard::showHelp() {
 	QMessageBox::information(this, tr(" Wizard Help"), message);
 
 	lastHelpMessage = message;
+#endif	
 }
 
 
