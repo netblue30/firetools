@@ -20,6 +20,7 @@
 #ifndef LICENSEWIZARD_H
 #define LICENSEWIZARD_H
 
+#include "firejail_ui.h"
 #include <QWizard>
 
 class QCheckBox;
@@ -38,6 +39,7 @@ public:
 	enum { Page_Config, Page_StartSandbox };
 
 	Wizard(QWidget *parent = 0);
+	void accept();
 
 private slots:
 	void showHelp();
@@ -80,7 +82,7 @@ public:
 	StartSandboxPage(QWidget *parent = 0);
 
 	int nextId() const;
-
+	
 private slots:
 	void groupClicked(QListWidgetItem*);
 	void appClicked(QListWidgetItem*);

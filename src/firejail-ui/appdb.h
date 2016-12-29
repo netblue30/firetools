@@ -21,7 +21,6 @@
 #define APPDB_H
 
 #include "firejail_ui.h"
-#include "../common/utils.h"
 #include <QString>
 class QListWidget;
 class QLineEdit;
@@ -32,28 +31,9 @@ struct AppEntry {
 	QString command_;
 	AppEntry *next_;
 	
-	AppEntry(char *line) {
-		assert(line);
-		group_ = QString("");
-		app_ = QString("");
-		command_ = QString("");
-		next_ = 0;
-
-		char *ptr = strtok(line, ";");
-		if (ptr) {
-			group_ = QString(ptr);
-			ptr = strtok(NULL, ";");
-			if (ptr) {
-				app_ = QString(ptr);
-				ptr = strtok(NULL, ";");
-				if (ptr)
-					command_ = QString(ptr);
-			}
-		}
-	}
-	
+	AppEntry(char *line);
 	void print() {
-		printf("%s;%s;%s\n", group_.toLatin1().data(), app_.toLatin1().data(), command_.toLatin1().data());
+		printf("%s;%s;%s\n", group_.toUtf8().data(), app_.toUtf8().data(), command_.toUtf8().data());
 	}
 
 };

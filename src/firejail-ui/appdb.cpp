@@ -29,6 +29,43 @@
 #include <QLineEdit>
 #define MAXBUF 4096
 
+AppEntry::AppEntry(char *line) {
+	assert(line);
+	group_ = QString("");
+	app_ = QString("");
+	command_ = QString("");
+	next_ = 0;
+
+	char *ptr = strtok(line, ";");
+	if (ptr) {
+		group_ = QString(ptr);
+		ptr = strtok(NULL, ";");
+		if (ptr) {
+			app_ = QString(ptr);
+			ptr = strtok(NULL, ";");
+			if (ptr) {
+				command_ = QString(ptr);
+				
+				// try to find the executable
+				char *str = strdup(command_.toUtf8().data());
+				if (!str)
+					errExit("strdup");
+				char *ptr = strchr(str, ' ');
+				if (ptr)
+					*ptr = '\0';
+				
+				struct stat s;
+				if (stat(str, &s) == -1) {
+					command_ = QString("");
+				}
+				free(str);
+			}
+		}
+	}
+}
+
+
+
 // return the list of applications
 AppEntry* appdb_load_file(void) {
 	FILE *fp = fopen("uimenus", "r");
@@ -36,7 +73,6 @@ AppEntry* appdb_load_file(void) {
 		return 0;
 	AppEntry *retval = 0;
 	AppEntry *last = 0;
-//	(void) last;
 	
 	char buf[MAXBUF];
 	while (fgets(buf, MAXBUF, fp)) {
@@ -48,8 +84,10 @@ AppEntry* appdb_load_file(void) {
 			*ptr2 = '\0';
 
 		AppEntry *entry = new AppEntry(ptr1);
-		if (entry->group_.isEmpty() || entry->app_.isEmpty() || entry->command_.isEmpty())
+		if (entry->group_.isEmpty() || entry->app_.isEmpty() || entry->command_.isEmpty()) {
 			delete entry;
+			continue;
+		}
 		
 		// add the app to the list
 		if (!retval) {

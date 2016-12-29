@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 	//	Q_INIT_RESOURCE(firetools);
 
 	QApplication app(argc, argv);
-    Wizard wizard;
-    wizard.show();
-    return app.exec();
+	Wizard wizard;
+	wizard.show();
+	return app.exec();
 }

@@ -20,6 +20,7 @@
 #ifndef HOME_WIDGET_H
 #define HOME_WIDGET_H
 
+#include "firejail_ui.h"
 #include <QListWidget>
 
 

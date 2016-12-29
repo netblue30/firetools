@@ -50,12 +50,27 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setWindowTitle(tr(" Wizard"));
 }
 
-
 void Wizard::showHelp() {
-
 	HelpWidget hw;
 	hw.exec();
 
+}
+
+#include <QProcess>
+void Wizard::accept() {
+	if (arg_debug)
+		printf("Wizard::accept\n");
+
+	// start a new process,
+	QProcess *process = new QProcess();
+	QStringList arguments;
+	arguments << field("command").toString();
+	process->startDetached(QString("firejail"), arguments);
+	process->waitForStarted(1500);
+	printf("Sandbox started\n");
+
+	// force a program exit
+	exit(0);		
 }
 
 
@@ -153,8 +168,6 @@ int ConfigPage::nextId() const {
 }
 
 
-
-
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(tr("Start the Application"));
 	setSubTitle(tr("Choose an application form the menus below, or type in the application name."));
@@ -179,20 +192,23 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	
 	// load database
 	appdb_ = appdb_load_file();
-	appdb_print_list(appdb_);
+	if (arg_debug)
+		appdb_print_list(appdb_);
 	appdb_load_group(appdb_, group_);
-//appdb_load_app(appdb_, app_, QString("Video"));	
 
+	// connect widgets
 	connect(group_, SIGNAL(itemClicked(QListWidgetItem*)), 
 	            this, SLOT(groupClicked(QListWidgetItem*)));
-
 	connect(app_, SIGNAL(itemClicked(QListWidgetItem*)), 
 	            this, SLOT(appClicked(QListWidgetItem*)));
+	            
+	registerField("command*", command_);
 }
 
 void StartSandboxPage::groupClicked(QListWidgetItem *item) {
 	QString group = item->text();
-printf("clicked %s\n", group.toLatin1().data());
+	if (arg_debug)
+		printf("StartSandboxPage::groupClicked %s\n", group.toLatin1().data());
 
 
 	appdb_load_app(appdb_, app_, group);
@@ -201,7 +217,8 @@ printf("clicked %s\n", group.toLatin1().data());
 
 void StartSandboxPage::appClicked(QListWidgetItem *item) {
 	QString app = item->text();
-printf("clicked %s\n", app.toLatin1().data());
+	if (arg_debug)
+		printf("StartSandboxPage::appClicked %s\n", app.toLatin1().data());
 
 
 	appdb_set_command(appdb_, command_, app);
@@ -213,5 +230,3 @@ printf("clicked %s\n", app.toLatin1().data());
 int StartSandboxPage::nextId() const {
 	return -1;
 }
-
-

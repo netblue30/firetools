@@ -20,6 +20,7 @@
 #ifndef HELP_WIDGET_H
 #define HELP_WIDGET_H
 
+#include "firejail_ui.h"
 #include <QDialog>
 
 class HelpWidget: public QDialog {

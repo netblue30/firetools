@@ -1,4 +1,5 @@
 Editors;LeafPad;/usr/bin/leafpad
+File Management;Launchy;/usr/bin/launchy
 File Management;Xarchiver;/usr/bin/xarchiver
 Games;Blobwars;/usr/games/blobwars
 Games;Micropolis;/usr/games/micropolis
@@ -6,12 +7,14 @@ Games;Penguin Command;/usr/games/penguin-command
 Games;Simutrans;/usr/games/simutrans
 Games;Warzone 2100;/usr/games/warzone2100
 Graphics;ImageMagick;/usr/bin/display-im6 logo:
+Graphics;ImageMagick;/usr/bin/display.im6 logo:
 Graphics;Inkscape;/usr/bin/inkscape
 Graphics;luminance-hdr;/usr/bin/luminance-hdr
 Graphics;MyPaint;/usr/bin/mypaint
 Graphics;Synfig Studio;/usr/bin/synfigstudio
 Graphics;The GIMP;/usr/bin/gimp
 Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
+Graphics;X Window Snapshot;xwd | xwud
 Help;yelp;/usr/bin/yelp
 Network;Chromium;chromium
 Network;Deluge BitTorrent Client;/usr/bin/deluge
@@ -34,6 +37,9 @@ Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
 Sound;Alsamixergui;/usr/bin/alsamixergui
 Sound;Echomixer;/usr/bin/echomixer
+Sound;paman;/usr/bin/paman
+Sound;pavucontrol;/usr/bin/pavucontrol
+Sound;pavumeter;/usr/bin/pavumeter
 System;Disk Management;/usr/bin/usermount
 System;GNOME partition editor;su-to-root -X -c /usr/sbin/gparted
 System;Network Admin;/usr/bin/network-admin
