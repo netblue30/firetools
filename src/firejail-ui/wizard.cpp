@@ -30,12 +30,14 @@
 #include <QMessageBox>
 #include <QRadioButton>
 #include <QLabel>
+#include <QLineEdit>
+#include <QListWidgetItem>
 #include "wizard.h"
 #include "home_widget.h"
 #include "help_widget.h"
+#include "appdb.h"
 
-Wizard::Wizard(QWidget *parent)
-: QWizard(parent) {
+Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Config, new ConfigPage);
 	setPage(Page_StartSandbox, new StartSandboxPage);
 
@@ -54,66 +56,13 @@ void Wizard::showHelp() {
 	HelpWidget hw;
 	hw.exec();
 
-#if 0
-	static QString lastHelpMessage;
-
-	QString message;
-
-	switch (currentId()) {
-		case Page_Config:
-			message = tr("<b>Sandbox Configuration:</b><br/>"
-			"<br/>"
-			"Firejail secures your Linux applications using the latest sandboxing technologies available "
-			"in Linux kernel. Use this page to configure the sandbox, and "
-			"press Next when finished.<br/>"
-			"<br/>"
-			"<b>Restrict home directory:</b> Choose the directories visible inside the sandbox. "
-			"If disabled, all home files and directories are available inside the sandbox.<br/>"
-			"<b>Restrict /dev directory:</b> Only a small number of devices are visible insde the sandbox. "
-			"Sound and 3D acceleration should be available if this checkbox is set.<br/>"
-			"<b>Restrict /tmp directory:</b> Start with a clean /tmp directory, only X11 directory is available "
-			"under /tmp.<br/>"
-			"<b>Restrict /mnt and /media:</b> Blacklist /mnt and /media directories.<br/>"
-			"<b>System network:</b> Use the networking stack provided by the system.<br/>"
-			"<b>Network namespace:</b> Install a separate networking stack.<br/>"
-			"<b>Disable networking:</b> No network connectivity is available inside the sandbox.<br/>"
-			"<b>Disable sound:</b> The sound subsystem is not available inside the sandbox.<br/>"
-			"<b>Disable 3D acceleration:</b> Hardware acceleration drivers are disabled.<br/>"
-			"<b>Disable X11:</b> X11 graphical user interface subsystem is disabled. "
-			"Use this option when running console programs or servers.<br/>"
-			"<b>seccomp, capabilities, nonewprivs:</b> These are some very powerfull security features "
-			"implemented by the kernel. Try to use them allways. A Linux Kernel version 3.5 is required for this option to work.<br/>"
-			"<b>AppArmor:</b> If available on your platform, this option implements a number "
-			"of advanced security features currently available on GrSecurity kernels. Also, on "
-			"Ubuntu 16.04 or later, this option disabled dBus access.<br/>"
-			"<b>OverlayFS:</b> This option mounts an overlay filesystem on top of the sandbox. "
-			"Any filesystem modifications are discarded when the sandbox is closed. "
-			"A kernel 3.18 or newer is required by this option to work.<br/>"
-			);
-			
-			break;
-		case Page_StartSandbox:
-			message = tr("Start Sandbox");
-			break;
-		default:
-			message = tr("This help is likely not to be of any help.");
-	}
-
-	if (lastHelpMessage == message)
-		message = tr("Sorry, I already gave what help I could. "
-			"Maybe you should try asking a human?");
-
-	QMessageBox::information(this, tr(" Wizard Help"), message);
-
-	lastHelpMessage = message;
-#endif	
 }
 
 
 ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(tr("Configure Firejail Sandbox"));
 	setSubTitle(tr("Firejail secures your Linux applications using the latest sandboxing technologies available "
-		"in Linux kernel."));
+		"in Linux kernel. Please configure the sandbox."));
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
 	private_dev_ = new QCheckBox("Restrict /dev directory");
@@ -182,7 +131,6 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	kernel_box_layout->addWidget(overlayfs_);
 	kernel_box->setLayout(kernel_box_layout);
 
-
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(fs_box, 0, 0);
 	layout->addWidget(home_box, 0, 1, 2, 1);
@@ -207,79 +155,63 @@ int ConfigPage::nextId() const {
 
 
 
-StartSandboxPage::StartSandboxPage(QWidget *parent)
-: QWizardPage(parent) {
-	setTitle(tr("Complete Your Registration"));
-	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
+	setTitle(tr("Start the Application"));
+	setSubTitle(tr("Choose an application form the menus below, or type in the application name."));
 
-	bottomLabel = new QLabel;
-	bottomLabel->setWordWrap(true);
-
-	agreeCheckBox = new QCheckBox(tr("I agree to the terms of the license"));
-
-	registerField("conclusion.agree*", agreeCheckBox);
-
-	QVBoxLayout *layout = new QVBoxLayout;
-	layout->addWidget(bottomLabel);
-	layout->addWidget(agreeCheckBox);
+	QGroupBox *app_box = new QGroupBox(tr("Applications"));
+	QGridLayout *app_box_layout = new QGridLayout;
+	group_ = new QListWidget;
+	command_ = new QLineEdit;
+	QLabel *label = new QLabel("Application:");
+	app_ = new QListWidget;
+	app_->setMinimumWidth(300);
+	app_box_layout->addWidget(group_, 0, 0);
+	app_box_layout->addWidget(app_, 0, 1);
+	app_box_layout->addWidget(label, 1, 0);
+	app_box_layout->addWidget(command_, 2, 0, 1, 2);
+	app_box->setLayout(app_box_layout);
+	
+	
+	QGridLayout *layout = new QGridLayout;
+	layout->addWidget(app_box, 0, 0);
 	setLayout(layout);
+	
+	// load database
+	appdb_ = appdb_load_file();
+	appdb_print_list(appdb_);
+	appdb_load_group(appdb_, group_);
+//appdb_load_app(appdb_, app_, QString("Video"));	
+
+	connect(group_, SIGNAL(itemClicked(QListWidgetItem*)), 
+	            this, SLOT(groupClicked(QListWidgetItem*)));
+
+	connect(app_, SIGNAL(itemClicked(QListWidgetItem*)), 
+	            this, SLOT(appClicked(QListWidgetItem*)));
+}
+
+void StartSandboxPage::groupClicked(QListWidgetItem *item) {
+	QString group = item->text();
+printf("clicked %s\n", group.toLatin1().data());
+
+
+	appdb_load_app(appdb_, app_, group);
+	app_->repaint();
+}
+
+void StartSandboxPage::appClicked(QListWidgetItem *item) {
+	QString app = item->text();
+printf("clicked %s\n", app.toLatin1().data());
+
+
+	appdb_set_command(appdb_, command_, app);
+//	command_->repaint();
 }
 
 
-int StartSandboxPage::nextId() const
-{
+
+int StartSandboxPage::nextId() const {
 	return -1;
 }
 
 
-void StartSandboxPage::initializePage() {
-#if 0
-	QString licenseText;
-
-	if (wizard()->hasVisitedPage(Wizard::Page_Home)) {
-		licenseText = tr("<u>Evaluation  Agreement:</u> "
-			"You can use this software for 30 days and make one "
-			"backup, but you are not allowed to distribute it.");
-	}
-	else if (wizard()->hasVisitedPage(Wizard::Page_Fs)) {
-		licenseText = tr("<u>First-Time  Agreement:</u> "
-			"You can use this software subject to the license "
-			"you will receive by email.");
-	}
-	else {
-		licenseText = tr("<u>Upgrade  Agreement:</u> "
-			"This software is licensed under the terms of your "
-			"current license.");
-	}
-	bottomLabel->setText(licenseText);
-#endif
-}
-
-
-void StartSandboxPage::setVisible(bool visible) {
-	QWizardPage::setVisible(visible);
-
-	if (visible) {
-		wizard()->setButtonText(QWizard::CustomButton1, tr("&Print"));
-		wizard()->setOption(QWizard::HaveCustomButton1, true);
-		connect(wizard(), SIGNAL(customButtonClicked(int)),
-			this, SLOT(printButtonClicked()));
-	}
-	else {
-		wizard()->setOption(QWizard::HaveCustomButton1, false);
-		disconnect(wizard(), SIGNAL(customButtonClicked(int)),
-			this, SLOT(printButtonClicked()));
-	}
-}
-
-
-void StartSandboxPage::printButtonClicked() {
-#if 0
-	QPrinter printer;
-	QPrintDialog dialog(&printer, this);
-	if (dialog.exec())
-		QMessageBox::warning(this, tr("Print "),
-			tr("As an environmentally friendly measure, the "
-			"license text will not actually be printed."));
-#endif
-}

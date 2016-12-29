@@ -27,6 +27,9 @@ class QLabel;
 class QLineEdit;
 class QRadioButton;
 class HomeWidget;
+class QListWidget;
+class QListWidgetItem;
+struct AppEntry;
 
 class Wizard : public QWizard {
 	Q_OBJECT
@@ -70,22 +73,22 @@ private:
 	QCheckBox *overlayfs_;
 };
 
-class StartSandboxPage : public QWizardPage
-{
+class StartSandboxPage : public QWizardPage {
 	Q_OBJECT
 
 public:
 	StartSandboxPage(QWidget *parent = 0);
 
-	void initializePage();
 	int nextId() const;
-	void setVisible(bool visible);
 
 private slots:
-	void printButtonClicked();
+	void groupClicked(QListWidgetItem*);
+	void appClicked(QListWidgetItem*);
 
 private:
-	QLabel *bottomLabel;
-	QCheckBox *agreeCheckBox;
+	AppEntry *appdb_;
+	QListWidget *app_;
+	QListWidget *group_;
+	QLineEdit *command_;
 };
 #endif

@@ -1,0 +1,56 @@
+Editors;LeafPad;/usr/bin/leafpad
+File Management;Xarchiver;/usr/bin/xarchiver
+Games;Blobwars;/usr/games/blobwars
+Games;Micropolis;/usr/games/micropolis
+Games;Penguin Command;/usr/games/penguin-command
+Games;Simutrans;/usr/games/simutrans
+Games;Warzone 2100;/usr/games/warzone2100
+Graphics;ImageMagick;/usr/bin/display-im6 logo:
+Graphics;Inkscape;/usr/bin/inkscape
+Graphics;luminance-hdr;/usr/bin/luminance-hdr
+Graphics;MyPaint;/usr/bin/mypaint
+Graphics;Synfig Studio;/usr/bin/synfigstudio
+Graphics;The GIMP;/usr/bin/gimp
+Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
+Help;yelp;/usr/bin/yelp
+Network;Chromium;chromium
+Network;Deluge BitTorrent Client;/usr/bin/deluge
+Network;Dillo;/usr/bin/dillo
+Network;FileZilla;/usr/bin/filezilla
+Network;HexChat;/usr/bin/hexchat
+Network;Icedove Mail;icedove
+Network;Liferea;/usr/bin/liferea
+Network;Netsurf Web Browser;/usr/bin/netsurf-gtk
+Network;qBittorrent;/usr/bin/qbittorrent
+Network;Transmission BitTorrent Client (GTK);/usr/bin/transmission-gtk
+Network;Transmission BitTorrent Client (Qt);/usr/bin/transmission-qt
+Network;Uget;/usr/bin/uget-gtk
+Network;Wireshark;/usr/bin/wireshark
+Network;X Chat;/usr/bin/xchat
+Network;xtightvncviewer;/usr/bin/xtightvncviewer
+Office;zathura;/usr/bin/zathura
+Programming;Geany;/usr/bin/geany
+Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
+Science;galculator;/usr/bin/galculator
+Sound;Alsamixergui;/usr/bin/alsamixergui
+Sound;Echomixer;/usr/bin/echomixer
+System;Disk Management;/usr/bin/usermount
+System;GNOME partition editor;su-to-root -X -c /usr/sbin/gparted
+System;Network Admin;/usr/bin/network-admin
+System;Openbox Configuration Manager;/usr/bin/obconf
+System;Reportbug (GTK+);/usr/bin/reportbug --exit-prompt --ui gtk2
+System;Xkill;xkill
+System;Xvidtune;xvidtune
+Terminal Emulators;Gnome Terminal;/usr/bin/gnome-terminal
+Terminal Emulators;Rxvt-Unicode (Black, Xft);urxvt -fn \
+Terminal Emulators;Xfce Terminal;/usr/bin/xfce4-terminal
+Terminal Emulators;X-Terminal as root (GKsu);/usr/bin/gksu -u root /usr/bin/x-terminal-emulator
+Terminal Emulators;XTerm (Unicode);uxterm
+Text;Character map;/usr/bin/gucharmap
+Video;Flowblade;/usr/bin/flowblade
+Video;MKV Creator;/usr/bin/mmg
+Video;VLC media player;/usr/bin/qvlc
+Viewers;Evince;/usr/bin/evince
+Viewers;gThumb Image Viewer;/usr/bin/gthumb
+Viewers;qPDFview;qpdfview
+Viewers;Xpdf;/usr/bin/xpdf
