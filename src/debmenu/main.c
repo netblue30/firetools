@@ -98,6 +98,26 @@ void section_cleanup(void) {
 		*ptr = '\0';
 }
 
+static void clean_buffers(void) {
+	if (buf_section) {
+		free(buf_section);
+		buf_section = NULL;
+	}
+	if (buf_command) {
+		free(buf_command);
+		buf_command = NULL;
+	}
+	if (buf_title) {
+		free(buf_title);
+		buf_title = NULL;
+	}
+	if (buf_needs) {
+		free(buf_needs);
+		buf_needs = NULL;
+	}
+}
+
+
 int main(void) {
 	DIR *dir = opendir("/usr/share/menu");
 	if (!dir) {
@@ -111,22 +131,7 @@ int main(void) {
 		if (*entry->d_name == '.')
 			continue;
 
-		if (buf_section) {
-			free(buf_section);
-			buf_section = NULL;
-		}
-		if (buf_command) {
-			free(buf_command);
-			buf_command = NULL;
-		}
-		if (buf_title) {
-			free(buf_title);
-			buf_title = NULL;
-		}
-		if (buf_needs) {
-			free(buf_needs);
-			buf_needs = NULL;
-		}
+		clean_buffers();
 		
 		// build filename
 		char *fname;
@@ -142,17 +147,20 @@ int main(void) {
 				while (*ptr == ' ' || *ptr == '\t')
 					ptr++;
 					
-				process_line(ptr);	
+				process_line(ptr);
+				
+				// print only x11 applications
+				if (buf_section && buf_command && buf_title && buf_needs) {
+					if (strcmp(buf_needs, "x11") == 0 || strcmp(buf_needs, "X11") == 0) {
+						section_cleanup();
+						printf("%s;%s;%s\n", buf_section, buf_title, buf_command);
+					}
+					clean_buffers();
+				}
+					
 			}
 		}
 		
-		// print only x11 applications
-		if (buf_section && buf_command && buf_title && buf_needs) {
-			if (strcmp(buf_needs, "x11") == 0 || strcmp(buf_needs, "X11") == 0) {
-				section_cleanup();
-				printf("%s;%s;%s\n", buf_section, buf_title, buf_command);
-			}
-		}
 	}
 	
 	closedir(dir);
