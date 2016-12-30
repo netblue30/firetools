@@ -28,87 +28,24 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include "help_widget.h"
+#include "../../firetools_config_extras.h"
 
+#define MAXBUF 4096
 
 HelpWidget::HelpWidget(QWidget * parent): QDialog(parent) {
-	QString message = tr(
-	
-		"Firejail is a SUID program that reduces the risk of security breaches by restricting the running environment "
-		"of untrusted applications using Linux namespaces and seccomp-bpf. "
-		"The sandbox doesn't implement any security feature in user space.  "
-		"Instead, it configures a number of advanced security features inside the kernel and quietly goes to sleep. "
-		"Programs running inside such a sandbox have a very limited view of the systeam, "
-		"and are heavily restricted.<br/><br/>"
-		
-		"<br/><b>Filesystem</b><br/><br/>"
-		"The user home directory contains all personal user files, "
-		"including text documents, music, pictures and videos. It also contains "
-		"browser history and bookmarks, passwords, encryption keys and other "
-		"highly sensitive files..<br/><br/>"
-		
-		"In a Linux system, the content of a user's home directory is protected by "
-		"filesystem permissions, and is accessible to all authenticated users and administrators. "
-		"The directory is also accessible to any crook taking control of "
-		"a user process. By default, Firejail denies access to some of the most sensitive files "
-		"such as passwod and encryption keys. This can be enhanced by checking <i>Restrict home directory</i> "
-		"in the left pane, and choosing what directories are visibile in the right pane.<br/>"
-		 
-		"<blockquote>"
-		"<i>Restrict home directory:</i> Choose the directories visible inside the sandbox. "
-		"By default, with the exception of some well-known password and encryption files, "
-		"all home files and directories are available inside the sandbox.<br/><br/>"
-		"</blockquote>"
-		
-		"Any other file or directory can be restricted in the command line version of Firejail. "
-		"We provide here only a small number of more common options. We belive these options will work "
-		"with for most applications.<br/>"
-		
-		"<blockquote>"
-		"<i>Restrict /dev directory:</i> A small number of very basic devices are visible inside the sandbox. "
-		"Sound and 3D acceleration should also be available if this checkbox is set.<br/><br/>"
-		"<i>Restrict /tmp directory:</i> Start with a clean /tmp directory, only X11 directory is available "
-		"there.<br/><br/>"
-		"<i>Restrict /mnt and /media:</i> Blacklist /mnt and /media directories.<br/><br/>"
-		"</blockquote>"
-
-		"Introduced in Linux kernel version 3.18, OverlayFS provides an elegant way to protect "
-		"the filesystem against modifications: the changes are only visible insde the sandbox, and "
-		"are discarded when the sandbox is closed. This option could be used to test new software, "
-		"try new browser addons etc.<br/>"
-
-		"<blockquote>"
-		"<i>OverlayFS:</i> This option mounts an overlay filesystem on top of the sandbox. "
-		"Filesystem modifications are discarded when the sandbox is closed. "
-		"A kernel 3.18 or newer is required by this option to work.<br/><br/>"
-		"</blockquote>"
-
-		"<b>Networking</b><br/><br/>"
-		"<blockquote>"
-		"<i>System network:</i> Use the networking stack provided by the system.<br/><br/>"
-		"<i>Network namespace:</i> Install a separate networking stack.<br/><br/>"
-		"<i>Disable networking:</i> No network connectivity is available inside the sandbox.<br/><br/>"
-		"</blockquote>"
-
-		"<b>Multimedia</b><br/><br/>"
-		"<blockquote>"
-		"<i>Disable sound:</i> The sound subsystem is not available inside the sandbox.<br/><br/>"
-		"<i>Disable 3D acceleration:</i> Hardware acceleration drivers are disabled.<br/><br/>"
-		"<i>Disable X11:</i> X11 graphical user interface subsystem is disabled. "
-		"Use this option when running console programs or servers.<br/><br/>"
-		"</blockquote>"
-
-		"<b>Kernel</b><br/><br/>"
-		"<blockquote>"
-		"<i>seccomp, capabilities, nonewprivs:</i> These are some very powerful security features "
-		"implemented by the kernel. A Linux Kernel version 3.5 is required for this option to work.<br/><br/>"
-		"<i>AppArmor:</i> If AppArmor is configured and running on  your system, this option implements a number "
-		"of advanced security features inspired by GrSecurity kernels. Also, on "
-		"Ubuntu 16.04 or later, this option disables dBus access.<br/><br/>"
-		"</blockquote>"
-	);
+	QString message;
+	const char *fname = PACKAGE_LIBDIR "/uihelp";
+//todo error recovery
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+		errExit("fopen");
+	char buf[MAXBUF];
+	while (fgets(buf, MAXBUF, fp))
+		message += QString(buf);
+	fclose(fp);
 
 	QTextBrowser *browser = new QTextBrowser;
-	browser->setText(message);
+	browser->setHtml(message);
 
 	QDialogButtonBox *box = new QDialogButtonBox( Qt::Horizontal );
 	QPushButton *button = new QPushButton( "Ok" );

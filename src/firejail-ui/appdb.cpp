@@ -25,6 +25,7 @@
 #endif
 
 #include "appdb.h"
+#include "../../firetools_config_extras.h"
 #include <QListWidget>
 #include <QLineEdit>
 #define MAXBUF 4096
@@ -68,7 +69,8 @@ AppEntry::AppEntry(char *line) {
 
 // return the list of applications
 AppEntry* appdb_load_file(void) {
-	FILE *fp = fopen("uimenus", "r");
+	const char *fname = PACKAGE_LIBDIR "/uimenus";
+	FILE *fp = fopen(fname, "r");
 	if (!fp)
 		return 0;
 	AppEntry *retval = 0;
