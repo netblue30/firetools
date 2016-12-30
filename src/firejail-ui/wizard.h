@@ -73,6 +73,7 @@ private:
 	QCheckBox *seccomp_;
 	QCheckBox *apparmor_;
 	QCheckBox *overlayfs_;
+	QCheckBox *noroot_;
 };
 
 class StartSandboxPage : public QWizardPage {
