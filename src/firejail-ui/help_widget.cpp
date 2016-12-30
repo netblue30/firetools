@@ -31,22 +31,23 @@
 
 
 HelpWidget::HelpWidget(QWidget * parent): QDialog(parent) {
-	QString message = tr("<b>Sandbox Configuration:</b><br/>"
-		"<br/>"
-		"Firejail  sandbox doesn't implement any security feature in user space.  "
+	QString message = tr(
+	
+		"Firejail is a SUID program that reduces the risk of security breaches by restricting the running environment "
+		"of untrusted applications using Linux namespaces and seccomp-bpf. "
+		"The sandbox doesn't implement any security feature in user space.  "
 		"Instead, it configures a number of advanced security features inside the kernel and quietly goes to sleep. "
-		"Programs running inside such a sandbox have a very limited view of the systeam, and are heavily restricted.<br/><br/>"
+		"Programs running inside such a sandbox have a very limited view of the systeam, "
+		"and are heavily restricted.<br/><br/>"
 		
-		"Use this page to configure the sandbox, and "
-		"press <i>Next</i> when finished.<br/><br/>"
-
 		"<br/><b>Filesystem</b><br/><br/>"
 		"The user home directory contains all personal user files, "
-		"including text documents, music, pictures and videos. It also contains configuration "
-		"files for various software packages, browser history and bookmarks, passwords and "
-		"encryption keys.<br/><br/>"
+		"including text documents, music, pictures and videos. It also contains "
+		"browser history and bookmarks, passwords, encryption keys and other "
+		"highly sensitive files..<br/><br/>"
+		
 		"In a Linux system, the content of a user's home directory is protected by "
-		"file system permissions, and is accessible to all authenticated users and administrators. "
+		"filesystem permissions, and is accessible to all authenticated users and administrators. "
 		"The directory is also accessible to any crook taking control of "
 		"a user process. By default, Firejail denies access to some of the most sensitive files "
 		"such as passwod and encryption keys. This can be enhanced by checking <i>Restrict home directory</i> "
@@ -70,10 +71,10 @@ HelpWidget::HelpWidget(QWidget * parent): QDialog(parent) {
 		"<i>Restrict /mnt and /media:</i> Blacklist /mnt and /media directories.<br/><br/>"
 		"</blockquote>"
 
-		"OverlayFS was introduced in Linux kernel version 3.18, and provides an elegant way to protect "
+		"Introduced in Linux kernel version 3.18, OverlayFS provides an elegant way to protect "
 		"the filesystem against modifications: the changes are only visible insde the sandbox, and "
-		"are discarded when the sandbox is closed. This option could be used to test new software, or for any "
-		"other light virtualization purpose.<br/>"
+		"are discarded when the sandbox is closed. This option could be used to test new software, "
+		"try new browser addons etc.<br/>"
 
 		"<blockquote>"
 		"<i>OverlayFS:</i> This option mounts an overlay filesystem on top of the sandbox. "
