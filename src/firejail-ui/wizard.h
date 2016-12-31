@@ -36,7 +36,7 @@ class Wizard : public QWizard {
 	Q_OBJECT
 
 public:
-	enum { Page_Config, Page_StartSandbox };
+	enum { Page_Config, Page_Application, Page_StartSandbox };
 
 	Wizard(QWidget *parent = 0);
 	void accept();
@@ -76,11 +76,11 @@ private:
 	QCheckBox *noroot_;
 };
 
-class StartSandboxPage : public QWizardPage {
+class ApplicationPage : public QWizardPage {
 	Q_OBJECT
 
 public:
-	StartSandboxPage(QWidget *parent = 0);
+	ApplicationPage(QWidget *parent = 0);
 
 	int nextId() const;
 	
@@ -93,5 +93,20 @@ private:
 	QListWidget *app_;
 	QListWidget *group_;
 	QLineEdit *command_;
+	QRadioButton *use_default_;
+	QRadioButton *use_custom_;
+};
+
+class StartSandboxPage : public QWizardPage {
+	Q_OBJECT
+
+public:
+	StartSandboxPage(QWidget *parent = 0);
+
+	int nextId() const;
+	
+private slots:
+
+private:
 };
 #endif

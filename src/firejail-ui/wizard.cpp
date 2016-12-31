@@ -32,16 +32,27 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidgetItem>
+#include <QProcess>
 #include "wizard.h"
 #include "home_widget.h"
 #include "help_widget.h"
 #include "appdb.h"
 
+QString global_title("Firejail Configuration Wizard");
+
+QString global_subtitle(
+	"Firejail reduces the  risk  of  security "
+	"breaches  by  restricting the running environment of untrusted "
+	"applications using the latest Linux kernel sandboxing technologies."
+);
+
+
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
+	setPage(Page_Application, new ApplicationPage);
 	setPage(Page_Config, new ConfigPage);
 	setPage(Page_StartSandbox, new StartSandboxPage);
+	setStartId(Page_Application);
 
-	setStartId(Page_Config);
 	setOption(HaveHelpButton, true);
 	setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
 
@@ -55,7 +66,6 @@ void Wizard::showHelp() {
 	hw.exec();
 }
 
-#include <QProcess>
 void Wizard::accept() {
 	if (arg_debug)
 		printf("Wizard::accept\n");
@@ -116,9 +126,11 @@ void Wizard::accept() {
 
 
 ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
-	setTitle(tr("Configure Firejail Sandbox"));
-	setSubTitle(tr("Firejail secures your Linux applications using the latest sandboxing technologies available "
-		"in Linux kernel. Please configure the sandbox."));
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
+
+	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox"));
+
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
 	private_dev_ = new QCheckBox("Restrict /dev directory");
@@ -213,12 +225,16 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	kernel_box_layout->addWidget(apparmor_);
 	kernel_box->setLayout(kernel_box_layout);
 
+	QWidget *w = new QWidget;
+	w->setMinimumHeight(8);
 	QGridLayout *layout = new QGridLayout;
-	layout->addWidget(fs_box, 0, 0);
-	layout->addWidget(home_box, 0, 1, 2, 1);
-	layout->addWidget(net_box, 1, 0);
-	layout->addWidget(multimed_box, 2, 0);
-	layout->addWidget(kernel_box, 2, 1);
+	layout->addWidget(label1, 0, 0);
+	layout->addWidget(w, 1, 0);
+	layout->addWidget(fs_box, 2, 0);
+	layout->addWidget(home_box, 2, 1, 2, 1);
+	layout->addWidget(net_box, 3, 0);
+	layout->addWidget(multimed_box, 4, 0);
+	layout->addWidget(kernel_box, 4, 1);
 	setLayout(layout);
 }
 
@@ -235,26 +251,41 @@ int ConfigPage::nextId() const {
 }
 
 
-StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
-	setTitle(tr("Start the Application"));
-	setSubTitle(tr("Choose an application form the menus below, or type in the application name."));
+ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
 
-	QGroupBox *app_box = new QGroupBox(tr("Applications"));
+	QGroupBox *app_box = new QGroupBox(tr("Step 1: Chose an application"));
+	
+	QLabel *label1 = new QLabel(tr("Choose an application form the menus below, or type in the program name."));
 	QGridLayout *app_box_layout = new QGridLayout;
 	group_ = new QListWidget;
 	command_ = new QLineEdit;
-	QLabel *label = new QLabel("Application:");
+	QLabel *label2 = new QLabel("Program:");
 	app_ = new QListWidget;
 	app_->setMinimumWidth(300);
-	app_box_layout->addWidget(group_, 0, 0);
-	app_box_layout->addWidget(app_, 0, 1);
-	app_box_layout->addWidget(label, 1, 0);
-	app_box_layout->addWidget(command_, 2, 0, 1, 2);
+	app_box_layout->addWidget(label1, 0, 0, 1, 2);
+	app_box_layout->addWidget(group_, 1, 0);
+	app_box_layout->addWidget(app_, 1, 1);
+	app_box_layout->addWidget(label2, 2, 0);
+	app_box_layout->addWidget(command_, 3, 0, 1, 2);
 	app_box->setLayout(app_box_layout);
 	
+
+	use_default_ = new QRadioButton("Use a default security profile");	
+	use_default_->setChecked(true);
+	use_custom_ = new QRadioButton("Build a custom security profile");
+	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Chose a security profile"));
+	QVBoxLayout *profile_box_layout = new QVBoxLayout;
+	profile_box_layout->addWidget(use_default_);
+	profile_box_layout->addWidget(use_custom_);
+	profile_box->setLayout(profile_box_layout);
+
+
 	
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(app_box, 0, 0);
+	layout->addWidget(profile_box, 1, 0);
 	setLayout(layout);
 	
 	// load database
@@ -272,26 +303,47 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	registerField("command*", command_);
 }
 
-void StartSandboxPage::groupClicked(QListWidgetItem *item) {
+void ApplicationPage::groupClicked(QListWidgetItem *item) {
 	QString group = item->text();
 	if (arg_debug)
-		printf("StartSandboxPage::groupClicked %s\n", group.toLatin1().data());
+		printf("ApplicationPage::groupClicked %s\n", group.toLatin1().data());
 
 
 	appdb_load_app(appdb_, app_, group);
 	app_->repaint();
 }
 
-void StartSandboxPage::appClicked(QListWidgetItem *item) {
+void ApplicationPage::appClicked(QListWidgetItem *item) {
 	QString app = item->text();
 	if (arg_debug)
-		printf("StartSandboxPage::appClicked %s\n", app.toLatin1().data());
+		printf("ApplicationPage::appClicked %s\n", app.toLatin1().data());
 
 
 	appdb_set_command(appdb_, command_, app);
 }
 
 
+
+int ApplicationPage::nextId() const {
+	if (use_custom_->isChecked())
+		return Wizard::Page_Config;
+	else
+		return Wizard::Page_StartSandbox;
+}
+
+
+StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
+
+	QLabel *label1 = new QLabel(tr("Press <i>Finish</i> to start the sandbox."));
+	QLabel *label2 = new QLabel(tr("Thank you for using Firejail."));
+	QGridLayout *layout = new QGridLayout;
+	layout->addWidget(label1, 0, 0);
+	layout->addWidget(label2, 1, 0);
+	setLayout(layout);
+
+}
 
 int StartSandboxPage::nextId() const {
 	return -1;
