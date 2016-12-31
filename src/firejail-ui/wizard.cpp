@@ -58,7 +58,7 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setWindowTitle(tr(" Wizard"));
+	setWindowTitle(tr("Firejal Wizard"));
 }
 
 void Wizard::showHelp() {
@@ -108,17 +108,20 @@ void Wizard::accept() {
 	if (field("apparmor").toBool())
 		dprintf(fd, "apparmor");
 	
+	// debug
+	if (field("debug").toBool())
+		arguments << QString("--debug");
+	if (field("trace").toBool())
+		arguments << QString("--trace");
 
 	// build command line
 	arguments << field("command").toString();
-	
-
 
 	// start a new process,
 	QProcess *process = new QProcess();
 	process->startDetached(QString("firejail"), arguments);
 	sleep(1);
-	printf("Sandbox started\n");
+	printf("Sandbox started, exiting firejail-ui...\n");
 
 	// force a program exit
 	exit(0);		
@@ -255,14 +258,26 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
 	setSubTitle(global_subtitle);
 
+	// fonts
+	QFont bold;
+	bold.setBold(true);
+	QFont oldFont;
+	oldFont.setBold(false);
+
 	QGroupBox *app_box = new QGroupBox(tr("Step 1: Chose an application"));
+	app_box->setFont(bold);
 	
 	QLabel *label1 = new QLabel(tr("Choose an application form the menus below, or type in the program name."));
+	label1->setFont(oldFont);
 	QGridLayout *app_box_layout = new QGridLayout;
 	group_ = new QListWidget;
+	group_->setFont(oldFont);
 	command_ = new QLineEdit;
+	command_->setFont(oldFont);
 	QLabel *label2 = new QLabel("Program:");
+	label2->setFont(oldFont);
 	app_ = new QListWidget;
+	app_->setFont(oldFont);
 	app_->setMinimumWidth(300);
 	app_box_layout->addWidget(label1, 0, 0, 1, 2);
 	app_box_layout->addWidget(group_, 1, 0);
@@ -272,10 +287,13 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	app_box->setLayout(app_box_layout);
 	
 
+	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Chose a security profile"));
+	profile_box->setFont(bold);
 	use_default_ = new QRadioButton("Use a default security profile");	
+	use_default_->setFont(oldFont);
 	use_default_->setChecked(true);
 	use_custom_ = new QRadioButton("Build a custom security profile");
-	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Chose a security profile"));
+	use_custom_->setFont(oldFont);
 	QVBoxLayout *profile_box_layout = new QVBoxLayout;
 	profile_box_layout->addWidget(use_default_);
 	profile_box_layout->addWidget(use_custom_);
@@ -335,14 +353,40 @@ int ApplicationPage::nextId() const {
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
 	setSubTitle(global_subtitle);
+	
+	// fonts
+	QFont bold;
+	bold.setBold(true);
+	QFont oldFont;
+	oldFont.setBold(false);
+	
 
-	QLabel *label1 = new QLabel(tr("Press <i>Finish</i> to start the sandbox."));
-	QLabel *label2 = new QLabel(tr("Thank you for using Firejail."));
+	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Sandbox Debugging"));
+	debug_box->setFont(bold);
+	debug_ = new QCheckBox("Enable sandbox debugging");	
+	debug_->setFont(oldFont);
+	trace_ = new QCheckBox("Trace open, access and connect system callse");
+	trace_->setFont(oldFont);
+	QVBoxLayout *debug_box_layout = new QVBoxLayout;
+	debug_box_layout->addWidget(debug_);
+	debug_box_layout->addWidget(trace_);
+	debug_box->setLayout(debug_box_layout);
+
+	QLabel *label1 = new QLabel(tr("Press <b><i>Finish</i></b> to start the sandbox. "
+		"Thank you for using Firejail!"));
+	QWidget *empty1 = new QWidget;
+	empty1->setMinimumHeight(12);
+	QWidget *empty2 = new QWidget;
+	empty2->setMinimumHeight(25);
 	QGridLayout *layout = new QGridLayout;
-	layout->addWidget(label1, 0, 0);
-	layout->addWidget(label2, 1, 0);
+	layout->addWidget(empty1, 0, 0);
+	layout->addWidget(debug_box, 1, 0);
+	layout->addWidget(empty2, 2, 0);
+	layout->addWidget(label1, 3, 0);
 	setLayout(layout);
 
+	registerField("debug", debug_);
+	registerField("trace", trace_);
 }
 
 int StartSandboxPage::nextId() const {

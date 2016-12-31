@@ -108,5 +108,7 @@ public:
 private slots:
 
 private:
+	QCheckBox *debug_;
+	QCheckBox *trace_;
 };
 #endif
