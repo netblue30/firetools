@@ -52,13 +52,15 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Config, new ConfigPage);
 	setPage(Page_StartSandbox, new StartSandboxPage);
 	setStartId(Page_Application);
-
+	
 	setOption(HaveHelpButton, true);
-	setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
 	setWindowTitle(tr("Firejal Wizard"));
+	
+	setWizardStyle(QWizard::MacStyle);
+	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/firejail-ui.png"));
 }
 
 void Wizard::showHelp() {
@@ -114,8 +116,10 @@ void Wizard::accept() {
 	if (field("trace").toBool())
 		arguments << QString("--trace");
 
-	// build command line
-	arguments << field("command").toString();
+	// split command into argumentsd
+	QString cmd = field("command").toString();
+	QStringList cmds = cmd.split( " " );
+	arguments += cmds;
 
 	// start a new process,
 	QProcess *process = new QProcess();
@@ -365,14 +369,15 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	debug_box->setFont(bold);
 	debug_ = new QCheckBox("Enable sandbox debugging");	
 	debug_->setFont(oldFont);
-	trace_ = new QCheckBox("Trace open, access and connect system callse");
+	trace_ = new QCheckBox("Trace filesystem and network access");
 	trace_->setFont(oldFont);
 	QVBoxLayout *debug_box_layout = new QVBoxLayout;
 	debug_box_layout->addWidget(debug_);
 	debug_box_layout->addWidget(trace_);
 	debug_box->setLayout(debug_box_layout);
 
-	QLabel *label1 = new QLabel(tr("Press <b><i>Finish</i></b> to start the sandbox. "
+	QLabel *label1 = new QLabel(tr("Press <b>Finish</b> to start the sandbox.<br/><br/>"
+		"For more information, visit us at <i>http://firejail.wordpress.com</i>. "
 		"Thank you for using Firejail!"));
 	QWidget *empty1 = new QWidget;
 	empty1->setMinimumHeight(12);

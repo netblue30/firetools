@@ -1,62 +1,48 @@
+Accessibility;Xmag;xmag
 Editors;LeafPad;/usr/bin/leafpad
+Editors;Xedit;xedit
 File Management;Launchy;/usr/bin/launchy
-File Management;Xarchiver;/usr/bin/xarchiver
-Games;Blobwars;/usr/games/blobwars
-Games;Micropolis;/usr/games/micropolis
-Games;Penguin Command;/usr/games/penguin-command
-Games;Simutrans;/usr/games/simutrans
-Games;Warzone 2100;/usr/games/warzone2100
-Graphics;ImageMagick;/usr/bin/display-im6 logo:
-Graphics;ImageMagick;/usr/bin/display.im6 logo:
+File Management;LXDE file manager (pcmanfm);pcmanfm
+Games;Oclock;oclock
+Games;Xclock (analog);xclock -analog
+Games;Xclock (digital);xclock -digital -update 1
+Games;Xeyes;xeyes
+Games;Xlogo;xlogo
+Graphics;ImageMagick;/usr/bin/display.im6 logo:*
 Graphics;Inkscape;/usr/bin/inkscape
-Graphics;luminance-hdr;/usr/bin/luminance-hdr
-Graphics;MyPaint;/usr/bin/mypaint
-Graphics;Synfig Studio;/usr/bin/synfigstudio
 Graphics;The GIMP;/usr/bin/gimp
-Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
-Graphics;X Window Snapshot;xwd | xwud
+Graphics;X Window Snapshot;xwd | xwud*
+Help;Xman;xman
 Help;yelp;/usr/bin/yelp
-Network;Chromium;chromium
-Network;Deluge BitTorrent Client;/usr/bin/deluge
-Network;Dillo;/usr/bin/dillo
-Network;FileZilla;/usr/bin/filezilla
-Network;HexChat;/usr/bin/hexchat
-Network;Icedove Mail;icedove
-Network;Liferea;/usr/bin/liferea
-Network;Netsurf Web Browser;/usr/bin/netsurf-gtk
-Network;qBittorrent;/usr/bin/qbittorrent
 Network;Transmission BitTorrent Client (GTK);/usr/bin/transmission-gtk
-Network;Transmission BitTorrent Client (Qt);/usr/bin/transmission-qt
-Network;Uget;/usr/bin/uget-gtk
 Network;Wireshark;/usr/bin/wireshark
-Network;X Chat;/usr/bin/xchat
+Network;Xbiff;xbiff
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
-Office;zathura;/usr/bin/zathura
-Programming;Geany;/usr/bin/geany
-Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
-Sound;Alsamixergui;/usr/bin/alsamixergui
+Science;Xcalc;xcalc
 Sound;Echomixer;/usr/bin/echomixer
+Sound;Envy24 control;/usr/bin/envy24control
+Sound;HDSPConf;/usr/bin/hdspconf
+Sound;HDSPMixer;/usr/bin/hdspmixer
 Sound;paman;/usr/bin/paman
 Sound;pavucontrol;/usr/bin/pavucontrol
 Sound;pavumeter;/usr/bin/pavumeter
-System;Disk Management;/usr/bin/usermount
+Sound;Rmedigicontrol;/usr/bin/rmedigicontrol
+System;Editres;editres
 System;GNOME partition editor;su-to-root -X -c /usr/sbin/gparted
-System;Network Admin;/usr/bin/network-admin
 System;Openbox Configuration Manager;/usr/bin/obconf
 System;Reportbug (GTK+);/usr/bin/reportbug --exit-prompt --ui gtk2
+System;Xclipboard;xclipboard
+System;Xconsole;xconsole -file /dev/xconsole
+System;Xev;x-terminal-emulator -e xev
+System;Xfontsel;xfontsel
 System;Xkill;xkill
+System;Xload;xload
+System;Xrefresh;xrefresh
 System;Xvidtune;xvidtune
-Terminal Emulators;Gnome Terminal;/usr/bin/gnome-terminal
-Terminal Emulators;Rxvt-Unicode (Black, Xft);urxvt -fn \
-Terminal Emulators;Xfce Terminal;/usr/bin/xfce4-terminal
 Terminal Emulators;X-Terminal as root (GKsu);/usr/bin/gksu -u root /usr/bin/x-terminal-emulator
 Terminal Emulators;XTerm (Unicode);uxterm
-Text;Character map;/usr/bin/gucharmap
-Video;Flowblade;/usr/bin/flowblade
-Video;MKV Creator;/usr/bin/mmg
+Terminal Emulators;XTerm;xterm
 Video;VLC media player;/usr/bin/qvlc
 Viewers;Evince;/usr/bin/evince
-Viewers;gThumb Image Viewer;/usr/bin/gthumb
-Viewers;qPDFview;qpdfview
-Viewers;Xpdf;/usr/bin/xpdf
+Viewers;Xditview;xditview

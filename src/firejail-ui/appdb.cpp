@@ -30,8 +30,43 @@
 #include <QLineEdit>
 #define MAXBUF 4096
 
+static bool check_executable(const char *exec) {
+	struct stat s;
+	if (stat(exec, &s) == 0)
+		return true;
+	
+	// check well-known paths
+	const char *path[] = {
+		"/usr/bin/",
+		"/bin/",
+		"/usr/games/",
+		"/usr/local/bin/",
+		"/sbin/",
+		"/usr/sbin/",
+		NULL
+	};
+	
+	int i = 0;
+	while (path[i] != NULL) {
+		bool found = false;
+		
+		char *name;
+		if (asprintf(&name, "%s%s", path[i], exec) == -1)
+			errExit("asprintf");
+		if (stat(name, &s) == 0)
+			found = true;
+		free(name);
+		if (found)
+			return true;
+	}
+	return false;
+}
+
+
 AppEntry::AppEntry(char *line) {
 	assert(line);
+	if (arg_debug)
+		printf("processing \"%s\"\n", line);
 	group_ = QString("");
 	app_ = QString("");
 	command_ = QString("");
@@ -46,17 +81,25 @@ AppEntry::AppEntry(char *line) {
 			ptr = strtok(NULL, ";");
 			if (ptr) {
 				command_ = QString(ptr);
+				if (command_.endsWith("*")) {
+					command_ = "";
+					return;
+				}
 				
 				// try to find the executable
 				char *str = strdup(command_.toUtf8().data());
 				if (!str)
 					errExit("strdup");
+				
+				// skip excutables ending in *
+				
 				char *ptr = strchr(str, ' ');
 				if (ptr)
 					*ptr = '\0';
-				
-				struct stat s;
-				if (stat(str, &s) == -1) {
+
+				if (check_executable(str) == false) {				
+					if (arg_debug)
+						printf("executable %s not found\n", str);
 					command_ = QString("");
 				}
 				free(str);
@@ -87,6 +130,8 @@ AppEntry* appdb_load_file(void) {
 
 		AppEntry *entry = new AppEntry(ptr1);
 		if (entry->group_.isEmpty() || entry->app_.isEmpty() || entry->command_.isEmpty()) {
+			if (arg_debug)
+				printf("line not accepted\n");
 			delete entry;
 			continue;
 		}

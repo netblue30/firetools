@@ -11,5 +11,5 @@ QT += widgets
  		appdb.cpp \
 		../common/utils.cpp \
 		../common/pid.cpp
-#RESOURCES = firejail-ui.qrc
+RESOURCES = firejail-ui.qrc
 TARGET=../../build/firejail-ui
