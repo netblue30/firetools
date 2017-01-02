@@ -58,6 +58,7 @@ static bool check_executable(const char *exec) {
 		free(name);
 		if (found)
 			return true;
+		i++;
 	}
 	return false;
 }

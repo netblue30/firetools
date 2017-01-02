@@ -18,6 +18,10 @@ src/firetools/qrc_firetools.cpp
 src/firemgr/moc_mainwindow.cpp
 src/firemgr/moc_topwidget.cpp
 src/firemgr/qrc_firemgr.cpp
+firetools_config_extras.h
+src/firejail-ui/moc_help_widget.cpp
+src/firejail-ui/moc_home_widget.cpp
+src/firejail-ui/moc_wizard.cpp
 
 src/firemgr/moc_predefs.h
 src/firetools/moc_predefs.h

@@ -60,7 +60,10 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setWindowTitle(tr("Firejal Wizard"));
 	
 	setWizardStyle(QWizard::MacStyle);
-	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/firejail-ui.png"));
+	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));
+
+//resize( QSize(600, 400).expandedTo(minimumSizeHint()) );
+
 }
 
 void Wizard::showHelp() {
