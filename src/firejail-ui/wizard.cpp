@@ -50,6 +50,7 @@ QString global_subtitle(
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
 	setPage(Page_Config, new ConfigPage);
+	setPage(Page_Config2, new ConfigPage2);
 	setPage(Page_StartSandbox, new StartSandboxPage);
 	setStartId(Page_Application);
 	
@@ -57,12 +58,11 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setWindowTitle(tr("Firejal Wizard"));
+	setWindowTitle(tr("Firejal UI"));
 	
 	setWizardStyle(QWizard::MacStyle);
 	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));
-
-//resize( QSize(600, 400).expandedTo(minimumSizeHint()) );
+	//resize( QSize(600, 400).expandedTo(minimumSizeHint()) );
 
 }
 
@@ -133,133 +133,6 @@ void Wizard::accept() {
 	// force a program exit
 	exit(0);		
 }
-
-
-ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
-	setTitle(global_title);
-	setSubTitle(global_subtitle);
-
-	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox"));
-
-
-	whitelisted_home_ = new QCheckBox("Restrict /home directory");
-	private_dev_ = new QCheckBox("Restrict /dev directory");
-	private_dev_->setChecked(true);
-	registerField("private_dev", private_dev_);
-	
-	private_tmp_ = new QCheckBox("Restrict /tmp directory");
-	private_tmp_->setChecked(true);
-	registerField("private_tmp", private_tmp_);
-	
-	mnt_media_ = new QCheckBox("Restrict /mnt and /media");
-	mnt_media_->setChecked(true);
-	registerField("mnt_media", mnt_media_);
-
-	overlayfs_ = new QCheckBox("OverlayFS");
-//	overlayfs_->setEnabled(false);
-	registerField("overlayfs", overlayfs_);
-
-	QGroupBox *fs_box = new QGroupBox(tr("File System"));
-	QVBoxLayout *fs_box_layout = new QVBoxLayout;
-	fs_box_layout->addWidget(whitelisted_home_);
-	fs_box_layout->addWidget(private_dev_);
-	fs_box_layout->addWidget(private_tmp_);
-	fs_box_layout->addWidget(mnt_media_);
-	fs_box_layout->addWidget(overlayfs_);
-	fs_box->setLayout(fs_box_layout);
-//	fs_box->setFlat(false);
-//	fs_box->setCheckable(true);
-	
-	nosound_ = new QCheckBox("Disable sound");
-	registerField("nosound", nosound_);
-	
-	no3d_ = new QCheckBox("Disable 3D acceleration");
-	registerField("no3d", no3d_);
-	
-	nox11_ = new QCheckBox("Disable X11 support");
-	nox11_->setEnabled(false);
-	registerField("nox11", nox11_);
-	
-	QGroupBox *multimed_box = new QGroupBox(tr("Multimedia"));
-	QVBoxLayout *multimed_box_layout = new QVBoxLayout;
-	multimed_box_layout->addWidget(nosound_);
-	multimed_box_layout->addWidget(no3d_);
-	multimed_box_layout->addWidget(nox11_);
-	multimed_box->setLayout(multimed_box_layout);
-//	multimed_box->setFlat(false);
-//	multimed_box->setCheckable(true);
-
-
-	
-	
-	sysnetwork_ = new QRadioButton("System network");
-	sysnetwork_->setChecked(true);
-	registerField("sysnetwork", sysnetwork_);
-	
-	nonetwork_ = new QRadioButton("Disable networking");
-	registerField("nonetwork", nonetwork_);
-	
-	namespace_network_ = new QRadioButton("Namespace");	
-	QGroupBox *net_box = new QGroupBox(tr("Networking"));
-	QVBoxLayout *net_box_layout = new QVBoxLayout;
-	net_box_layout->addWidget(sysnetwork_);
-	net_box_layout->addWidget(namespace_network_);
-	net_box_layout->addWidget(nonetwork_);
-	net_box->setLayout(net_box_layout);
-	connect(sysnetwork_, SIGNAL(toggled(bool)), this, SLOT(setX11(bool)));
-
-	home_ = new HomeWidget;
-	QGroupBox *home_box = new QGroupBox(tr("Home Directory"));
-	QVBoxLayout *home_box_layout = new QVBoxLayout;
-	home_box_layout->addWidget(home_);
-	home_box->setLayout(home_box_layout);
-	home_->setEnabled(false);
-	connect(whitelisted_home_, SIGNAL(toggled(bool)), this, SLOT(setHome(bool)));
-	
-	seccomp_ = new QCheckBox("Seccomp etc.");
-	seccomp_->setChecked(true);
-	registerField("seccomp", seccomp_);
-	
-	noroot_ = new QCheckBox("Restricted  user namespace (noroot)");
-//	apparmor_->setEnabled(false);
-	registerField("noroot", noroot_);
-
-	apparmor_ = new QCheckBox("AppArmor");
-//	apparmor_->setEnabled(false);
-	registerField("apparmor", apparmor_);
-
-	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
-	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
-	kernel_box_layout->addWidget(seccomp_);
-	kernel_box_layout->addWidget(noroot_);
-	kernel_box_layout->addWidget(apparmor_);
-	kernel_box->setLayout(kernel_box_layout);
-
-	QWidget *w = new QWidget;
-	w->setMinimumHeight(8);
-	QGridLayout *layout = new QGridLayout;
-	layout->addWidget(label1, 0, 0);
-	layout->addWidget(w, 1, 0);
-	layout->addWidget(fs_box, 2, 0);
-	layout->addWidget(home_box, 2, 1, 2, 1);
-	layout->addWidget(net_box, 3, 0);
-	layout->addWidget(multimed_box, 4, 0);
-	layout->addWidget(kernel_box, 4, 1);
-	setLayout(layout);
-}
-
-void ConfigPage::setX11(bool inactive) {
-	nox11_->setEnabled(!inactive);
-}
-
-void ConfigPage::setHome(bool active) {
-	home_->setEnabled(active);
-}
-
-int ConfigPage::nextId() const {
-	return Wizard::Page_StartSandbox;
-}
-
 
 ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
@@ -347,8 +220,6 @@ void ApplicationPage::appClicked(QListWidgetItem *item) {
 	appdb_set_command(appdb_, command_, app);
 }
 
-
-
 int ApplicationPage::nextId() const {
 	if (use_custom_->isChecked())
 		return Wizard::Page_Config;
@@ -356,6 +227,183 @@ int ApplicationPage::nextId() const {
 		return Wizard::Page_StartSandbox;
 }
 
+
+
+ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
+
+	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox"));
+
+	whitelisted_home_ = new QCheckBox("Restrict /home directory");
+	private_dev_ = new QCheckBox("Restrict /dev directory");
+	private_dev_->setChecked(true);
+	registerField("private_dev", private_dev_);
+	
+	private_tmp_ = new QCheckBox("Restrict /tmp directory");
+	private_tmp_->setChecked(true);
+	registerField("private_tmp", private_tmp_);
+	
+	mnt_media_ = new QCheckBox("Restrict /mnt and /media");
+	mnt_media_->setChecked(true);
+	registerField("mnt_media", mnt_media_);
+
+	overlayfs_ = new QCheckBox("OverlayFS");
+	if (kernel_major == 3 && kernel_minor < 18) {
+	   	if (arg_debug)
+	   		printf("disabling overlayfs\n");
+		overlayfs_->setEnabled(false);
+	}
+	registerField("overlayfs", overlayfs_);
+
+	QGroupBox *fs_box = new QGroupBox(tr("File System"));
+	QVBoxLayout *fs_box_layout = new QVBoxLayout;
+	fs_box_layout->addWidget(whitelisted_home_);
+	fs_box_layout->addWidget(private_dev_);
+	fs_box_layout->addWidget(private_tmp_);
+	fs_box_layout->addWidget(mnt_media_);
+	fs_box_layout->addWidget(overlayfs_);
+	fs_box->setLayout(fs_box_layout);
+//	fs_box->setFlat(false);
+//	fs_box->setCheckable(true);
+	
+	sysnetwork_ = new QRadioButton("System network");
+	sysnetwork_->setChecked(true);
+	registerField("sysnetwork", sysnetwork_);
+	
+	nonetwork_ = new QRadioButton("Disable networking");
+	registerField("nonetwork", nonetwork_);
+	
+	namespace_network_ = new QRadioButton("Namespace");	
+	QGroupBox *net_box = new QGroupBox(tr("Networking"));
+	QVBoxLayout *net_box_layout = new QVBoxLayout;
+	net_box_layout->addWidget(sysnetwork_);
+	net_box_layout->addWidget(namespace_network_);
+	net_box_layout->addWidget(nonetwork_);
+	net_box->setLayout(net_box_layout);
+	connect(sysnetwork_, SIGNAL(toggled(bool)), this, SLOT(setX11(bool)));
+
+	home_ = new HomeWidget;
+	QGroupBox *home_box = new QGroupBox(tr("Home Directory"));
+	QVBoxLayout *home_box_layout = new QVBoxLayout;
+	home_box_layout->addWidget(home_);
+	home_box->setLayout(home_box_layout);
+	home_->setEnabled(false);
+	connect(whitelisted_home_, SIGNAL(toggled(bool)), this, SLOT(setHome(bool)));
+	
+
+	QWidget *w = new QWidget;
+	w->setMinimumHeight(8);
+	QGridLayout *layout = new QGridLayout;
+	layout->addWidget(label1, 0, 0);
+	layout->addWidget(w, 1, 0);
+	layout->addWidget(fs_box, 2, 0);
+	layout->addWidget(home_box, 2, 1, 2, 1);
+	layout->addWidget(net_box, 3, 0);
+	setLayout(layout);
+}
+
+void ConfigPage::setHome(bool active) {
+	home_->setEnabled(active);
+}
+
+int ConfigPage::nextId() const {
+	return Wizard::Page_Config2;
+}
+
+
+ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
+
+	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox - continued..."));
+
+	
+	nosound_ = new QCheckBox("Disable sound");
+	registerField("nosound", nosound_);
+	
+	no3d_ = new QCheckBox("Disable 3D acceleration");
+	registerField("no3d", no3d_);
+	
+	nox11_ = new QCheckBox("Disable X11 support");
+	registerField("nox11", nox11_);
+	
+	QGroupBox *multimed_box = new QGroupBox(tr("Multimedia"));
+	QVBoxLayout *multimed_box_layout = new QVBoxLayout;
+	multimed_box_layout->addWidget(nosound_);
+	multimed_box_layout->addWidget(no3d_);
+	multimed_box_layout->addWidget(nox11_);
+	multimed_box->setLayout(multimed_box_layout);
+//	multimed_box->setFlat(false);
+//	multimed_box->setCheckable(true);
+
+	seccomp_ = new QCheckBox("Enable seccomp-bpf");
+	if (kernel_major == 3 && kernel_minor < 5) {
+	   	if (arg_debug)
+	   		printf("disabling seccomp-bpf\n");
+		seccomp_->setEnabled(false);
+	}
+	else
+		seccomp_->setChecked(true);
+	registerField("seccomp", seccomp_);
+	
+	nonewprivs_ = new QCheckBox("Enable nonewprivs");
+	if (kernel_major == 3 && kernel_minor < 5) {
+	   	if (arg_debug)
+	   		printf("disabling nonewprivs\n");
+		nonewprivs_->setEnabled(false);
+	}
+	else
+		nonewprivs_->setChecked(true);
+	registerField("nonewprivs", nonewprivs_);
+	
+	caps_ = new QCheckBox("Disable all Linux capabilities");
+	caps_->setChecked(true);
+	registerField("caps", caps_);
+	
+	noroot_ = new QCheckBox("Restricted  user namespace (noroot)");
+	if (kernel_major == 3 && kernel_minor < 8) {
+	   	if (arg_debug)
+	   		printf("disabling noroot\n");
+		noroot_->setEnabled(false);
+	}
+	else
+		noroot_->setChecked(true);
+	registerField("noroot", noroot_);
+
+	apparmor_ = new QCheckBox("AppArmor");
+//	apparmor_->setEnabled(false);
+	registerField("apparmor", apparmor_);
+
+	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
+	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
+	kernel_box_layout->addWidget(seccomp_);
+	kernel_box_layout->addWidget(nonewprivs_);
+	kernel_box_layout->addWidget(caps_);
+	kernel_box_layout->addWidget(noroot_);
+	kernel_box_layout->addWidget(apparmor_);
+	kernel_box->setLayout(kernel_box_layout);
+
+	QWidget *w = new QWidget;
+	w->setMinimumHeight(8);
+	QGridLayout *layout = new QGridLayout;
+	layout->addWidget(label1, 0, 0);
+	layout->addWidget(w, 1, 0);
+	layout->addWidget(multimed_box, 2, 0);
+	layout->addWidget(kernel_box, 3, 0);
+	setLayout(layout);
+}
+
+int ConfigPage2::nextId() const {
+	return Wizard::Page_StartSandbox;
+}
+
+void ConfigPage2::initializePage() {
+	if (field("sysnetwork").toBool())
+		nox11_->setEnabled(false);
+	else
+		nox11_->setEnabled(true);
+}
 
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
@@ -366,7 +414,6 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	bold.setBold(true);
 	QFont oldFont;
 	oldFont.setBold(false);
-	
 
 	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Sandbox Debugging"));
 	debug_box->setFont(bold);

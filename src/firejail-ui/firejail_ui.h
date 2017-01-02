@@ -23,6 +23,7 @@
 
 extern int arg_debug;
 extern int svg_not_found;
-class QWizardPage;
+extern int kernel_major;
+extern int kernel_minor;
 
 #endif

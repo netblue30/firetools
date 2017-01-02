@@ -36,44 +36,13 @@ class Wizard : public QWizard {
 	Q_OBJECT
 
 public:
-	enum { Page_Config, Page_Application, Page_StartSandbox };
+	enum { Page_Application, Page_Config, Page_Config2, Page_StartSandbox };
 
 	Wizard(QWidget *parent = 0);
 	void accept();
 
 private slots:
 	void showHelp();
-};
-
-class ConfigPage : public QWizardPage {
-	Q_OBJECT
-
-public:
-	ConfigPage(QWidget *parent = 0);
-
-	int nextId() const;
-
-
-public slots:
-	void setX11(bool);	
-	void setHome(bool);
-
-private:
-	QCheckBox *whitelisted_home_;
-	QCheckBox *private_dev_;
-	QCheckBox *private_tmp_;
-	QCheckBox *mnt_media_;
-	QCheckBox *nosound_;
-	QCheckBox *no3d_;
-	QCheckBox *nox11_;
-	QRadioButton *sysnetwork_;
-	QRadioButton *nonetwork_;
-	QRadioButton *namespace_network_;
-	HomeWidget *home_;
-	QCheckBox *seccomp_;
-	QCheckBox *apparmor_;
-	QCheckBox *overlayfs_;
-	QCheckBox *noroot_;
 };
 
 class ApplicationPage : public QWizardPage {
@@ -95,6 +64,58 @@ private:
 	QLineEdit *command_;
 	QRadioButton *use_default_;
 	QRadioButton *use_custom_;
+};
+
+class ConfigPage : public QWizardPage {
+	Q_OBJECT
+
+public:
+	ConfigPage(QWidget *parent = 0);
+
+	int nextId() const;
+
+
+public slots:
+	void setHome(bool);
+
+private:
+	// filesystem
+	QCheckBox *whitelisted_home_;
+	QCheckBox *private_dev_;
+	QCheckBox *private_tmp_;
+	QCheckBox *mnt_media_;
+	QCheckBox *overlayfs_;
+	HomeWidget *home_;
+
+	// networking
+	QRadioButton *sysnetwork_;
+	QRadioButton *nonetwork_;
+	QRadioButton *namespace_network_;
+};
+
+class ConfigPage2 : public QWizardPage {
+	Q_OBJECT
+
+public:
+	ConfigPage2(QWidget *parent = 0);
+
+	int nextId() const;
+	void initializePage();
+
+public slots:
+
+private:
+	// multimedia
+	QCheckBox *nosound_;
+	QCheckBox *no3d_;
+	QCheckBox *nox11_;
+	
+	// kernel
+	QCheckBox *seccomp_;
+	QCheckBox *nonewprivs_;
+	QCheckBox *caps_;
+	QCheckBox *noroot_;
+	QCheckBox *apparmor_;
 };
 
 class StartSandboxPage : public QWizardPage {

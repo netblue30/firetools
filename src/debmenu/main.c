@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include "../common/common.h"
 
+int arg_debug = 0;
+int arg_test = 0;
+
 #define BUFSIZE 1024
 static char buf[BUFSIZE];
 static char *buf_title = NULL;
@@ -117,8 +120,42 @@ static void clean_buffers(void) {
 	}
 }
 
+static void usage(void) {
+	printf("Usage: debmenu [options]\n");
+	printf("Option:\n");
+	printf("\t--debug - enable debugging\n");
+	printf("\t--test - test the files\n");
+	printf("--help, -? - this help screen\n");
+}
 
-int main(void) {
+int main(int argc, char **argv) {
+	// parse arguments
+	int i;
+	for (i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--debug") == 0)
+			arg_debug = 1;
+		else if (strcmp(argv[i], "--test") == 0)
+			arg_test = 1;
+		else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-?") == 0) {
+			usage();
+			return 0;
+		}
+#if 0
+		else if (strcmp(argv[i], "--version") == 0) {
+			printf("Firejail-ui version " PACKAGE_VERSION "\n");
+			return 0;
+		}
+#endif
+		else {
+			fprintf(stderr, "Error: invalid option\n");
+			usage();
+			return 1;
+		}
+	}
+	
+	
+	
+	
 	DIR *dir = opendir("/usr/share/menu");
 	if (!dir) {
 		fprintf(stderr, "Error: cannot open /usr/share/menu\n");
@@ -132,6 +169,8 @@ int main(void) {
 			continue;
 
 		clean_buffers();
+//		if (arg_test)
+//			printf("processing %s\n", entry->d_name);
 		
 		// build filename
 		char *fname;
@@ -141,6 +180,7 @@ int main(void) {
 		free(fname);
 		
 		if (fp) {
+			int printed = 0;
 			// parse file
 			while(fgets(buf, BUFSIZE, fp)) {
 				char *ptr = buf;
@@ -153,12 +193,19 @@ int main(void) {
 				if (buf_section && buf_command && buf_title && buf_needs) {
 					if (strcmp(buf_needs, "x11") == 0 || strcmp(buf_needs, "X11") == 0) {
 						section_cleanup();
-						printf("%s;%s;%s\n", buf_section, buf_title, buf_command);
+						if (!arg_test)
+							printf("%s;%s;%s\n", buf_section, buf_title, buf_command);
+						printed = 1;
 					}
+					else if (arg_test)
+						printed = 1;
 					clean_buffers();
 				}
 					
 			}
+			
+			if (!printed && arg_test)
+				fprintf(stderr, "Error: cannot process %s\n", entry->d_name);
 		}
 		
 	}

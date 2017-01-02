@@ -22,6 +22,7 @@
 #include <QSystemTrayIcon>
 #include <QLibraryInfo>
 #include <QWizard>
+#include <sys/utsname.h>
 
 #include "firejail_ui.h"
 #include "wizard.h"
@@ -30,6 +31,8 @@
 
 int arg_debug = 0;
 int svg_not_found = 0;
+int kernel_major;
+int kernel_minor;
 
 static void usage() {
 	printf("Firejail-ui - graphical user interface for Firejail security sandbox\n\n");
@@ -61,17 +64,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	struct stat s;
-#if QT_VERSION >= 0x050000
-	// test run time dependencies - print warning and continue program
-	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
-	ppath += "/imageformats/libqsvg.so";
-	if (stat(ppath.toUtf8().constData(), &s) == -1) {
-		fprintf(stderr, "Warning: QT5 SVG support not installed, please install libqt5svg5 package\n");
-		svg_not_found = 1;
-	}
-#endif
-
 	// test run time dependencies - exit
 	if (!which("firejail")) {
 		fprintf(stderr, "Error: firejail package not found, please install it!\n");
@@ -84,6 +76,7 @@ int main(int argc, char *argv[]) {
 	if (asprintf(&path, "%s/.config/firetools", homedir) == -1)
 		errExit("asprintf");
 	free(homedir);
+	struct stat s;
 	if (stat(path, &s) == -1) {
 		/* coverity[toctou] */
 		int rv = mkdir(path, 0755);
@@ -94,8 +87,27 @@ int main(int argc, char *argv[]) {
 	}
 	free(path);
 
+	// read kernel version
+	struct utsname u;
+	int rv = uname(&u);
+	if (rv != 0)
+		errExit("uname");
+	if (2 != sscanf(u.release, "%d.%d", &kernel_major, &kernel_minor)) {
+		fprintf(stderr, "***********************************\n");
+		fprintf(stderr, "Warning: cannot extract a sane Linux kernel version: %s.\n", u.version);
+		fprintf(stderr, "         Assuming a default version of 3.2. Quite a number of sandboxing\n");
+		fprintf(stderr, "         features are disabled.\n");
+		fprintf(stderr, "***********************************\n");
+	}
+	if (kernel_major < 3) {
+		fprintf(stderr, "Error: a Linux kernel 3.x or newer is required in order to run Firejail\n");
+		exit(1);
+	}
+	if (arg_debug)
+		printf("Linux kernel version %d.%d\n", kernel_major, kernel_minor);
+	
 	// initialize resources
-	//	Q_INIT_RESOURCE(firetools);
+	//Q_INIT_RESOURCE(firejail-ui);
 
 	QApplication app(argc, argv);
 	Wizard wizard;

@@ -22,6 +22,7 @@ firetools_config_extras.h
 src/firejail-ui/moc_help_widget.cpp
 src/firejail-ui/moc_home_widget.cpp
 src/firejail-ui/moc_wizard.cpp
+src/firejail-ui/qrc_firejail-ui.cpp
 
 src/firemgr/moc_predefs.h
 src/firetools/moc_predefs.h

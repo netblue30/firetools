@@ -1,8 +1,10 @@
 Accessibility;Xmag;xmag
 Editors;LeafPad;/usr/bin/leafpad
 Editors;Xedit;xedit
+File Management;Brasero CD/DVD burning application;/usr/bin/brasero
 File Management;Launchy;/usr/bin/launchy
 File Management;LXDE file manager (pcmanfm);pcmanfm
+File Management;Xarchiver;/usr/bin/xarchiver
 Games;Oclock;oclock
 Games;Xclock (analog);xclock -analog
 Games;Xclock (digital);xclock -digital -update 1
@@ -14,10 +16,14 @@ Graphics;The GIMP;/usr/bin/gimp
 Graphics;X Window Snapshot;xwd | xwud*
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
+Network;Firefox-ESR;/usr/lib/firefox-esr/firefox-esr
+Network;Firefox;/usr/lib/firefox/firefox
+Network;Iceweasel;/usr/lib/iceweasel/iceweasel
 Network;Transmission BitTorrent Client (GTK);/usr/bin/transmission-gtk
 Network;Wireshark;/usr/bin/wireshark
 Network;Xbiff;xbiff
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
+Office;Calibre eBook reader;/usr/bin/calibre
 Science;galculator;/usr/bin/galculator
 Science;Xcalc;xcalc
 Sound;Echomixer;/usr/bin/echomixer
@@ -40,9 +46,11 @@ System;Xkill;xkill
 System;Xload;xload
 System;Xrefresh;xrefresh
 System;Xvidtune;xvidtune
+Terminal Emulators;LXTerminal;/usr/bin/lxterminal
 Terminal Emulators;X-Terminal as root (GKsu);/usr/bin/gksu -u root /usr/bin/x-terminal-emulator
 Terminal Emulators;XTerm (Unicode);uxterm
 Terminal Emulators;XTerm;xterm
 Video;VLC media player;/usr/bin/qvlc
 Viewers;Evince;/usr/bin/evince
+Viewers;Image Viewer;/usr/bin/gpicview
 Viewers;Xditview;xditview
