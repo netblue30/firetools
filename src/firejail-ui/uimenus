@@ -1,3 +1,5 @@
+Emulators;VirtualBox;/usr/bin/virtualbox
+Accessibility;Florence virtual keyboard;/usr/bin/florence
 Accessibility;Xmag;xmag
 Editors;Abiword word processor;/usr/bin/abiword
 Editors;CherryTree note taking application;/usr/bin/cherrytree
@@ -25,7 +27,8 @@ Editors;TeXworks;/usr/bin/texworks
 Editors;X2;/usr/bin/x2
 Editors;xJed;/usr/bin/xjed
 Editors;Xedit;xedit
-Emulators;VirtualBox;/usr/bin/virtualbox
+Editors;Bluefish;/usr/bin/bluefish
+Editors;Quanta Plus;/usr/bin/quanta
 File Management;Brasero CD/DVD burning application;/usr/bin/brasero
 File Management;Launchy;/usr/bin/launchy
 File Management;LXDE file manager (pcmanfm);pcmanfm
@@ -40,6 +43,23 @@ Games;Xclock (analog);xclock -analog
 Games;Xclock (digital);xclock -digital -update 1
 Games;Xeyes;xeyes
 Games;Xlogo;xlogo
+Games;0 A.D.;/usr/games/0ad
+Games;2048 puzzle;/usr/games/2048-qt
+Games;3dchess;/usr/games/3Dc
+Games;4digits;/usr/games/4digits
+Games;Seven Kingdoms;/usr/games/7kaa
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
+Games;
 Graphics;Blender;/usr/bin/blender
 Graphics;MyPaint;/usr/bin/mypaint
 Graphics;mtPaint;/usr/bin/mtpaint
@@ -59,11 +79,10 @@ Graphics;Pinta;/usr/bin/pinta
 Graphics;rgbPaint;/usr/bin/rgbpaint
 Graphics;showFoto;/usr/bin/showfoto
 Graphics;Tgif;/usr/bin/tgif
-Graphics;
-Graphics;
-Graphics;
-Graphics;
-Graphics;
+Graphics;Trimage;/usr/bin/trimage
+Graphics;Tux Paint;/usr/bin/tuxpaint
+Graphics;Whitedune;/usr/bin/whitedune
+Graphics;XPaint;/usr/bin/xpaint
 Graphics;ImageMagick;/usr/bin/display.im6 logo:*
 Graphics;Inkscape;/usr/bin/inkscape
 Graphics;luminance-hdr;/usr/bin/luminance-hdr
@@ -74,15 +93,15 @@ Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
 Graphics;X Window Snapshot;xwd | xwud*
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
-Network;Chromium;chromium
+Network;Chromium;/usr/bin/chromium
 Network;Deluge BitTorrent Client;/usr/bin/deluge
 Network;Dillo;/usr/bin/dillo
 Network;FileZilla;/usr/bin/filezilla
-Network;Firefox-ESR;/usr/lib/firefox-esr/firefox-esr
-Network;Firefox;/usr/lib/firefox/firefox
+Network;Firefox-ESR;/usr/bin/firefox-esr
+Network;Firefox;/usr/bin/firefox
 Network;HexChat;/usr/bin/hexchat
 Network;Icedove Mail;icedove
-Network;Iceweasel;/usr/lib/iceweasel/iceweasel
+Network;Iceweasel;/usr/bin/iceweasel
 Network;Liferea;/usr/bin/liferea
 Network;Netsurf Web Browser;/usr/bin/netsurf-gtk
 Network;qBittorrent;/usr/bin/qbittorrent
@@ -93,6 +112,21 @@ Network;Wireshark;/usr/bin/wireshark
 Network;Xbiff;xbiff
 Network;X Chat;/usr/bin/xchat
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
+Network;dwb;/usr/bin/dwb
+Network;Hv3;/usr/bin/hv3
+Network;Konqueror;/usr/bin/konqueror
+Network;QuiteRSS;/usr/bin/quiterss
+Network;
+Network;
+Network;
+Network;
+Network;
+Network;
+Network;
+Network;
+
+
+
 Office;Calibre eBook reader;/usr/bin/calibre
 Office;zathura;/usr/bin/zathura
 Office:
@@ -146,7 +180,37 @@ Video;MKV Creator;/usr/bin/mmg
 Video;mpv Media Player;/usr/bin/mpv
 Video;VLC media player;/usr/bin/qvlc
 Video;HandBrake;/usr/bin/handbrake
-Video;
+Video;Bino;/usr/bin/bino
+Video;DeVeDe;/usr/bin/devede
+Video;Dragon Player;/usr/bin/dragon
+Video;DvdAuthor;/usr/bin/dvdauthor
+Video;Flowblade Movie Editor;/usr/bin/flowblade
+Video;FreetuxTV;/usr/bin/freetuxtv
+Video;gnome-mplayer;/usr/bin/gnome-mplayer
+Video;gnome-mpv;/usr/bin/gnome-mpv
+Video;gxine;/usr/bin/gxine
+Video;DVD slide show maker;/usr/bin/imagination
+Video;Kaffeine;/usr/bin/kaffeine
+Video;Kazam;/usr/bin/kazam
+Video;Kdenlive;/usr/bin/kdenlive
+Video;Kino;/usr/bin/kino
+Video;KMPlayer;/usr/bin/kmplayer
+Video;KPlayer;/usr/bin/kplayer
+Video;LiVES;/usr/bin/lives
+Video;Minitube;/usr/bin/minitube
+Video;MPlayer;/usr/bin/mplayer
+Video;MPlayer GUI;/usr/bin/gmplayer
+Video;OpenShot Video Editor;/usr/bin/openshot
+Video;qStopMotion;/usr/bin/qstopmotion
+Video;Simple Screen Recorder;/usr/bin/simplescreenrecorder
+Video;SMPlayer;/usr/bin/smplayer
+Video;SMTube;/usr/bin/smtube
+Video;Snappy;/usr/bin/snappy
+Video;Totem;/usr/bin/totem
+Video;tvtime;/usr/bin/tvtime
+Video;Voctomix;/usr/bin/voctogui
+Video;vokoscreen;/usr/bin/vokoscreen
+Video;Xine;/usr/bin/xine
 Video;
 Video;
 Video;
@@ -169,14 +233,6 @@ Viewers;Phototonic;/usr/bin/phototonic
 Viewers;QComicBook;/usr/bin/qcomicbook
 Viewers;Quick Image Viewer;/usr/bin/qiv
 Viewers;sxiv;/usr/bin/sxiv
-Viewers;
-Viewers;
-Viewers;
-Viewers;
-Viewers;
-Viewers;
-Viewers;
-Viewers;
 Viewers;
 Viewers;
 Viewers;

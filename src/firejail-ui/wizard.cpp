@@ -38,10 +38,11 @@
 #include "help_widget.h"
 #include "appdb.h"
 
-QString global_title("Firejail Configuration Wizard");
+//QString global_title("Firejail Configuration Wizard");
+QString global_title("");
 
 QString global_subtitle(
-	"Firejail reduces the  risk  of  security "
+	"<b>Firejail</b> reduces the  risk  of  security "
 	"breaches  by  restricting the running environment of untrusted "
 	"applications using the latest Linux kernel sandboxing technologies."
 );
@@ -58,7 +59,7 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setWindowTitle(tr("Firejal UI"));
+	setWindowTitle(tr("Firejail Configuration Wizard"));
 	
 	setWizardStyle(QWizard::MacStyle);
 	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));
