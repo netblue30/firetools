@@ -1,43 +1,130 @@
 Accessibility;Xmag;xmag
+Editors;Abiword word processor;/usr/bin/abiword
+Editors;CherryTree note taking application;/usr/bin/cherrytree
+Editors;Focuswriter;/usr/bin/focuswriter
+Editors;FTE;/usr/bin/xfte
+Editors;GNU Emacs editor;/usr/bin/emacs
+Editors;jEdit;/usr/bin/jedit
+Editors;JuffEd;/usr/bin/juffed
+Editors;KWrite;/usr/bin/kwrite
 Editors;LeafPad;/usr/bin/leafpad
+Editors;LyX;/usr/bin/lyx
+Editors;medit;/usr/bin/medit
+Editors;Monkey Studio;/usr/bin/monkeystudio
+Editors;Mousepad;/usr/bin/mousepad
+Editors;NEdit;/usr/bin/nedit
+Editors;nobleNote;/usr/bin/noblenote
+Editors;Plume Creator;/usr/bin/plume-creator
+Editors;PyRoom;/usr/bin/pyroom
+Editors;ReText;/usr/bin/retext
+Editors;SciTE;/usr/bin/scite
+Editors;Sigil;/usr/bin/sigil
+Editors;TEA;/usr/bin/tea
+Editors;TeXstudio;/usr/bin/texstudio
+Editors;TeXworks;/usr/bin/texworks
+Editors;X2;/usr/bin/x2
+Editors;xJed;/usr/bin/xjed
 Editors;Xedit;xedit
+Emulators;VirtualBox;/usr/bin/virtualbox
 File Management;Brasero CD/DVD burning application;/usr/bin/brasero
 File Management;Launchy;/usr/bin/launchy
 File Management;LXDE file manager (pcmanfm);pcmanfm
 File Management;Xarchiver;/usr/bin/xarchiver
+Games;Blobwars;/usr/games/blobwars
+Games;Micropolis;/usr/games/micropolis
 Games;Oclock;oclock
+Games;Penguin Command;/usr/games/penguin-command
+Games;Simutrans;/usr/games/simutrans
+Games;Warzone 2100;/usr/games/warzone2100
 Games;Xclock (analog);xclock -analog
 Games;Xclock (digital);xclock -digital -update 1
 Games;Xeyes;xeyes
 Games;Xlogo;xlogo
+Graphics;Blender;/usr/bin/blender
+Graphics;MyPaint;/usr/bin/mypaint
+Graphics;mtPaint;/usr/bin/mtpaint
+Graphics;gnome-paint;/usr/bin/gnome-paint
+Graphics;Allegro Sprite Editor;/usr/bin/aseprite
+Graphics;Darktable;/usr/bin/darktable
+Graphics;Diagram editor;/usr/bin/dia
+Graphics;digiKam;/usr/bin/digikam
+Graphics;Ipe;/usr/bin/ipe
+Graphics;K-3D;/usr/bin/k3d
+Graphics;Karbon;/usr/bin/karbon
+Graphics;Krita;/usr/bin/krita
+Graphics;Ocamlgraph;/usr/bin/ocamlgraph-editor
+Graphics;Pencil2D;/usr/bin/pencil2d
+Graphics;PhotoCollage;/usr/bin/photocollage
+Graphics;Pinta;/usr/bin/pinta
+Graphics;rgbPaint;/usr/bin/rgbpaint
+Graphics;showFoto;/usr/bin/showfoto
+Graphics;Tgif;/usr/bin/tgif
+Graphics;
+Graphics;
+Graphics;
+Graphics;
+Graphics;
 Graphics;ImageMagick;/usr/bin/display.im6 logo:*
 Graphics;Inkscape;/usr/bin/inkscape
+Graphics;luminance-hdr;/usr/bin/luminance-hdr
+Graphics;MyPaint;/usr/bin/mypaint
+Graphics;Synfig Studio;/usr/bin/synfigstudio
 Graphics;The GIMP;/usr/bin/gimp
+Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
 Graphics;X Window Snapshot;xwd | xwud*
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
+Network;Chromium;chromium
+Network;Deluge BitTorrent Client;/usr/bin/deluge
+Network;Dillo;/usr/bin/dillo
+Network;FileZilla;/usr/bin/filezilla
 Network;Firefox-ESR;/usr/lib/firefox-esr/firefox-esr
 Network;Firefox;/usr/lib/firefox/firefox
+Network;HexChat;/usr/bin/hexchat
+Network;Icedove Mail;icedove
 Network;Iceweasel;/usr/lib/iceweasel/iceweasel
+Network;Liferea;/usr/bin/liferea
+Network;Netsurf Web Browser;/usr/bin/netsurf-gtk
+Network;qBittorrent;/usr/bin/qbittorrent
 Network;Transmission BitTorrent Client (GTK);/usr/bin/transmission-gtk
+Network;Transmission BitTorrent Client (Qt);/usr/bin/transmission-qt
+Network;Uget;/usr/bin/uget-gtk
 Network;Wireshark;/usr/bin/wireshark
 Network;Xbiff;xbiff
+Network;X Chat;/usr/bin/xchat
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
 Office;Calibre eBook reader;/usr/bin/calibre
+Office;zathura;/usr/bin/zathura
+Office:
+Office:
+Office:
+Office:Scribus;/usr/bin/scribus
+Programming;Geany;/usr/bin/geany
+Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
 Science;Xcalc;xcalc
+Sound;Alsamixergui;/usr/bin/alsamixergui
 Sound;Echomixer;/usr/bin/echomixer
 Sound;Envy24 control;/usr/bin/envy24control
+Sound;HDAJackRetask;/usr/bin/hdajackretask
 Sound;HDSPConf;/usr/bin/hdspconf
 Sound;HDSPMixer;/usr/bin/hdspmixer
 Sound;paman;/usr/bin/paman
 Sound;pavucontrol;/usr/bin/pavucontrol
 Sound;pavumeter;/usr/bin/pavumeter
 Sound;Rmedigicontrol;/usr/bin/rmedigicontrol
+System;About Myself;/usr/bin/userinfo
+System;Disk Management;/usr/bin/usermount
 System;Editres;editres
 System;GNOME partition editor;su-to-root -X -c /usr/sbin/gparted
+System;Network Admin;/usr/bin/network-admin
 System;Openbox Configuration Manager;/usr/bin/obconf
+System;Password;/usr/bin/userpasswd
 System;Reportbug (GTK+);/usr/bin/reportbug --exit-prompt --ui gtk2
+System;Services Admin;/usr/bin/services-admin
+System;Shares Admin;/usr/bin/shares-admin
+System;Time Admin;/usr/bin/time-admin
+System;User accounts Admin;/usr/bin/users-admin
 System;Xclipboard;xclipboard
 System;Xconsole;xconsole -file /dev/xconsole
 System;Xev;x-terminal-emulator -e xev
@@ -46,11 +133,51 @@ System;Xkill;xkill
 System;Xload;xload
 System;Xrefresh;xrefresh
 System;Xvidtune;xvidtune
+Terminal Emulators;Gnome Terminal;/usr/bin/gnome-terminal
 Terminal Emulators;LXTerminal;/usr/bin/lxterminal
+Terminal Emulators;Rxvt-Unicode (Black, Xft);urxvt
+Terminal Emulators;Xfce Terminal;/usr/bin/xfce4-terminal
 Terminal Emulators;X-Terminal as root (GKsu);/usr/bin/gksu -u root /usr/bin/x-terminal-emulator
 Terminal Emulators;XTerm (Unicode);uxterm
 Terminal Emulators;XTerm;xterm
+Text;Character map;/usr/bin/gucharmap
+Video;Flowblade;/usr/bin/flowblade
+Video;MKV Creator;/usr/bin/mmg
+Video;mpv Media Player;/usr/bin/mpv
 Video;VLC media player;/usr/bin/qvlc
+Video;HandBrake;/usr/bin/handbrake
+Video;
+Video;
+Video;
+Video;
+Video;
+Video;
 Viewers;Evince;/usr/bin/evince
+Viewers;gThumb Image Viewer;/usr/bin/gthumb
 Viewers;Image Viewer;/usr/bin/gpicview
+Viewers;qPDFview;qpdfview
 Viewers;Xditview;xditview
+Viewers;Xpdf;/usr/bin/xpdf
+Viewers;Okular;/usr/bin/okular
+Viewers;Eye of MATE;/usr/bin/eom
+Viewers;Geeqie;/usr/bin/geeqie
+Viewers;GPicView;/usr/bin/gpicview
+Viewers;Gwenview;/usr/bin/gwenview
+Viewers;Mirage;/usr/bin/mirage
+Viewers;nomacs;/usr/bin/nomacs
+Viewers;Phototonic;/usr/bin/phototonic
+Viewers;QComicBook;/usr/bin/qcomicbook
+Viewers;Quick Image Viewer;/usr/bin/qiv
+Viewers;sxiv;/usr/bin/sxiv
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
+Viewers;
