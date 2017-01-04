@@ -112,7 +112,6 @@ private:
 	
 	// kernel
 	QCheckBox *seccomp_;
-	QCheckBox *nonewprivs_;
 	QCheckBox *caps_;
 	QCheckBox *noroot_;
 	QCheckBox *apparmor_;

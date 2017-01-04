@@ -73,5 +73,14 @@ void HomeWidget::readFiles() {
 	}
 	
 	closedir(dir);
+}
+
+QString HomeWidget::getContent() {
+	for(int i = 0; i < count(); ++i) {
+		QListWidgetItem* item = item(i);
+
+
+	QString retval = QString("");
+	return retval;
 
 }

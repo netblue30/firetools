@@ -46,7 +46,7 @@ QString global_subtitle(
 	"breaches  by  restricting the running environment of untrusted "
 	"applications using the latest Linux kernel sandboxing technologies."
 );
-
+HomeWidget *global_home_widget;
 
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
@@ -72,47 +72,61 @@ void Wizard::showHelp() {
 	hw.exec();
 }
 
+
+
 void Wizard::accept() {
 	if (arg_debug)
 		printf("Wizard::accept\n");
 	QStringList arguments;
 
-	// build the profile in a termporary file
-	char profname[] = "/tmp/firejail-ui-XXXXXX";
-	int fd = mkstemp(profname);
-	if (fd == -1)
-		errExit("mkstemp");
-	QString profarg = QString("--profile=") + QString(profname);
-	arguments << profarg;
-
-	// include	
-	dprintf(fd, "include /etc/firejail/disable-common.inc\n");
-	dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
+	if (field("use_custom").toBool()) {
+		if (arg_debug)
+			printf("building a custom profile\n");
 	
-	// filesystem
-	dprintf(fd, "\n# filesystem\n");
-	if (field("private_tmp").toBool())
-		dprintf(fd, "private-tmp\n");
-	if (field("private_dev").toBool())
-		dprintf(fd, "private-dev\n");
-	if (field("mnt_media").toBool()) {
-		dprintf(fd, "blacklist /mnt\n");
-		dprintf(fd, "blacklist /media\n");
+		// build the profile in a termporary file
+		char profname[] = "/tmp/firejail-ui-XXXXXX";
+		int fd = mkstemp(profname);
+		if (fd == -1)
+			errExit("mkstemp");
+		QString profarg = QString("--profile=") + QString(profname);
+		arguments << profarg;
+	
+		// include	
+		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
+		dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
+		
+		// home directory
+		if (field("restricted_home").toBool()) {
+			getContent();
+			
+		}
+		
+		// filesystem
+		dprintf(fd, "\n# filesystem\n");
+		if (field("private_tmp").toBool())
+			dprintf(fd, "private-tmp\n");
+		if (field("private_dev").toBool())
+			dprintf(fd, "private-dev\n");
+		if (field("mnt_media").toBool()) {
+			dprintf(fd, "blacklist /mnt\n");
+			dprintf(fd, "blacklist /media\n");
+		}
+		if (field("overlayfs").toBool())
+			arguments << QString("--overlay-tmpfs");
+	
+		// kernel
+		dprintf(fd, "\n# kernel\n");
+		if (field("seccomp").toBool()) {
+			dprintf(fd, "seccomp\n");
+			dprintf(fd, "nonewprivs\n");
+		}
+		if (field("caps").toBool())
+			dprintf(fd, "caps.drop all\n");
+		if (field("noroot").toBool())
+			dprintf(fd, "noroot\n");
+		if (field("apparmor").toBool())
+			dprintf(fd, "apparmor");
 	}
-	if (field("overlayfs").toBool())
-		arguments << QString("--overlay-tmpfs");
-
-	// kernel
-	dprintf(fd, "\n# kernel\n");
-	if (field("seccomp").toBool()) {
-		dprintf(fd, "seccomp\n");
-		dprintf(fd, "caps.drop all\n");
-		dprintf(fd, "nonewprivs\n");
-	}
-	if (field("noroot").toBool())
-		dprintf(fd, "noroot\n");
-	if (field("apparmor").toBool())
-		dprintf(fd, "apparmor");
 	
 	// debug
 	if (field("debug").toBool())
@@ -167,7 +181,6 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	app_box_layout->addWidget(command_, 3, 0, 1, 2);
 	app_box->setLayout(app_box_layout);
 	
-
 	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Chose a security profile"));
 	profile_box->setFont(bold);
 	use_default_ = new QRadioButton("Use a default security profile");	
@@ -179,8 +192,6 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	profile_box_layout->addWidget(use_default_);
 	profile_box_layout->addWidget(use_custom_);
 	profile_box->setLayout(profile_box_layout);
-
-
 	
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(app_box, 0, 0);
@@ -200,6 +211,7 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	            this, SLOT(appClicked(QListWidgetItem*)));
 	            
 	registerField("command*", command_);
+	registerField("use_custom", use_custom_); 
 }
 
 void ApplicationPage::groupClicked(QListWidgetItem *item) {
@@ -237,6 +249,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox"));
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
+	registerField("restrict_home", nonetwork_);
 	private_dev_ = new QCheckBox("Restrict /dev directory");
 	private_dev_->setChecked(true);
 	registerField("private_dev", private_dev_);
@@ -282,7 +295,6 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	net_box_layout->addWidget(namespace_network_);
 	net_box_layout->addWidget(nonetwork_);
 	net_box->setLayout(net_box_layout);
-	connect(sysnetwork_, SIGNAL(toggled(bool)), this, SLOT(setX11(bool)));
 
 	home_ = new HomeWidget;
 	QGroupBox *home_box = new QGroupBox(tr("Home Directory"));
@@ -291,7 +303,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	home_box->setLayout(home_box_layout);
 	home_->setEnabled(false);
 	connect(whitelisted_home_, SIGNAL(toggled(bool)), this, SLOT(setHome(bool)));
-	
+	global_home_widget = home_;
 
 	QWidget *w = new QWidget;
 	w->setMinimumHeight(8);
@@ -317,7 +329,7 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
 	setSubTitle(global_subtitle);
 
-	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox - continued..."));
+	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox... continued...</b>"));
 
 	
 	nosound_ = new QCheckBox("Disable sound");
@@ -348,16 +360,6 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 		seccomp_->setChecked(true);
 	registerField("seccomp", seccomp_);
 	
-	nonewprivs_ = new QCheckBox("Enable nonewprivs");
-	if (kernel_major == 3 && kernel_minor < 5) {
-	   	if (arg_debug)
-	   		printf("disabling nonewprivs\n");
-		nonewprivs_->setEnabled(false);
-	}
-	else
-		nonewprivs_->setChecked(true);
-	registerField("nonewprivs", nonewprivs_);
-	
 	caps_ = new QCheckBox("Disable all Linux capabilities");
 	caps_->setChecked(true);
 	registerField("caps", caps_);
@@ -379,7 +381,6 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
 	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
 	kernel_box_layout->addWidget(seccomp_);
-	kernel_box_layout->addWidget(nonewprivs_);
 	kernel_box_layout->addWidget(caps_);
 	kernel_box_layout->addWidget(noroot_);
 	kernel_box_layout->addWidget(apparmor_);
