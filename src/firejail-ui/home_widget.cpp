@@ -27,6 +27,7 @@
 #include <QCheckBox>
 #include "firejail_ui.h"
 #include "home_widget.h"
+#include "../common/utils.h"
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -56,7 +57,7 @@ void HomeWidget::readFiles() {
 		// allow only directorries 
 		struct stat s;
 		char *name;
-		if (asprintf(&name, "/home/netblue/%s", entry->d_name) == -1)
+		if (asprintf(&name, "%s/%s", get_home_directory(), entry->d_name) == -1)
 			errExit("asprintf");
 		if (stat(name, &s) == -1) {
 			free(name);
@@ -76,11 +77,18 @@ void HomeWidget::readFiles() {
 }
 
 QString HomeWidget::getContent() {
-	for(int i = 0; i < count(); ++i) {
-		QListWidgetItem* item = item(i);
-
-
 	QString retval = QString("");
+
+	for(int i = 0; i < count(); ++i) {
+		QListWidgetItem* ptr = item(i);
+		
+		QCheckBox *box = (QCheckBox *) itemWidget(ptr);
+		if (box->isChecked()) {
+			QString name = box->text();
+			retval += "whitelist ~/" + box->text() + "\n";
+		}	
+	}
+
 	return retval;
 
 }

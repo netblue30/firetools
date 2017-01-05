@@ -91,41 +91,81 @@ void Wizard::accept() {
 		QString profarg = QString("--profile=") + QString(profname);
 		arguments << profarg;
 	
+	
+		if (arg_debug) {
+			printf("\n");
+			printf("##################\n");
+			printf("# Warning: OverlayFS is not coverd in profile files.\n");
+			printf("# Please use --overlay-tmpfs on firejail command line.\n");
+			printf("############## start of profile file\n");
+		}	
+
 		// include	
 		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
 		dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
-		
+		if (arg_debug) {
+			printf("include /etc/firejail/disable-common.inc\n");
+			printf("include /etc/firejail/disable-passwdmgr.inc\n");
+		}	
+			
 		// home directory
 		if (field("restricted_home").toBool()) {
-			getContent();
-			
+			QString whitelist = global_home_widget->getContent();
+			if (whitelist.isEmpty())
+				whitelist = QString("private\n");
+			else
+				whitelist += QString("include /etc/firejail/whitelist-common.inc\n");
+			dprintf(fd, "%s", whitelist.toUtf8().data());
+			if (arg_debug)
+				printf("%s", whitelist.toUtf8().data());
 		}
 		
 		// filesystem
-		dprintf(fd, "\n# filesystem\n");
-		if (field("private_tmp").toBool())
+		if (field("private_tmp").toBool()) {
 			dprintf(fd, "private-tmp\n");
-		if (field("private_dev").toBool())
+			if (arg_debug)
+				printf("private-tmp\n");
+		}
+		if (field("private_dev").toBool()) {
 			dprintf(fd, "private-dev\n");
+			if (arg_debug)
+				printf("private-dev\n");
+		}
 		if (field("mnt_media").toBool()) {
 			dprintf(fd, "blacklist /mnt\n");
 			dprintf(fd, "blacklist /media\n");
+			if (arg_debug)
+				printf("blacklist /mnt\nblacklist /media\n");
 		}
 		if (field("overlayfs").toBool())
 			arguments << QString("--overlay-tmpfs");
 	
 		// kernel
-		dprintf(fd, "\n# kernel\n");
 		if (field("seccomp").toBool()) {
 			dprintf(fd, "seccomp\n");
 			dprintf(fd, "nonewprivs\n");
+			if (arg_debug)
+				printf("seccomp\nnonewprivs\n");
 		}
-		if (field("caps").toBool())
+		if (field("caps").toBool()) {
 			dprintf(fd, "caps.drop all\n");
-		if (field("noroot").toBool())
+			if (arg_debug)
+				printf("caps.drop all\n");
+		}
+		if (field("noroot").toBool()) {
 			dprintf(fd, "noroot\n");
-		if (field("apparmor").toBool())
+			if (arg_debug)
+				printf("noroot\n");
+		}
+		if (field("apparmor").toBool()) {
 			dprintf(fd, "apparmor");
+			if (arg_debug)
+				printf("apparmor");
+		}
+		if (arg_debug) {
+			printf("############# end of profile file\n");
+			printf("\n");
+		}
 	}
 	
 	// debug
@@ -246,10 +286,10 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
 	setSubTitle(global_subtitle);
 
-	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox"));
+	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox</b>"));
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
-	registerField("restrict_home", nonetwork_);
+	registerField("restricted_home", whitelisted_home_);
 	private_dev_ = new QCheckBox("Restrict /dev directory");
 	private_dev_->setChecked(true);
 	registerField("private_dev", private_dev_);

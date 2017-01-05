@@ -149,6 +149,8 @@ AppEntry* appdb_load_file(void) {
 	}
 	
 	fclose(fp);
+	if (arg_debug)
+		printf("menus loaded\n");	
 	return retval;
 }
 

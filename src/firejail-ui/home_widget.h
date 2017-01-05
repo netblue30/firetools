@@ -29,7 +29,7 @@ class HomeWidget : public QListWidget {
 
 public:
 	HomeWidget(QWidget * parent = 0);
-	QSting getContent();
+	QString getContent();
 
 private:
 	void readFiles();
