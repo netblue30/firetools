@@ -321,6 +321,11 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 //	fs_box->setFlat(false);
 //	fs_box->setCheckable(true);
 	
+	
+	// networking
+printf("**********\n");	
+	detect_network();
+printf("**********\n");	
 	sysnetwork_ = new QRadioButton("System network");
 	sysnetwork_->setChecked(true);
 	registerField("sysnetwork", sysnetwork_);

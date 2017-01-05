@@ -9,6 +9,7 @@ QT += widgets
  		home_widget.cpp \
  		help_widget.cpp \
  		appdb.cpp \
+ 		network.cpp \
 		../common/utils.cpp \
 		../common/pid.cpp
 RESOURCES = firejail-ui.qrc

@@ -26,4 +26,7 @@ extern int svg_not_found;
 extern int kernel_major;
 extern int kernel_minor;
 
+// network.cpp
+void detect_network();
+
 #endif
