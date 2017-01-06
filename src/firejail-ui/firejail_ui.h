@@ -27,6 +27,6 @@ extern int kernel_major;
 extern int kernel_minor;
 
 // network.cpp
-void detect_network();
+const char *detect_network();
 
 #endif

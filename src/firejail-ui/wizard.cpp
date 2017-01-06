@@ -47,6 +47,7 @@ QString global_subtitle(
 	"applications using the latest Linux kernel sandboxing technologies."
 );
 HomeWidget *global_home_widget;
+QString global_ifname = "";
 
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
@@ -94,9 +95,6 @@ void Wizard::accept() {
 	
 		if (arg_debug) {
 			printf("\n");
-			printf("##################\n");
-			printf("# Warning: OverlayFS is not coverd in profile files.\n");
-			printf("# Please use --overlay-tmpfs on firejail command line.\n");
 			printf("############## start of profile file\n");
 		}	
 
@@ -137,9 +135,22 @@ void Wizard::accept() {
 			if (arg_debug)
 				printf("blacklist /mnt\nblacklist /media\n");
 		}
-		if (field("overlayfs").toBool())
-			arguments << QString("--overlay-tmpfs");
 	
+		// network
+		if (field("sysnetwork").toBool()) {
+			;
+		}
+		else if (field("nonetwork").toBool()) {
+			dprintf(fd, "net none\n");
+			if (arg_debug)
+				printf("net none\n");
+		}	
+		else if (field("netnamespace").toBool()) {
+			dprintf(fd, "net %s\nnetfilter\n", global_ifname.toUtf8().data());
+			if (arg_debug)
+				printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
+		}
+			
 		// kernel
 		if (field("seccomp").toBool()) {
 			dprintf(fd, "seccomp\n");
@@ -156,11 +167,6 @@ void Wizard::accept() {
 			dprintf(fd, "noroot\n");
 			if (arg_debug)
 				printf("noroot\n");
-		}
-		if (field("apparmor").toBool()) {
-			dprintf(fd, "apparmor");
-			if (arg_debug)
-				printf("apparmor");
 		}
 		if (arg_debug) {
 			printf("############# end of profile file\n");
@@ -302,30 +308,19 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	mnt_media_->setChecked(true);
 	registerField("mnt_media", mnt_media_);
 
-	overlayfs_ = new QCheckBox("OverlayFS");
-	if (kernel_major == 3 && kernel_minor < 18) {
-	   	if (arg_debug)
-	   		printf("disabling overlayfs\n");
-		overlayfs_->setEnabled(false);
-	}
-	registerField("overlayfs", overlayfs_);
-
 	QGroupBox *fs_box = new QGroupBox(tr("File System"));
 	QVBoxLayout *fs_box_layout = new QVBoxLayout;
 	fs_box_layout->addWidget(whitelisted_home_);
 	fs_box_layout->addWidget(private_dev_);
 	fs_box_layout->addWidget(private_tmp_);
 	fs_box_layout->addWidget(mnt_media_);
-	fs_box_layout->addWidget(overlayfs_);
 	fs_box->setLayout(fs_box_layout);
 //	fs_box->setFlat(false);
 //	fs_box->setCheckable(true);
 	
 	
 	// networking
-printf("**********\n");	
-	detect_network();
-printf("**********\n");	
+	global_ifname = detect_network();
 	sysnetwork_ = new QRadioButton("System network");
 	sysnetwork_->setChecked(true);
 	registerField("sysnetwork", sysnetwork_);
@@ -333,11 +328,17 @@ printf("**********\n");
 	nonetwork_ = new QRadioButton("Disable networking");
 	registerField("nonetwork", nonetwork_);
 	
-	namespace_network_ = new QRadioButton("Namespace");	
+	if (global_ifname.isEmpty()) {
+		netnamespace_ = new QRadioButton("Namespace");
+		netnamespace_->setEnabled(false);
+	}
+	else
+		netnamespace_ = new QRadioButton(QString("Namespace (") + global_ifname + ")");
+	registerField("netnamespace", netnamespace_);
 	QGroupBox *net_box = new QGroupBox(tr("Networking"));
 	QVBoxLayout *net_box_layout = new QVBoxLayout;
 	net_box_layout->addWidget(sysnetwork_);
-	net_box_layout->addWidget(namespace_network_);
+	net_box_layout->addWidget(netnamespace_);
 	net_box_layout->addWidget(nonetwork_);
 	net_box->setLayout(net_box_layout);
 
@@ -419,16 +420,11 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 		noroot_->setChecked(true);
 	registerField("noroot", noroot_);
 
-	apparmor_ = new QCheckBox("AppArmor");
-//	apparmor_->setEnabled(false);
-	registerField("apparmor", apparmor_);
-
 	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
 	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
 	kernel_box_layout->addWidget(seccomp_);
 	kernel_box_layout->addWidget(caps_);
 	kernel_box_layout->addWidget(noroot_);
-	kernel_box_layout->addWidget(apparmor_);
 	kernel_box->setLayout(kernel_box_layout);
 
 	QWidget *w = new QWidget;

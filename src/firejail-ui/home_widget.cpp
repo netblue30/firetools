@@ -39,9 +39,9 @@ HomeWidget::HomeWidget(QWidget * parent): QListWidget(parent) {
 }
 
 void HomeWidget::readFiles() {
-	DIR *dir = opendir("/home/netblue");
+	char *homedir = get_home_directory();
+	DIR *dir = opendir(homedir);
 	if (!dir)
-// todo: error recovery
 		errExit("opendir");
 	
 	struct dirent *entry;
@@ -57,7 +57,7 @@ void HomeWidget::readFiles() {
 		// allow only directorries 
 		struct stat s;
 		char *name;
-		if (asprintf(&name, "%s/%s", get_home_directory(), entry->d_name) == -1)
+		if (asprintf(&name, "%s/%s", homedir, entry->d_name) == -1)
 			errExit("asprintf");
 		if (stat(name, &s) == -1) {
 			free(name);

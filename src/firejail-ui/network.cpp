@@ -32,9 +32,45 @@
 #include <linux/if.h>
 #include <linux/if_link.h>
 #include <linux/wireless.h>
+#include <sys/ioctl.h>
 
-#if 0
-//https://gist.github.com/edufelipe/6108057
+#define BUFSIZE 1024
+
+// return default gateway for the system in host format
+uint32_t network_get_defaultgw() {
+	FILE *fp = fopen("/proc/self/net/route", "r");
+	if (!fp)
+		// probably we are dealing with a GrSecurity system
+		return 0; // attempt error recovery
+	
+	char buf[BUFSIZE];
+	uint32_t retval = 0;
+	while (fgets(buf, BUFSIZE, fp)) {
+		if (strncmp(buf, "Iface", 5) == 0)
+			continue;
+		
+		char *ptr = buf;
+		while (*ptr != ' ' && *ptr != '\t')
+			ptr++;
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+			
+		unsigned dest;
+		unsigned gw;
+		int rv = sscanf(ptr, "%x %x", &dest, &gw);
+		if (rv == 2 && dest == 0) {
+			retval = ntohl(gw);
+			break;
+		}
+	}
+
+	fclose(fp);
+	return retval;
+}
+
+
+
+// return 1 if the interface is a wireless interface
 int check_wireless(const char* ifname, char* protocol) {
 	int sock = -1;
 	struct iwreq pwrq;
@@ -42,12 +78,13 @@ int check_wireless(const char* ifname, char* protocol) {
 	strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		perror("socket");
+		perror("sockqet");
 		return 0;
 	}
 
 	if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
-		if (protocol) strncpy(protocol, pwrq.u.name, IFNAMSIZ);
+		if (protocol)
+			strncpy(protocol, pwrq.u.name, IFNAMSIZ);
 		close(sock);
 		return 1;
 	}
@@ -55,20 +92,24 @@ int check_wireless(const char* ifname, char* protocol) {
 	close(sock);
 	return 0;
 }
-#endif
 
 // detect network
-void detect_network() {
+const char *detect_network() {
 	struct ifaddrs *ifaddr, *ifa;
-	int n;
 
 	if (getifaddrs(&ifaddr) == -1)
 		errExit("getifaddrs");
-
-	/* Walk through linked list, maintaining head pointer so we
-	   can free list later */
-
-	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+		
+	// find the default gateway
+	uint32_t gw = network_get_defaultgw();
+	printf("default gateway %d.%d.%d.%d\n", PRINT_IP(gw));
+	if (gw == 0) {
+		fprintf(stderr, "Warning: cannot find the default gateway. Networking namespace is disabled.\n");
+		return "";
+	}
+	
+	// Walk through linked list, maintaining head pointer so we can free list later
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
 		if (ifa->ifa_addr == NULL)
 			continue;
 
@@ -80,12 +121,29 @@ void detect_network() {
 		if (ifa->ifa_flags & IFF_LOOPBACK)
 			continue;
 
-		char *addr = inet_ntoa(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr);
+		// interface not running
+		if ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) != (IFF_UP | IFF_RUNNING))
+			continue;
+		
+		// no wireless
+		if (check_wireless(ifa->ifa_name, NULL))
+			continue;
 
-		printf("%-8s  %s\n", ifa->ifa_name, addr);
-		// check /sys/class/net/NETDEVICE/wireless
+		uint32_t if_addr = ntohl(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr.s_addr);
+		uint32_t if_mask = ntohl(((struct sockaddr_in *)ifa->ifa_netmask)->sin_addr.s_addr);
+		printf("%s %d.%d.%d.%d %d.%d.%d.%d\n", 
+			ifa->ifa_name, PRINT_IP(if_addr), PRINT_IP(if_mask));
+
+		// check default gateway is resolved on this interface
+		if (in_netrange(gw, if_addr, if_mask) == NULL) {
+			char *ifname = strdup(ifa->ifa_name);
+			if (!ifname)
+				errExit("strdup");
+			freeifaddrs(ifaddr);
+			return ifname;
+		}
 	}
-
+	fprintf(stderr, "Warning: no suitable interface detected for network namespace.\n");
 	freeifaddrs(ifaddr);
-
+	return "";
 }

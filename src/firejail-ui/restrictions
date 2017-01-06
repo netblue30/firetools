@@ -2,6 +2,6 @@ Sandbox feature dependencies:
 
 - seccomp, nonewpriv - kernel 3.5 (done)
 - noroot - kernel 3.8 (done)
-- overlayfs - kernel 3.18 (done)
+- overlayfs - kernel 3.18
 - nox11 only with a network namespace (done)
 - net= doesn't work on wireless interfaces

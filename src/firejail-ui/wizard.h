@@ -84,13 +84,12 @@ private:
 	QCheckBox *private_dev_;
 	QCheckBox *private_tmp_;
 	QCheckBox *mnt_media_;
-	QCheckBox *overlayfs_;
 	HomeWidget *home_;
 
 	// networking
 	QRadioButton *sysnetwork_;
 	QRadioButton *nonetwork_;
-	QRadioButton *namespace_network_;
+	QRadioButton *netnamespace_;
 };
 
 class ConfigPage2 : public QWizardPage {
@@ -114,7 +113,6 @@ private:
 	QCheckBox *seccomp_;
 	QCheckBox *caps_;
 	QCheckBox *noroot_;
-	QCheckBox *apparmor_;
 };
 
 class StartSandboxPage : public QWizardPage {
