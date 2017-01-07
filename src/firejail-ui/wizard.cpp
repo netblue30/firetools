@@ -92,19 +92,15 @@ void Wizard::accept() {
 		QString profarg = QString("--profile=") + QString(profname);
 		arguments << profarg;
 	
-	
-		if (arg_debug) {
-			printf("\n");
-			printf("############## start of profile file\n");
-		}	
+		// always print the profile on stdout
+		printf("\n");
+		printf("############## start of profile file\n");
 
 		// include	
 		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
 		dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
-		if (arg_debug) {
-			printf("include /etc/firejail/disable-common.inc\n");
-			printf("include /etc/firejail/disable-passwdmgr.inc\n");
-		}	
+		printf("include /etc/firejail/disable-common.inc\n");
+		printf("include /etc/firejail/disable-passwdmgr.inc\n");
 			
 		// home directory
 		if (field("restricted_home").toBool()) {
@@ -114,26 +110,22 @@ void Wizard::accept() {
 			else
 				whitelist += QString("include /etc/firejail/whitelist-common.inc\n");
 			dprintf(fd, "%s", whitelist.toUtf8().data());
-			if (arg_debug)
-				printf("%s", whitelist.toUtf8().data());
+			printf("%s", whitelist.toUtf8().data());
 		}
 		
 		// filesystem
 		if (field("private_tmp").toBool()) {
 			dprintf(fd, "private-tmp\n");
-			if (arg_debug)
-				printf("private-tmp\n");
+			printf("private-tmp\n");
 		}
 		if (field("private_dev").toBool()) {
 			dprintf(fd, "private-dev\n");
-			if (arg_debug)
-				printf("private-dev\n");
+			printf("private-dev\n");
 		}
 		if (field("mnt_media").toBool()) {
 			dprintf(fd, "blacklist /mnt\n");
 			dprintf(fd, "blacklist /media\n");
-			if (arg_debug)
-				printf("blacklist /mnt\nblacklist /media\n");
+			printf("blacklist /mnt\nblacklist /media\n");
 		}
 	
 		// network
@@ -142,36 +134,44 @@ void Wizard::accept() {
 		}
 		else if (field("nonetwork").toBool()) {
 			dprintf(fd, "net none\n");
-			if (arg_debug)
-				printf("net none\n");
+			printf("net none\n");
 		}	
 		else if (field("netnamespace").toBool()) {
 			dprintf(fd, "net %s\nnetfilter\n", global_ifname.toUtf8().data());
-			if (arg_debug)
-				printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
+			printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
 		}
+		
+		// multimedia
+		if (field("nosound").toBool()) {
+			dprintf(fd, "nosound\n");
+			printf("nosound\n");
+		}
+		if (field("no3d").toBool()) {
+			dprintf(fd, "no3d\n");
+			printf("no3d\n");
+		}
+		if (field("nox11").toBool()) {
+			dprintf(fd, "x11 none\n");
+			printf("x11 none\n");
+		}
+		
 			
 		// kernel
 		if (field("seccomp").toBool()) {
 			dprintf(fd, "seccomp\n");
 			dprintf(fd, "nonewprivs\n");
-			if (arg_debug)
-				printf("seccomp\nnonewprivs\n");
+			printf("seccomp\nnonewprivs\n");
 		}
 		if (field("caps").toBool()) {
 			dprintf(fd, "caps.drop all\n");
-			if (arg_debug)
-				printf("caps.drop all\n");
+			printf("caps.drop all\n");
 		}
 		if (field("noroot").toBool()) {
 			dprintf(fd, "noroot\n");
-			if (arg_debug)
-				printf("noroot\n");
+			printf("noroot\n");
 		}
-		if (arg_debug) {
-			printf("############# end of profile file\n");
-			printf("\n");
-		}
+		printf("############# end of profile file\n");
+		printf("\n");
 	}
 	
 	// debug
@@ -376,8 +376,6 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox... continued...</b>"));
-
-	
 	nosound_ = new QCheckBox("Disable sound");
 	registerField("nosound", nosound_);
 	
@@ -441,12 +439,14 @@ int ConfigPage2::nextId() const {
 	return Wizard::Page_StartSandbox;
 }
 
+
 void ConfigPage2::initializePage() {
 	if (field("sysnetwork").toBool())
 		nox11_->setEnabled(false);
 	else
 		nox11_->setEnabled(true);
 }
+
 
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);

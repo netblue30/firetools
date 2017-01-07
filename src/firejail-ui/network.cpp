@@ -102,7 +102,7 @@ const char *detect_network() {
 		
 	// find the default gateway
 	uint32_t gw = network_get_defaultgw();
-	printf("default gateway %d.%d.%d.%d\n", PRINT_IP(gw));
+	printf("default gateway detected: %d.%d.%d.%d\n", PRINT_IP(gw));
 	if (gw == 0) {
 		fprintf(stderr, "Warning: cannot find the default gateway. Networking namespace is disabled.\n");
 		return "";
@@ -131,7 +131,7 @@ const char *detect_network() {
 
 		uint32_t if_addr = ntohl(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr.s_addr);
 		uint32_t if_mask = ntohl(((struct sockaddr_in *)ifa->ifa_netmask)->sin_addr.s_addr);
-		printf("%s %d.%d.%d.%d %d.%d.%d.%d\n", 
+		printf("network interface: %s %d.%d.%d.%d %d.%d.%d.%d\n", 
 			ifa->ifa_name, PRINT_IP(if_addr), PRINT_IP(if_mask));
 
 		// check default gateway is resolved on this interface
