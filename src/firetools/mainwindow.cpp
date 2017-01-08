@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	active_index_ = -1;
 	edit_index_ = -1;
 	animation_id_ = 0;
-	stats_ = new StatsDialog();
-	connect(this, SIGNAL(cycleReadySignal()), stats_, SLOT(cycleReady()));
+//	stats_ = new StatsDialog();
+//	connect(this, SIGNAL(cycleReadySignal()), stats_, SLOT(cycleReady()));
 
 	// check firejail
 	if (!which("firejail")) {
@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	applications_init();
 	createTrayActions();
 	createLocalActions();
-	thread_ = new PidThread();
-	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
+//	thread_ = new PidThread();
+//	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
 
 	setContextMenuPolicy(Qt::ActionsContextMenu);
 	setToolTip(tr("Double click on an icon to open an application.\n"
@@ -165,8 +165,8 @@ void MainWindow::run() {
 }
 
 void MainWindow::runTools() {
-	stats_->show();
-	emit cycleReadySignal();
+//	stats_->show();
+//	emit cycleReadySignal();
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
@@ -375,11 +375,11 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 
 	if (isVisible()) {
 		hide();
-		stats_->hide();
+//		stats_->hide();
 	}
 	else {
 		show();
-		stats_->hide();
+//		stats_->hide();
 	}
 }
 
@@ -387,7 +387,7 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 void MainWindow::createTrayActions() {
 	minimizeAction = new QAction(tr("Mi&nimize"), this);
 	connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-	connect(minimizeAction, SIGNAL(triggered()), stats_, SLOT(hide()));
+//	connect(minimizeAction, SIGNAL(triggered()), stats_, SLOT(hide()));
 
 	restoreAction = new QAction(tr("&Restore"), this);
 	connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
