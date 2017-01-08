@@ -1,7 +1,7 @@
-Emulators;VirtualBox;/usr/bin/virtualbox
 Accessibility;Florence virtual keyboard;/usr/bin/florence
 Accessibility;Xmag;xmag
 Editors;Abiword word processor;/usr/bin/abiword
+Editors;Bluefish;/usr/bin/bluefish
 Editors;CherryTree note taking application;/usr/bin/cherrytree
 Editors;Focuswriter;/usr/bin/focuswriter
 Editors;FTE;/usr/bin/xfte
@@ -18,6 +18,7 @@ Editors;NEdit;/usr/bin/nedit
 Editors;nobleNote;/usr/bin/noblenote
 Editors;Plume Creator;/usr/bin/plume-creator
 Editors;PyRoom;/usr/bin/pyroom
+Editors;Quanta Plus;/usr/bin/quanta
 Editors;ReText;/usr/bin/retext
 Editors;SciTE;/usr/bin/scite
 Editors;Sigil;/usr/bin/sigil
@@ -25,86 +26,112 @@ Editors;TEA;/usr/bin/tea
 Editors;TeXstudio;/usr/bin/texstudio
 Editors;TeXworks;/usr/bin/texworks
 Editors;X2;/usr/bin/x2
-Editors;xJed;/usr/bin/xjed
 Editors;Xedit;xedit
-Editors;Bluefish;/usr/bin/bluefish
-Editors;Quanta Plus;/usr/bin/quanta
+Editors;xJed;/usr/bin/xjed
+Emulators;VirtualBox;/usr/bin/virtualbox
 File Management;Brasero CD/DVD burning application;/usr/bin/brasero
+File Management;Caja file manager;/usr/bin/caja
+File Management;Dolphin file manager;/usr/bin/dolphin
+File Management;gentoo file manager;/usr/bin/gentoo
+File Management;GNOME Commander file manager;/usr/bin/gnome-commander
+File Management;Konqueror file manager;/usr/bin/konqueror
+File Management;Krusader file manager;/usr/bin/krusader
 File Management;Launchy;/usr/bin/launchy
-File Management;LXDE file manager (pcmanfm);pcmanfm
+File Management;Nautilus file manager;/usr/bin/nautilus
+File Management;Nemo file manager;/usr/bin/nemo
+File Management;PCManFM file manager;pcmanfm
+File Management;ROX-Filer file manager;/usr/bin/rox-filer
+File Management;SpaceFM file manager;/usr/bin/spacefm
+File Management;Thunar file manager;/usr/bin/thunar
+File Management;Worker file manager;/usr/bin/worker
 File Management;Xarchiver;/usr/bin/xarchiver
-Games;Blobwars;/usr/games/blobwars
-Games;Micropolis;/usr/games/micropolis
-Games;Oclock;oclock
-Games;Penguin Command;/usr/games/penguin-command
-Games;Simutrans;/usr/games/simutrans
-Games;Warzone 2100;/usr/games/warzone2100
-Games;Xclock (analog);xclock -analog
-Games;Xclock (digital);xclock -digital -update 1
-Games;Xeyes;xeyes
-Games;Xlogo;xlogo
+File Management;Xfe file manager;/usr/bin/xfe
 Games;0 A.D.;/usr/games/0ad
 Games;2048 puzzle;/usr/games/2048-qt
 Games;3dchess;/usr/games/3Dc
 Games;4digits;/usr/games/4digits
+Games;ALIEN ARENA;/usr/games/alien-arena
+Games;AssaultCube;/usr/games/assaultcube
+Games;Blobwars;/usr/games/blobwars
+Games;Bomber;/usr/games/bomber
+Games;Extreme Tux Racer;/usr/games/etr
+Games;Flight Gear;/usr/games/fgfs
+Games;Freeciv;/usr/games/freeciv
+Games;Frozen-Bubble;/usr/games/frozen-bubble
+Games;Hedgewars;/usr/games/hedgewars
+Games;Micropolis;/usr/games/micropolis
+Games;Nexuiz Classic;/usr/games/nexuiz
+Games;Oclock;oclock
+Games;Open Transport Tycoon Deluxe;/usr/games/openttd
+Games;Penguin Command;/usr/games/penguin-command
+Games;Quake 4;/usr/games/quake4
+Games;Quake III Arena;/usr/games/quake3
+Games;Quake II;/usr/games/quake2
+Games;Quake;/usr/games/quake
+Games;Return to Castle Wolfenstein;/usr/games/wolfsp
+Games;Scorched3D;/usr/games/scorched3d
 Games;Seven Kingdoms;/usr/games/7kaa
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Games;
-Graphics;Blender;/usr/bin/blender
-Graphics;MyPaint;/usr/bin/mypaint
-Graphics;mtPaint;/usr/bin/mtpaint
-Graphics;gnome-paint;/usr/bin/gnome-paint
+Games;Simutrans;/usr/games/simutrans
+Games;Starfighter;/usr/games/starfighter
+Games;SuperTuxKart;/usr/games/supertuxkart
+Games;SuperTux;/usr/games/supertux2
+Games;TORCS;/usr/games/torcs
+Games;UFO: Alien Invasion;/usr/games/ufoai
+Games;Unknown Horizons;/usr/games/unknown-horizons
+Games;Warzone 2100;/usr/games/warzone2100
+Games;Wolfenstein 3D;/usr/games/wolf4sdl
+Games;Xclock (analog);xclock -analog
+Games;Xclock (digital);xclock -digital -update 1
+Games;Xeyes;xeyes
+Games;Xlogo;xlogo
 Graphics;Allegro Sprite Editor;/usr/bin/aseprite
+Graphics;Blender;/usr/bin/blender
 Graphics;Darktable;/usr/bin/darktable
 Graphics;Diagram editor;/usr/bin/dia
 Graphics;digiKam;/usr/bin/digikam
+Graphics;gnome-paint;/usr/bin/gnome-paint
+Graphics;ImageMagick;/usr/bin/display.im6 logo:*
+Graphics;Inkscape;/usr/bin/inkscape
 Graphics;Ipe;/usr/bin/ipe
 Graphics;K-3D;/usr/bin/k3d
 Graphics;Karbon;/usr/bin/karbon
 Graphics;Krita;/usr/bin/krita
+Graphics;luminance-hdr;/usr/bin/luminance-hdr
+Graphics;mtPaint;/usr/bin/mtpaint
+Graphics;MyPaint;/usr/bin/mypaint
 Graphics;Ocamlgraph;/usr/bin/ocamlgraph-editor
 Graphics;Pencil2D;/usr/bin/pencil2d
 Graphics;PhotoCollage;/usr/bin/photocollage
 Graphics;Pinta;/usr/bin/pinta
 Graphics;rgbPaint;/usr/bin/rgbpaint
 Graphics;showFoto;/usr/bin/showfoto
+Graphics;Synfig Studio;/usr/bin/synfigstudio
 Graphics;Tgif;/usr/bin/tgif
+Graphics;The GIMP;/usr/bin/gimp
 Graphics;Trimage;/usr/bin/trimage
+Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
 Graphics;Tux Paint;/usr/bin/tuxpaint
 Graphics;Whitedune;/usr/bin/whitedune
 Graphics;XPaint;/usr/bin/xpaint
-Graphics;ImageMagick;/usr/bin/display.im6 logo:*
-Graphics;Inkscape;/usr/bin/inkscape
-Graphics;luminance-hdr;/usr/bin/luminance-hdr
-Graphics;MyPaint;/usr/bin/mypaint
-Graphics;Synfig Studio;/usr/bin/synfigstudio
-Graphics;The GIMP;/usr/bin/gimp
-Graphics;tupi - 2D Animation design and authoring tool;/usr/bin/tupi
 Graphics;X Window Snapshot;xwd | xwud*
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
 Network;Chromium;/usr/bin/chromium
 Network;Deluge BitTorrent Client;/usr/bin/deluge
 Network;Dillo;/usr/bin/dillo
+Network;dwb;/usr/bin/dwb
 Network;FileZilla;/usr/bin/filezilla
 Network;Firefox-ESR;/usr/bin/firefox-esr
 Network;Firefox;/usr/bin/firefox
 Network;HexChat;/usr/bin/hexchat
+Network;Hv3;/usr/bin/hv3
 Network;Icedove Mail;icedove
 Network;Iceweasel;/usr/bin/iceweasel
+Network;Konqueror;/usr/bin/konqueror
 Network;Liferea;/usr/bin/liferea
 Network;Netsurf Web Browser;/usr/bin/netsurf-gtk
 Network;qBittorrent;/usr/bin/qbittorrent
+Network;QuiteRSS;/usr/bin/quiterss
 Network;Transmission BitTorrent Client (GTK);/usr/bin/transmission-gtk
 Network;Transmission BitTorrent Client (Qt);/usr/bin/transmission-qt
 Network;Uget;/usr/bin/uget-gtk
@@ -112,40 +139,49 @@ Network;Wireshark;/usr/bin/wireshark
 Network;Xbiff;xbiff
 Network;X Chat;/usr/bin/xchat
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
-Network;dwb;/usr/bin/dwb
-Network;Hv3;/usr/bin/hv3
-Network;Konqueror;/usr/bin/konqueror
-Network;QuiteRSS;/usr/bin/quiterss
-Network;
-Network;
-Network;
-Network;
-Network;
-Network;
-Network;
-Network;
-
-
-
 Office;Calibre eBook reader;/usr/bin/calibre
+Office;LibreOffice Base;/usr/bin/lobase
+Office;LibreOffice Calc;/usr/bin/localc
+Office;LibreOffice Charts;/usr/bin/locharts
+Office;LibreOffice Draw;/usr/bin/lodraw
+Office;LibreOffice Impress;/usr/bin/loimpress
+Office;LibreOffice Math;/usr/bin/lomath
+Office;LibreOffice;/usr/bin/libreoffice
+Office;LibreOffice Writer;/usr/bin/lowriter
+Office;Scribus;/usr/bin/scribus
 Office;zathura;/usr/bin/zathura
-Office:
-Office:
-Office:
-Office:Scribus;/usr/bin/scribus
 Programming;Geany;/usr/bin/geany
 Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
 Science;Xcalc;xcalc
 Sound;Alsamixergui;/usr/bin/alsamixergui
+Sound;Amarok;/usr/bin/amarok
+Sound;AScd;/usr/bin/ascd
+Sound;Asunder;/usr/bin/asunder
+Sound;Audacious;/usr/bin/audacious
+Sound;Audacity;/usr/bin/audacity
+Sound;Banshee;/usr/bin/banshee
+Sound;cccd;/usr/bin/cccd
+Sound;Clementine;/usr/bin/clementine
 Sound;Echomixer;/usr/bin/echomixer
 Sound;Envy24 control;/usr/bin/envy24control
 Sound;HDAJackRetask;/usr/bin/hdajackretask
 Sound;HDSPConf;/usr/bin/hdspconf
 Sound;HDSPMixer;/usr/bin/hdspmixer
+Sound;KMix;/usr/bin/kmix
+Sound;Kowthelist;/usr/bin/knowthelist
+Sound;KRadio;/usr/bin/kradio4
+Sound;KsCD;/usr/bin/kscd
+Sound;Linux Multimedia Studio;/usr/bin/lmms
+Sound;LXMusic;/usr/bin/lxmusic
+Sound;MusE MIDI/audio sequencer;/usr/bin/muse
+Sound;MuseScore;/usr/bin/musescore
+Sound;Musique;/usr/bin/musique
 Sound;paman;/usr/bin/paman
 Sound;pavucontrol;/usr/bin/pavucontrol
 Sound;pavumeter;/usr/bin/pavumeter
+Sound;PulseAudio Volume Control;/usr/bin/pavucontrol
+Sound;PulseAudio Volume Meter;/usr/bin/pavumeter
 Sound;Rmedigicontrol;/usr/bin/rmedigicontrol
 System;About Myself;/usr/bin/userinfo
 System;Disk Management;/usr/bin/usermount
@@ -175,21 +211,18 @@ Terminal Emulators;X-Terminal as root (GKsu);/usr/bin/gksu -u root /usr/bin/x-te
 Terminal Emulators;XTerm (Unicode);uxterm
 Terminal Emulators;XTerm;xterm
 Text;Character map;/usr/bin/gucharmap
-Video;Flowblade;/usr/bin/flowblade
-Video;MKV Creator;/usr/bin/mmg
-Video;mpv Media Player;/usr/bin/mpv
-Video;VLC media player;/usr/bin/qvlc
-Video;HandBrake;/usr/bin/handbrake
 Video;Bino;/usr/bin/bino
 Video;DeVeDe;/usr/bin/devede
 Video;Dragon Player;/usr/bin/dragon
 Video;DvdAuthor;/usr/bin/dvdauthor
+Video;DVD slide show maker;/usr/bin/imagination
 Video;Flowblade Movie Editor;/usr/bin/flowblade
+Video;Flowblade;/usr/bin/flowblade
 Video;FreetuxTV;/usr/bin/freetuxtv
 Video;gnome-mplayer;/usr/bin/gnome-mplayer
 Video;gnome-mpv;/usr/bin/gnome-mpv
 Video;gxine;/usr/bin/gxine
-Video;DVD slide show maker;/usr/bin/imagination
+Video;HandBrake;/usr/bin/handbrake
 Video;Kaffeine;/usr/bin/kaffeine
 Video;Kazam;/usr/bin/kazam
 Video;Kdenlive;/usr/bin/kdenlive
@@ -198,8 +231,10 @@ Video;KMPlayer;/usr/bin/kmplayer
 Video;KPlayer;/usr/bin/kplayer
 Video;LiVES;/usr/bin/lives
 Video;Minitube;/usr/bin/minitube
-Video;MPlayer;/usr/bin/mplayer
+Video;MKV Creator;/usr/bin/mmg
 Video;MPlayer GUI;/usr/bin/gmplayer
+Video;MPlayer;/usr/bin/mplayer
+Video;mpv Media Player;/usr/bin/mpv
 Video;OpenShot Video Editor;/usr/bin/openshot
 Video;qStopMotion;/usr/bin/qstopmotion
 Video;Simple Screen Recorder;/usr/bin/simplescreenrecorder
@@ -208,32 +243,24 @@ Video;SMTube;/usr/bin/smtube
 Video;Snappy;/usr/bin/snappy
 Video;Totem;/usr/bin/totem
 Video;tvtime;/usr/bin/tvtime
+Video;VLC media player;/usr/bin/qvlc
 Video;Voctomix;/usr/bin/voctogui
 Video;vokoscreen;/usr/bin/vokoscreen
 Video;Xine;/usr/bin/xine
-Video;
-Video;
-Video;
-Video;
-Video;
 Viewers;Evince;/usr/bin/evince
-Viewers;gThumb Image Viewer;/usr/bin/gthumb
-Viewers;Image Viewer;/usr/bin/gpicview
-Viewers;qPDFview;qpdfview
-Viewers;Xditview;xditview
-Viewers;Xpdf;/usr/bin/xpdf
-Viewers;Okular;/usr/bin/okular
 Viewers;Eye of MATE;/usr/bin/eom
 Viewers;Geeqie;/usr/bin/geeqie
 Viewers;GPicView;/usr/bin/gpicview
+Viewers;gThumb Image Viewer;/usr/bin/gthumb
 Viewers;Gwenview;/usr/bin/gwenview
+Viewers;Image Viewer;/usr/bin/gpicview
 Viewers;Mirage;/usr/bin/mirage
 Viewers;nomacs;/usr/bin/nomacs
+Viewers;Okular;/usr/bin/okular
 Viewers;Phototonic;/usr/bin/phototonic
 Viewers;QComicBook;/usr/bin/qcomicbook
+Viewers;qPDFview;qpdfview
 Viewers;Quick Image Viewer;/usr/bin/qiv
 Viewers;sxiv;/usr/bin/sxiv
-Viewers;
-Viewers;
-Viewers;
-Viewers;
+Viewers;Xditview;xditview
+Viewers;Xpdf;/usr/bin/xpdf
