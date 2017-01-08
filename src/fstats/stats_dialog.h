@@ -28,6 +28,8 @@
 class QTextBrowser;
 class QUrl;
 
+class PidThread;
+
 class StatsDialog: public QDialog {
 Q_OBJECT
 
@@ -75,6 +77,8 @@ private:
 	int caps_cnt_;
 	GraphType graph_type_;
 	bool no_network_;
+
+	PidThread *thread_;
 };
 
 

@@ -33,6 +33,7 @@
 #include "../common/utils.h"
 #include "../common/pid.h"
 #include "../../firetools_config.h"
+#include "pid_thread.h"
 extern bool data_ready;
 
 static QString getName(pid_t pid);
@@ -86,6 +87,10 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	struct stat s;
 	if (getuid() != 0 && stat("/proc/sys/kernel/grsecurity", &s) == 0) 
 		no_network_ = true;
+
+	thread_ = new PidThread();
+	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
+	
 }
 
 QString StatsDialog::header() {
@@ -130,7 +135,7 @@ QString StatsDialog::header() {
 void StatsDialog::updateTop() {
 	QString msg = header() + "<hr>";
 	msg += "<table><tr><td width=\"5\"></td><td><b>Sandbox List</b></td></tr></table><br/>\n";
-	msg += "<table><tr><td width=\"5\"></td><td width=\"60\">PID</td/><td width=\"60\">CPU(%)</td><td>Memory(KiB)&nbsp;&nbsp;</td><td>RX(KB/s)&nbsp;&nbsp;</td><td>TX(KB/s)&nbsp;&nbsp;</td><td>Command</td>\n";
+	msg += "<table><tr><td width=\"5\"></td><td width=\"60\">PID</td/><td width=\"60\">CPU<br/>(%)</td><td>Memory<br/>(KiB)&nbsp;&nbsp;</td><td>RX<br/>(KB/s)&nbsp;&nbsp;</td><td>TX<br/>(KB/s)&nbsp;&nbsp;</td><td>Command</td>\n";
 	
 	int cycle = Db::instance().getCycle();
 	assert(cycle < DbPid::MAXCYCLE);

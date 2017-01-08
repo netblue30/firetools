@@ -31,7 +31,7 @@ PidThread::PidThread(): ending_(false) {
 	start();
 }
 
-
+// todo: implement cleanup
 PidThread::~PidThread() {
 	ending_ = true;
 }

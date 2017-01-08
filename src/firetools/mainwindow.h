@@ -23,9 +23,6 @@
 #include <QAction>
 #include <QSystemTrayIcon>
 
-//class PidThread;
-//class StatsDialog;
-
 class MainWindow : public QWidget {
 Q_OBJECT
 
@@ -72,8 +69,6 @@ private:
 	int active_index_;
 	int animation_id_;
 	int edit_index_;
-//	PidThread *thread_;
-//	StatsDialog *stats_;
 	
 public:	
 	// tray
