@@ -29,8 +29,6 @@
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "applications.h"
-#include "pid_thread.h"
-#include "stats_dialog.h"
 #include "edit_dialog.h"
 
 MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint) {

@@ -29,10 +29,7 @@
 
 #include <QUrl>
 #include "edit_dialog.h"
-#include "db.h"
-#include "graph.h"
 #include "applications.h"
-#include "../common/utils.h"
 #include "../../firetools_config.h"
 
 
