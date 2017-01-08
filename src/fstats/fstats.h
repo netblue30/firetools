@@ -17,59 +17,18 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef DB_H
-#define DB_H
+#ifndef FSTATS_H
+#define FSTATS_H
+#include "../common/common.h"
 
-#include "fstats.h"
-#include "dbpid.h"
-
-
-class Db {
-public:
-	static Db& instance() {
-		static Db myinstance;
-		return myinstance;
-	}
+typedef enum {
+	GRAPH_4MIN = 0,
+	GRAPH_1H,
+	GRAPH_12H
+} GraphType;
 	
-	void newCycle();
-	int getCycle() {
-		return cycle_;
-	}
-	int getG1HCycle() {
-		return g1h_cycle_;
-	}
-	int getG1HCycleDelta() {
-		return g1h_cycle_delta_;
-	}
-	int getG12HCycle() {
-		return g12h_cycle_;
-	}
-	int getG12HCycleDelta() {
-		return g12h_cycle_delta_;
-	}
-	DbPid *firstPid() {
-		return pidlist_;
-	}
-	DbPid *newPid(pid_t pid);
-	DbPid *findPid(pid_t pid);
-	DbPid *removePid(pid_t pid);
 
-	void dbgprint();
-	void dbgprintcycle();
-		
-private:
-	Db();
-	Db(Db const&);
-	void operator=(Db const&);
-
-private:
-	int cycle_;
-	int g1h_cycle_;
-	int g1h_cycle_delta_;
-	int g12h_cycle_;
-	int g12h_cycle_delta_;
-	DbPid *pidlist_;
-};
-
+extern int arg_debug;
+extern int svg_not_found;
 
 #endif

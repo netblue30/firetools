@@ -21,6 +21,7 @@
 #define DBPID_H
 #include <sys/types.h>
 #include <unistd.h>
+#include "fstats.h"
 #include "dbstorage.h"
 
 class DbPid {

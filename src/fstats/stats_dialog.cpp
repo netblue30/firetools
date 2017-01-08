@@ -17,7 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "firetools.h"
 #include <QtGlobal>
 
 #if QT_VERSION >= 0x050000
@@ -27,7 +26,6 @@
 #endif
 
 #include <QUrl>
-#include "firetools.h"
 #include <sys/utsname.h>
 #include "stats_dialog.h"
 #include "db.h"

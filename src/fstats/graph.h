@@ -17,10 +17,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef GRAPH_h
-#define GRAPH_h
+#ifndef GRAPH_H
+#define GRAPH_H
 #include <QString>
-#include "firetools.h"
+#include "fstats.h"
 
 class DbPid;
 QString graph(int id, DbPid *dbpid, int cycle, GraphType gt);
