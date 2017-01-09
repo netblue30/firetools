@@ -50,7 +50,7 @@ install: all
 	mkdir -p $(DESTDIR)/$(DOCDIR)
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
 	install -c -m 0755 build/firetools $(DESTDIR)/$(PREFIX)/bin/.
-	install -c -m 0755 build/firemgr $(DESTDIR)/$(PREFIX)/bin/.
+	install -c -m 0755 build/firemgr $(DESTDIR)/$(PREFIX)/lib/firetools/fmgr
 	install -c -m 0755 build/firejail-ui $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0644 src/firejail-ui/uimenus $(DESTDIR)/$(PREFIX)/lib/firetools/.
 	install -c -m 0644 src/firejail-ui/uihelp $(DESTDIR)/$(PREFIX)/lib/firetools/.
@@ -71,7 +71,6 @@ install: all
 
 uninstall:;
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firetools
-	rm -f $(DESTDIR)/$(PREFIX)/bin/firemgr
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firejail-ui
 	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetjail-ui.png
@@ -79,7 +78,7 @@ uninstall:;
 	rm -f $(DESTDIR)/$(PREFIX)/share/applications/firejail-ui.desktop
 	rm -fr $(DESTDIR)/$(PREFIX)/share/doc/firetools
 	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firetools.1*
-	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firemgr.1*
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firejail-ui.1*
 	rm -fr $(DESTDIR)/$(PREFIX)/lib/firetools
 
 dist:

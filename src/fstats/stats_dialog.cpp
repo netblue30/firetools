@@ -33,6 +33,7 @@
 #include "../common/utils.h"
 #include "../common/pid.h"
 #include "../../firetools_config.h"
+#include "../../firetools_config_extras.h"
 #include "pid_thread.h"
 extern bool data_ready;
 
@@ -652,9 +653,8 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		}
 	}
 	else if (linkstr == "fmgr") {
-		// join the process in a new xterm
 		char *cmd;
-		if (asprintf(&cmd, "firemgr %d&", pid_) != -1) {
+		if (asprintf(&cmd, PACKAGE_LIBDIR "/fmgr %d&", pid_) != -1) {
 			int rv = system(cmd);
 			(void) rv;
 			free(cmd);
