@@ -1,4 +1,4 @@
-APPS = firetools firemgr debmenu firejail-ui
+APPS = firetools firemgr debmenu firejail-ui fstats
 .PHONY: apps $(APPS)
 apps: $(APPS)
 $(APPS):

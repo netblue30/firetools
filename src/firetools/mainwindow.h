@@ -41,7 +41,6 @@ protected:
 
 public slots:
 	void trayActivated(QSystemTrayIcon::ActivationReason);
-	void cycleReady();
 	
 private slots:
 	void edit();

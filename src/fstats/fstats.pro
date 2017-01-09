@@ -12,5 +12,5 @@ QT += widgets
                  graph.cpp \
                   ../common/utils.cpp \
                   ../common/pid.cpp
-#RESOURCES = firetools.qrc
-TARGET=fstats
+RESOURCES = fstats.qrc
+TARGET=../../build/fstats

@@ -25,7 +25,7 @@
 	#include <QtGui>
 #endif
 
-
+#include "../../firetools_config_extras.h"
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "applications.h"
@@ -74,12 +74,6 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 		"Use the right mouse button to open a context menu."));
 	setWindowTitle(tr("Firejail Tools"));
 	
-}
-
-void MainWindow::cycleReady() {
-	if (isVisible()) {
-		emit cycleReadySignal();
-	}
 }
 
 void MainWindow::edit() {
@@ -163,8 +157,12 @@ void MainWindow::run() {
 }
 
 void MainWindow::runTools() {
-//	stats_->show();
-//	emit cycleReadySignal();
+// const char *fname = PACKAGE_LIBDIR "/uimenus";
+	// start fstats as a separate process
+	QProcess *process = new QProcess();
+	process->startDetached(QString(PACKAGE_LIBDIR "/fstats"));
+	sleep(1);
+	printf("stats started\n");
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {

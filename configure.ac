@@ -51,6 +51,7 @@ $QMAKE -v
 cd src/firetools && $QMAKE && cd ../..
 cd src/firemgr && $QMAKE && cd ../..
 cd src/firejail-ui && $QMAKE && cd ../..
+cd src/fstats && $QMAKE && cd ../..
 
 # build sanitizer.sh file
 echo "#!/bin/bash" >sanitizer.sh

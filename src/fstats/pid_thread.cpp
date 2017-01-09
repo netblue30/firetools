@@ -110,6 +110,7 @@ void PidThread::run() {
 	// memory page size clicks per second
 	int pgsz = getpagesize();
 	int clocktick = sysconf(_SC_CLK_TCK);
+	bool first = true;
 	
 	while (1) {
 		if (ending_)
@@ -136,10 +137,15 @@ void PidThread::run() {
 			}
 		}
 		
-		// sleep 5 seconds
-		msleep(4500);
-		data_ready = false;
-		msleep(500);
+		
+		if (!first) {
+			// sleep 5 seconds
+			msleep(4500);
+			data_ready = false;
+			msleep(500);
+		}
+		else
+			first = false;
 		
 		// start a new database cycle
 		Db::instance().newCycle();
