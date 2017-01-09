@@ -1,24 +1,17 @@
-.TH FIRETOOLS 1 "MONTH YEAR" "VERSION" "firetools man page"
+.TH FIREMGR 1 "MONTH YEAR" "VERSION" "firemgr man page"
 .SH NAME
-Firetools \- Graphical tools collection for Firejail security sandbox
+firejail-ui \- Firejail user interface
 .SH SYNOPSIS
-firetools [OPTIONS]
+firejail-ui [OPTIONS]
 .SH DESCRIPTION
-Firetools is a collection of graphical tools for Firejail security sandbox. The
-collection contains a sandbox launcher, a statistics utility, and a sandbox wizard.
+This  manual  page  documents  briefly firejail-ui, the sandbox configuration wizard.
 .SH OPTIONS
-.TP
-\fB\-\-autostart\fR
-Configure Firetools to run automatically in system tray when X11 session is started.
 .TP
 \fB\-\-debug\fR
 Print debug messages.
 .TP
 \fB\-?\fR, \fB\-\-help\fR
 Print options end exit.
-.TP
-\fB\-\-minimize\fR
-Start the program minimized in system tray.
 .TP
 \fB\-\-version\fR
 Print software version and exit.
@@ -36,6 +29,8 @@ This program is free software; you can redistribute it and/or modify it under th
 Homepage: http://firejail.sourceforge.net
 .SH SEE ALSO
 \&\flfirejail\fR\|(1),
-\&\flfirejail-ui\fR\|(1)
+\&\flfiretools\fR\|(1)
+
+
 
 

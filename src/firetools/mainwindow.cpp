@@ -157,12 +157,9 @@ void MainWindow::run() {
 }
 
 void MainWindow::runTools() {
-// const char *fname = PACKAGE_LIBDIR "/uimenus";
 	// start fstats as a separate process
-	QProcess *process = new QProcess();
-	process->startDetached(QString(PACKAGE_LIBDIR "/fstats"));
-	sleep(1);
-	printf("stats started\n");
+	int rv = system(PACKAGE_LIBDIR "/fstats &");
+	(void) rv;
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
