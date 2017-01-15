@@ -1,11 +1,12 @@
 Accessibility;Florence virtual keyboard;/usr/bin/florence
 Accessibility;Xmag;xmag
-Editors;Abiword word processor;/usr/bin/abiword
+Editors;GEdit;/usr/bin/gedit
+Editors;Abiword Word Processor;/usr/bin/abiword
 Editors;Bluefish;/usr/bin/bluefish
-Editors;CherryTree note taking application;/usr/bin/cherrytree
+Editors;CherryTree Note Taking Application;/usr/bin/cherrytree
 Editors;Focuswriter;/usr/bin/focuswriter
 Editors;FTE;/usr/bin/xfte
-Editors;GNU Emacs editor;/usr/bin/emacs
+Editors;GNU Emacs Editor;/usr/bin/emacs
 Editors;jEdit;/usr/bin/jedit
 Editors;JuffEd;/usr/bin/juffed
 Editors;KWrite;/usr/bin/kwrite
@@ -29,23 +30,24 @@ Editors;X2;/usr/bin/x2
 Editors;Xedit;xedit
 Editors;xJed;/usr/bin/xjed
 Emulators;VirtualBox;/usr/bin/virtualbox
-File Management;Brasero CD/DVD burning application;/usr/bin/brasero
-File Management;Caja file manager;/usr/bin/caja
-File Management;Dolphin file manager;/usr/bin/dolphin
-File Management;gentoo file manager;/usr/bin/gentoo
-File Management;GNOME Commander file manager;/usr/bin/gnome-commander
-File Management;Konqueror file manager;/usr/bin/konqueror
-File Management;Krusader file manager;/usr/bin/krusader
+File Management;File Roller Archive Manager;/usr/bin/file-roller
+File Management;Brasero CD/DVD Burning Application;/usr/bin/brasero
+File Management;Caja File Manager;/usr/bin/caja
+File Management;Dolphin File Manager;/usr/bin/dolphin
+File Management;gentoo File Manager;/usr/bin/gentoo
+File Management;GNOME Commander File Manager;/usr/bin/gnome-commander
+File Management;Konqueror File Manager;/usr/bin/konqueror
+File Management;Krusader File Manager;/usr/bin/krusader
 File Management;Launchy;/usr/bin/launchy
-File Management;Nautilus file manager;/usr/bin/nautilus
-File Management;Nemo file manager;/usr/bin/nemo
-File Management;PCManFM file manager;pcmanfm
-File Management;ROX-Filer file manager;/usr/bin/rox-filer
-File Management;SpaceFM file manager;/usr/bin/spacefm
-File Management;Thunar file manager;/usr/bin/thunar
-File Management;Worker file manager;/usr/bin/worker
+File Management;Nautilus File Manager;/usr/bin/nautilus
+File Management;Nemo File Manager;/usr/bin/nemo
+File Management;PCManFM File Manager;pcmanfm
+File Management;ROX-Filer File Manager;/usr/bin/rox-filer
+File Management;SpaceFM File Manager;/usr/bin/spacefm
+File Management;Thunar File Manager;/usr/bin/thunar
+File Management;Worker File Manager;/usr/bin/worker
 File Management;Xarchiver;/usr/bin/xarchiver
-File Management;Xfe file manager;/usr/bin/xfe
+File Management;Xfe File Manager;/usr/bin/xfe
 Games;0 A.D.;/usr/games/0ad
 Games;2048 puzzle;/usr/games/2048-qt
 Games;3dchess;/usr/games/3Dc
@@ -114,9 +116,11 @@ Graphics;Tux Paint;/usr/bin/tuxpaint
 Graphics;Whitedune;/usr/bin/whitedune
 Graphics;XPaint;/usr/bin/xpaint
 Graphics;X Window Snapshot;xwd | xwud*
+Graphics;Shotwell Photo Manager;/usr/bin/shotwell
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
 Network;Chromium;/usr/bin/chromium
+Network;Chromium;/usr/bin/chromium-browser
 Network;Deluge BitTorrent Client;/usr/bin/deluge
 Network;Dillo;/usr/bin/dillo
 Network;dwb;/usr/bin/dwb
@@ -139,6 +143,8 @@ Network;Wireshark;/usr/bin/wireshark
 Network;Xbiff;xbiff
 Network;X Chat;/usr/bin/xchat
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
+Network;Thunderbird;/usr/bin/thunderbird
+Network;Pidgin;/usr/bin/pidgin
 Office;Calibre eBook reader;/usr/bin/calibre
 Office;LibreOffice Base;/usr/bin/lobase
 Office;LibreOffice Calc;/usr/bin/localc
@@ -183,6 +189,7 @@ Sound;pavumeter;/usr/bin/pavumeter
 Sound;PulseAudio Volume Control;/usr/bin/pavucontrol
 Sound;PulseAudio Volume Meter;/usr/bin/pavumeter
 Sound;Rmedigicontrol;/usr/bin/rmedigicontrol
+Sound;Rhythmbox;/usr/bin/rhythmbox
 System;About Myself;/usr/bin/userinfo
 System;Disk Management;/usr/bin/usermount
 System;Editres;editres
@@ -249,6 +256,7 @@ Video;vokoscreen;/usr/bin/vokoscreen
 Video;Xine;/usr/bin/xine
 Viewers;Evince;/usr/bin/evince
 Viewers;Eye of MATE;/usr/bin/eom
+Viewers;Eye of Gnome;/usr/bin/eog
 Viewers;Geeqie;/usr/bin/geeqie
 Viewers;GPicView;/usr/bin/gpicview
 Viewers;gThumb Image Viewer;/usr/bin/gthumb
