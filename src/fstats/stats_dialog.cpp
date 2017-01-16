@@ -99,6 +99,7 @@ QString StatsDialog::header() {
 	if (mode_ == MODE_TOP) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"about\">About</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">New Sandbox</a>";
 		msg += "</td></tr></table>";
 	}
 	
@@ -674,6 +675,11 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	
 		QMessageBox::about(this, tr("About"), msg);
 		
+	}
+	else if (linkstr == "newsandbox") {
+		// start firejail-ui as a separate process
+		int rv = system("firejail-ui &");
+		(void) rv;
 	}
 	else {
 		pid_ = linkstr.toInt();

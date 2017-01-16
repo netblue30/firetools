@@ -162,6 +162,12 @@ void MainWindow::runTools() {
 	(void) rv;
 }
 
+void MainWindow::newSandbox() {
+	// start firejail-ui as a separate process
+	int rv = system("firejail-ui &");
+	(void) rv;
+}
+
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
@@ -391,6 +397,10 @@ void MainWindow::createTrayActions() {
 }
 
 void MainWindow::createLocalActions() {
+	QAction *newsandbox = new QAction(tr("&New sandbox"), this);
+	connect(newsandbox, SIGNAL(triggered()), this, SLOT(newSandbox()));
+	addAction(newsandbox);
+
 	QAction *runtools = new QAction(tr("&Tools"), this);
 	connect(runtools, SIGNAL(triggered()), this, SLOT(runTools()));
 	addAction(runtools);
@@ -444,6 +454,7 @@ void MainWindow::help() {
 	txt += "<br/>";
 	txt += "<b>Context Menu</b><br/><br/>\n";
 	txt += "<b>Tools:</b> open the tools window<br/>\n";
+	txt += "<b>New Sandbox:</b> start a new sandbox<br/>\n";
 	txt += "<b>Minimize:</b> minimize the launcher<br/>\n";
 	txt += "<b>Run:</b> start the program in a new sandbox.<br/>\n";
 	txt += "<b>Edit:</b> edit the sandbox launcher.<br/>\n";

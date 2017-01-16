@@ -49,6 +49,7 @@ private slots:
 	void runTools();
 	void help();
 	void main_quit();
+	void newSandbox();
 
 signals:
 	void cycleReadySignal();
