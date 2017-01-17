@@ -57,7 +57,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(procView_, 0, 0);
 	setLayout(layout);
-	resize(600, 600);
+	resize(650, 650);
 	setWindowTitle(tr("Firejail Tools and Stats"));
 	
 	// detect if joining a sandbox is possible on this system
@@ -526,13 +526,13 @@ void StatsDialog::updatePid() {
 	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
 	if (graph_type_ == GRAPH_4MIN) {
-		msg += "<td><b>Stats: </b>4min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td></tr>\n";
+		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td></tr>\n";
 	}
 	else if (graph_type_ == GRAPH_1H) {
-		msg += "<td><b>Stats: </b><a href=\"4min\">4min</a> 1h <a href=\"12h\">12h</a></td></tr>\n";
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td></tr>\n";
 	}
 	else if (graph_type_ == GRAPH_12H) {
-		msg += "<td><b>Stats: </b><a href=\"4min\">4min</a> <a href=\"1h\">1h</a> 12h</td></tr>\n";
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td></tr>\n";
 	}
 	else
 		assert(0);
@@ -619,7 +619,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	else if (linkstr == "12h") {
 		graph_type_ = GRAPH_12H;
 	}
-	else if (linkstr == "4min") {
+	else if (linkstr == "1min") {
 		graph_type_ = GRAPH_4MIN;
 	}
 	else if (linkstr == "dns") {

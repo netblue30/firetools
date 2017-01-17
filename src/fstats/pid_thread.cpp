@@ -140,7 +140,7 @@ void PidThread::run() {
 		
 		if (!first) {
 			// sleep 5 seconds
-			msleep(4500);
+			msleep(500);
 			data_ready = false;
 			msleep(500);
 		}
@@ -198,7 +198,7 @@ void PidThread::run() {
 					pids[i].tx = 0;
 				}
 				
-				store(i, 5, clocktick);
+				store(i, 1, clocktick);
 				
 				if (pids[i].cmd)
 					free(pids[i].cmd);

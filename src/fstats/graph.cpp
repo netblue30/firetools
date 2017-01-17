@@ -47,8 +47,9 @@ QString graph(int id, DbPid *dbpid, int cycle, GraphType gt) {
 	int j;
 	
 	// set pixmap
-#define TOPMARGIN 20	
-	QPixmap *pixmap = new QPixmap((maxcycle - 1) * 4 + 100, TOPMARGIN + 100 + 30);
+#define TOPMARGIN 20
+#define RIGHTMARGIN 60	
+	QPixmap *pixmap = new QPixmap((maxcycle - 1) * 4 + RIGHTMARGIN, TOPMARGIN + 100 + 30);
 	QPainter *paint = new QPainter(pixmap);
 	paint->fillRect(0, 0, (maxcycle - 1) * 4 + 100, TOPMARGIN + 100 + 30, Qt::white);
 	paint->setPen(Qt::black);
@@ -163,11 +164,13 @@ QString graph(int id, DbPid *dbpid, int cycle, GraphType gt) {
 	paint->drawText((maxcycle - 1) * 4 + 3, TOPMARGIN + 100 + 3, QString("0"));
 	if (gt == GRAPH_12H)
 		paint->drawText(0 + 2, TOPMARGIN + 100 + 15, QString("(hours)"));
-	else
+	if (gt == GRAPH_1H)
 		paint->drawText(0 + 2, TOPMARGIN + 100 + 15, QString("(minutes)"));
+	else
+		paint->drawText(0 + 2, TOPMARGIN + 100 + 15, QString("(seconds)"));
 	if (gt == GRAPH_4MIN) {
-		paint->drawText((maxcycle - 1) * 2 - 5, TOPMARGIN + 100 + 15, QString("-2"));
-		paint->drawText((maxcycle - 1) * 3 - 5, TOPMARGIN + 100 + 15, QString("-1"));
+		paint->drawText((maxcycle - 1) * 2 - 5, TOPMARGIN + 100 + 15, QString("-30"));
+		paint->drawText((maxcycle - 1) * 3 - 5, TOPMARGIN + 100 + 15, QString("-15"));
 	}
 	else if (gt == GRAPH_1H) {
 		paint->drawText((maxcycle - 1) * 2 - 5, TOPMARGIN + 100 + 15, QString("-30"));
