@@ -26,13 +26,13 @@ firejail-ui.1: src/man/firejail-ui.txt
 clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 
 distclean: clean
-	rm -f `find src/firetools -name Makefile`
+	rm -f `find src/firelauncher -name Makefile`
 	rm -f `find src/ffstats -name Makefile`
 	rm -f `find src/firemgr -name Makefile`
 	rm -f `find src/firejail-ui -name Makefile`
 	rm -f `find src/debmenu -name Makefile`
 	rm -f firetools_config.h firetools_config_extras.h Makefile config.status config.log
-	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
+	rm -f  src/firelauncher/config.log src/firelauncher/config.status #fedora fix
 	rm -f  src/fstats/config.log src/fstats/config.status #fedora fix
 	rm -f  src/firemgr/config.log src/firemgr/config.status #fedora fix
 	rm -f  src/debmenu/config.log src/debmenu/config.status #fedora fix
@@ -49,13 +49,13 @@ install: all
 	mkdir -p $(DESTDIR)/$(PREFIX)/lib/firetools
 	mkdir -p $(DESTDIR)/$(DOCDIR)
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
-	install -c -m 0755 build/firetools $(DESTDIR)/$(PREFIX)/bin/.
+	install -c -m 0755 build/firelauncher $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0755 build/firemgr $(DESTDIR)/$(PREFIX)/lib/firetools/fmgr
 	install -c -m 0755 build/firejail-ui $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0644 src/firejail-ui/uimenus $(DESTDIR)/$(PREFIX)/lib/firetools/.
 	install -c -m 0644 src/firejail-ui/uihelp $(DESTDIR)/$(PREFIX)/lib/firetools/.
 	install -c -m 0755 build/fstats $(DESTDIR)/$(PREFIX)/lib/firetools/.
-	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
+#	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
 	install -c -m 0644 src/firejail-ui/firejail-ui.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
 	install -c -m 0644 src/firetools/resources/firetools.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	install -c -m 0644 src/firejail-ui/resources/firejail-ui.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firejail-ui.png
@@ -70,7 +70,7 @@ install: all
 	install -c -m 0644 firejail-ui.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
 
 uninstall:;
-	rm -f $(DESTDIR)/$(PREFIX)/bin/firetools
+	rm -f $(DESTDIR)/$(PREFIX)/bin/firelauncher
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firejail-ui
 	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	rm -f $(DESTDIR)/$(PREFIX)/share/pixmaps/firetjail-ui.png

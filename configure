@@ -585,7 +585,7 @@ PACKAGE_STRING='firetools 0.9.45'
 PACKAGE_BUGREPORT='netblue30@yahoo.com'
 PACKAGE_URL='http://firejail.wordpress.com'
 
-ac_unique_file="src/firetools/main.cpp"
+ac_unique_file="src/firejail-ui/main.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -3833,7 +3833,7 @@ fi
 
 $QMAKE -v
 
-cd src/firetools && $QMAKE && cd ../..
+cd src/firelauncher && $QMAKE && cd ../..
 cd src/firemgr && $QMAKE && cd ../..
 cd src/firejail-ui && $QMAKE && cd ../..
 cd src/fstats && $QMAKE && cd ../..

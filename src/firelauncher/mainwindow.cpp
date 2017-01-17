@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "firetools.h"
+#include "firelauncher.h"
 #include <QtGlobal>
 #if QT_VERSION >= 0x050000
 	#include <QtWidgets>
@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 
 	// check firejail
 	if (!which("firejail")) {
-		QMessageBox::warning(this, tr("Firejail Tools"),
+		QMessageBox::warning(this, tr("Firejail Launcher"),
 			tr("<br/><b>Firejail</b> software not found. Please install it.<br/><br/><br/>"));
 		exit(1);
 	}
@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 			svgfound = true;
 	}
 	if (!svgfound) {
-		QMessageBox::warning(this, tr("Firejail Tools"),
+		QMessageBox::warning(this, tr("Firejail Launcher"),
 			tr("<br/>Qt5 SVG icon library not found. Please install it:<br/>"
 			    "sudo apt-get install libqt5svg5<br/><br/>"));
 	}
@@ -158,7 +158,7 @@ void MainWindow::run() {
 
 void MainWindow::runTools() {
 	// start fstats as a separate process
-	int rv = system(PACKAGE_LIBDIR "/fstats &");
+	int rv = system(PACKAGE_LIBDIR "/firetools &");
 	(void) rv;
 }
 

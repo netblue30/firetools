@@ -22,7 +22,7 @@
 #include <QSystemTrayIcon>
 #include <QLibraryInfo>
 
-#include "firetools.h"
+#include "firelauncher.h"
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "../../firetools_config.h"
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
 	free(path);	
 	
 	// initialize resources
-	Q_INIT_RESOURCE(firetools);
+	Q_INIT_RESOURCE(firelauncher);
 
 	QApplication app(argc, argv);
 	MainWindow fc;
