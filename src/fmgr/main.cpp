@@ -21,7 +21,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-#include "firemgr.h"
+#include "fmgr.h"
 #include "mainwindow.h"
 //#include "../common/utils.h"
 #include "../../firetools_config.h"
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 	pid_t pid = (pid_t) atoi(argv[i]);
 
 	// initialize resources
-	Q_INIT_RESOURCE(firemgr);
+	Q_INIT_RESOURCE(fmgr);
 
 	QApplication app(argc, argv);
 	MainWindow fm(pid);

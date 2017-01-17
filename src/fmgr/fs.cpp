@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include "fs.h"
-#include "firemgr.h"
+#include "fmgr.h"
 #include <string.h>
 
 FS::FS(pid_t pid): pid_(pid) {

@@ -49,7 +49,7 @@ fi
 $QMAKE -v
 
 cd src/firelauncher && $QMAKE && cd ../..
-cd src/firemgr && $QMAKE && cd ../..
+cd src/fmgr && $QMAKE && cd ../..
 cd src/firejail-ui && $QMAKE && cd ../..
 cd src/firetools && $QMAKE && cd ../..
 

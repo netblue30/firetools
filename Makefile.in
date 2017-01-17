@@ -28,13 +28,13 @@ clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 distclean: clean
 	rm -f `find src/firelauncher -name Makefile`
 	rm -f `find src/firetools -name Makefile`
-	rm -f `find src/firemgr -name Makefile`
+	rm -f `find src/fmgr -name Makefile`
 	rm -f `find src/firejail-ui -name Makefile`
 	rm -f `find src/debmenu -name Makefile`
 	rm -f firetools_config.h firetools_config_extras.h Makefile config.status config.log
 	rm -f  src/firelauncher/config.log src/firelauncher/config.status #fedora fix
 	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
-	rm -f  src/firemgr/config.log src/firemgr/config.status #fedora fix
+	rm -f  src/fmgr/config.log src/fmgr/config.status #fedora fix
 	rm -f  src/debmenu/config.log src/debmenu/config.status #fedora fix
 	rm -f  src/firejail-ui/config.log src/firejail-ui/config.status #fedora fix
 	rm -fr autom4te.cache
@@ -52,7 +52,7 @@ install: all
 	install -c -m 0755 build/firelauncher $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0755 build/firetools $(DESTDIR)/$(PREFIX)/bin/.
 	install -c -m 0755 build/firejail-ui $(DESTDIR)/$(PREFIX)/bin/.
-	install -c -m 0755 build/firemgr $(DESTDIR)/$(PREFIX)/lib/firetools/fmgr
+	install -c -m 0755 build/fmgr $(DESTDIR)/$(PREFIX)/lib/firetools/fmgr
 	install -c -m 0644 src/firejail-ui/uimenus $(DESTDIR)/$(PREFIX)/lib/firetools/.
 	install -c -m 0644 src/firejail-ui/uihelp $(DESTDIR)/$(PREFIX)/lib/firetools/.
 #	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
