@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	free(path);	
 	
 	// initialize resources
-	Q_INIT_RESOURCE(fstats);
+	Q_INIT_RESOURCE(firetools);
 
 	QApplication app(argc, argv);
 	StatsDialog sd;

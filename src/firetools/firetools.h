@@ -17,13 +17,18 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef GRAPH_H
-#define GRAPH_H
-#include <QString>
-#include "fstats.h"
+#ifndef FIRETOOLS_H
+#define FIRETOOLS_H
+#include "../common/common.h"
 
-class DbPid;
-QString graph(int id, DbPid *dbpid, int cycle, GraphType gt);
+typedef enum {
+	GRAPH_4MIN = 0,
+	GRAPH_1H,
+	GRAPH_12H
+} GraphType;
+	
 
+extern int arg_debug;
+extern int svg_not_found;
 
 #endif

@@ -25,7 +25,7 @@
 #include <QThread>
 #include <QWaitCondition>
 #include <QStringList>
-#include "fstats.h"
+#include "firetools.h"
 
 class PidThread : public QThread
 {

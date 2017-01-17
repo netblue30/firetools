@@ -3,7 +3,7 @@ QMAKE_CFLAGS += $$(CFLAGS) -fstack-protector-all -D_FORTIFY_SOURCE=2 -fPIE -pie 
 QMAKE_LFLAGS += $$(LDFLAGS) -Wl,-z,relro -Wl,-z,now
 QT += widgets
  HEADERS       = ../common/utils.h ../common/pid.h ../common/common.h \
- 		  pid_thread.h db.h dbstorage.h dbpid.h stats_dialog.h graph.h
+ 		  pid_thread.h db.h dbstorage.h dbpid.h stats_dialog.h graph.h firetools.h
  SOURCES       = main.cpp \
                  stats_dialog.cpp \
                 pid_thread.cpp \
@@ -12,5 +12,5 @@ QT += widgets
                  graph.cpp \
                   ../common/utils.cpp \
                   ../common/pid.cpp
-RESOURCES = fstats.qrc
-TARGET=../../build/fstats
+RESOURCES = firetools.qrc
+TARGET=../../build/firetools
