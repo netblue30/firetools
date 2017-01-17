@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Firejail User Interface
-Comment=Firejail user interface
-Exec=firejail-ui
-Icon=firejail-ui
-Terminal=false
-Type=Application
-Categories=Qt;Utility;
-Keywords=jail;security;seccomp;

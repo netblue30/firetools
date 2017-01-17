@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	setToolTip(tr("Double click on an icon to open an application.\n"
 		"Drag the launcher with the left mouse button.\n"
 		"Use the right mouse button to open a context menu."));
-	setWindowTitle(tr("Firejail Tools"));
+	setWindowTitle(tr("Firelauncher"));
 	
 }
 
@@ -158,7 +158,7 @@ void MainWindow::run() {
 
 void MainWindow::runTools() {
 	// start fstats as a separate process
-	int rv = system(PACKAGE_LIBDIR "/firetools &");
+	int rv = system("firetools &");
 	(void) rv;
 }
 
@@ -397,7 +397,7 @@ void MainWindow::createTrayActions() {
 }
 
 void MainWindow::createLocalActions() {
-	QAction *newsandbox = new QAction(tr("&New sandbox"), this);
+	QAction *newsandbox = new QAction(tr("&Configuration wizard"), this);
 	connect(newsandbox, SIGNAL(triggered()), this, SLOT(newSandbox()));
 	addAction(newsandbox);
 

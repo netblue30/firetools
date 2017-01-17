@@ -26,6 +26,7 @@
 #endif
 
 #include <QUrl>
+#include <QProcess>
 #include <sys/utsname.h>
 #include "stats_dialog.h"
 #include "db.h"
@@ -58,7 +59,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	layout->addWidget(procView_, 0, 0);
 	setLayout(layout);
 	resize(650, 650);
-	setWindowTitle(tr("Firejail Tools and Stats"));
+	setWindowTitle(tr("Firetools"));
 	
 	// detect if joining a sandbox is possible on this system
 	struct utsname u;
@@ -99,7 +100,8 @@ QString StatsDialog::header() {
 	if (mode_ == MODE_TOP) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"about\">About</a>";
-		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">New Sandbox</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"launcher\">Sandbox Launcher</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configuration Wizard</a>";
 		msg += "</td></tr></table>";
 	}
 	
@@ -678,7 +680,15 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	}
 	else if (linkstr == "newsandbox") {
 		// start firejail-ui as a separate process
-		int rv = system("firejail-ui &");
+
+		QProcess *process = new QProcess();
+		QStringList arguments;
+		arguments << "--nofiretools";
+		process->startDetached(QString("firejail-ui"), arguments);
+	}
+	else if (linkstr == "launcher") {
+		// start firejail-ui as a separate process
+		int rv = system("firelauncher &");
 		(void) rv;
 	}
 	else {

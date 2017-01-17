@@ -194,7 +194,7 @@ void Wizard::accept() {
 	printf("Sandbox started, exiting firejail-ui...\n");
 
 	if (field("mon").toBool()) {
-		int rv = system(PACKAGE_LIBDIR "/fstats &");
+		int rv = system("firetools &");
 		(void) rv;
 	}
 
@@ -478,6 +478,8 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 		debug_->setEnabled(false);
 		trace_->setEnabled(false);
 	}
+	if (arg_nofiretools)
+		mon_->setEnabled(false);
 
 	QVBoxLayout *debug_box_layout = new QVBoxLayout;
 	debug_box_layout->addWidget(debug_);

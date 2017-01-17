@@ -22,6 +22,7 @@
 #include "../common/common.h"
 
 extern int arg_debug;
+extern int arg_nofiretools;
 extern int svg_not_found;
 extern int kernel_major;
 extern int kernel_minor;
