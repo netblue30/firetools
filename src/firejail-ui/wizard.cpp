@@ -33,10 +33,12 @@
 #include <QLineEdit>
 #include <QListWidgetItem>
 #include <QProcess>
+#include "../../firetools_config_extras.h"
 #include "wizard.h"
 #include "home_widget.h"
 #include "help_widget.h"
 #include "appdb.h"
+#include <unistd.h>
 
 //QString global_title("Firejail Configuration Wizard");
 QString global_title("");
@@ -190,6 +192,11 @@ void Wizard::accept() {
 	process->startDetached(QString("firejail"), arguments);
 	sleep(1);
 	printf("Sandbox started, exiting firejail-ui...\n");
+
+	if (field("mon").toBool()) {
+		int rv = system(PACKAGE_LIBDIR "/fstats &");
+		(void) rv;
+	}
 
 	// force a program exit
 	exit(0);		
@@ -458,19 +465,28 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	QFont oldFont;
 	oldFont.setBold(false);
 
-	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Sandbox Debugging"));
+	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Debugging"));
 	debug_box->setFont(bold);
 	debug_ = new QCheckBox("Enable sandbox debugging");	
 	debug_->setFont(oldFont);
 	trace_ = new QCheckBox("Trace filesystem and network access");
 	trace_->setFont(oldFont);
+	mon_ = new QCheckBox("Sandbox monitoring and statistics");
+	mon_->setFont(oldFont);
+
+	if (!isatty(0)) {
+		debug_->setEnabled(false);
+		trace_->setEnabled(false);
+	}
+
 	QVBoxLayout *debug_box_layout = new QVBoxLayout;
 	debug_box_layout->addWidget(debug_);
 	debug_box_layout->addWidget(trace_);
+	debug_box_layout->addWidget(mon_);
 	debug_box->setLayout(debug_box_layout);
 
-	QLabel *label1 = new QLabel(tr("Press <b>Finish</b> to start the sandbox.<br/><br/>"
-		"For more information, visit us at <i>http://firejail.wordpress.com</i>. "
+	QLabel *label1 = new QLabel(tr("Press <b>Done</b> to start the sandbox.<br/><br/>"
+		"For more information, visit us at <b>http://firejail.wordpress.com</b>. "
 		"Thank you for using Firejail!"));
 	QWidget *empty1 = new QWidget;
 	empty1->setMinimumHeight(12);
@@ -485,6 +501,7 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 
 	registerField("debug", debug_);
 	registerField("trace", trace_);
+	registerField("mon", mon_);
 }
 
 int StartSandboxPage::nextId() const {

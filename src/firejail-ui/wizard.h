@@ -128,5 +128,6 @@ private slots:
 private:
 	QCheckBox *debug_;
 	QCheckBox *trace_;
+	QCheckBox *mon_;
 };
 #endif

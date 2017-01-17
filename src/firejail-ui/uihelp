@@ -4,10 +4,10 @@ environment of untrusted applications using Linux namespaces and seccomp-bpf. It
 process and all its descendants to have their own private view of the globally shared kernel 
 resources, such as the network stack, process table, mount table.<br/><br/>
 Even though hundreds of user-space applications are already supported by Firejail, 
-sometimes is necessary to customize the sandbox environment. This simple configuration 
-wizard was build in order to make this task easier.<br/><br/>
+sometimes is necessary to customize the sandbox environment. This configuration 
+wizard was built in order to make this task easier.<br/><br/>
 Start with the filesystem configuration, 
-where the most sensitive directory is the user home directory, move to the network stack and 
+where the most sensitive directory is the user home directory, move to the network and 
 multimedia subsytems, and finish with the kernel. In the end, you can turn on debugging and 
 get all the sensible information in a terminal, such as network requests and files accessed by 
 the application.<br/>
