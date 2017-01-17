@@ -55,7 +55,7 @@ install: all
 	install -c -m 0755 build/fmgr $(DESTDIR)/$(PREFIX)/lib/firetools/fmgr
 	install -c -m 0644 src/firejail-ui/uimenus $(DESTDIR)/$(PREFIX)/lib/firetools/.
 	install -c -m 0644 src/firejail-ui/uihelp $(DESTDIR)/$(PREFIX)/lib/firetools/.
-#	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
+	install -c -m 0644 src/firetools/firetools.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
 	install -c -m 0644 src/firejail-ui/firejail-ui.desktop $(DESTDIR)/$(PREFIX)/share/applications/.
 	install -c -m 0644 src/firetools/resources/firetools.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firetools.png
 	install -c -m 0644 src/firejail-ui/resources/firejail-ui.png $(DESTDIR)/$(PREFIX)/share/pixmaps/firejail-ui.png
