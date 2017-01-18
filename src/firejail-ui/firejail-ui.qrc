@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
    <file>resources/background.png</file>
+   <file>resources/firetools.png</file>
+   <file>resources/firejail-ui.png</file>
 </qresource>
 </RCC>
