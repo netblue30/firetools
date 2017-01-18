@@ -28,7 +28,7 @@ typedef struct {
 	pid_t parent;
 	uid_t uid;
 	char *user;
-	char *cmd;
+//	char *cmd;
 	unsigned utime;
 	unsigned stime;
 	unsigned rss;
@@ -38,6 +38,8 @@ typedef struct {
 } Process;
 //extern Process pids[max_pids];
 extern Process *pids;
+extern int pids_first;
+extern int pids_last;
 
 // pid self-contained functions
 void pid_getmem(unsigned pid, unsigned *rss, unsigned *shared);

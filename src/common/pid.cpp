@@ -27,6 +27,8 @@
        
 #define PIDS_BUFLEN 4096
 Process *pids = 0;
+int pids_first = 0;
+int pids_last = 0;
 int max_pids = 32769;
 static int pid_proc_cmdline_x11_xpra_xephyr(const pid_t pid);
 
@@ -175,7 +177,9 @@ doexit:
 
 // mon_pid: pid of sandbox to be monitored, 0 if all sandboxes are included
 void pid_read(pid_t mon_pid) {
-	if (pids == NULL) {
+	pids_first = 0;
+	pids_last = 0;
+	if (pids == NULL) {	
 		FILE *fp = fopen("/proc/sys/kernel/pid_max", "r");
 		if (fp) {
 			int val;
@@ -242,8 +246,12 @@ void pid_read(pid_t mon_pid) {
 				if ((strncmp(ptr, "firejail", 8) == 0) && (mon_pid == 0 || mon_pid == pid)) {
 					if (pid_proc_cmdline_x11_xpra_xephyr(pid))
 						pids[pid].level = -1;
-					else
+					else {
 						pids[pid].level = 1;
+						if (pids_first == 0)
+							pids_first = pid;
+						pids_last = pid;
+					}
 				}
 				else
 					pids[pid].level = -1;

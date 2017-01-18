@@ -39,14 +39,6 @@ PidThread::~PidThread() {
 // store process data in database
 static void store(int pid, int interval, int clocktick) {
 	assert(pid < max_pids);
-	if (pids[pid].cmd == 0)	{ // process shutting down
-		// remove dbpid
-		DbPid *dbpid = Db::instance().removePid(pid);
-		if (dbpid)
-			delete dbpid;
-		return;
-	}
-		
 	DbPid *dbpid = Db::instance().findPid(pid);
 	
 	if (!dbpid) {
@@ -83,8 +75,10 @@ static void store(int pid, int interval, int clocktick) {
 		}	
 		free(name);
 		
-		// command line			
-		dbpid->setCmd(pids[pid].cmd);
+		// command line
+		char *cmd =  pid_proc_cmdline(pid);;			
+		dbpid->setCmd(cmd);
+		free(cmd);
 		dbpid->setConfigured();
 	}
 }
@@ -124,7 +118,7 @@ void PidThread::run() {
 		unsigned stime = 0;
 		unsigned long long rx;
 		unsigned long long tx;
-		for (int i = 0; i < max_pids; i++) {
+		for (int i = pids_first; i  <= pids_last; i++) {
 			if (pids[i].level == 1) {
 				// cpu
 				pid_get_cpu_sandbox(i, &utime, &stime);
@@ -151,12 +145,11 @@ void PidThread::run() {
 		Db::instance().newCycle();
 		
 		// read the cpu time again, memory
-		for (int i = 0; i < max_pids; i++) {
+		for (int i = pids_first; i  <= pids_last; i++) {
 			if (pids[i].level == 1) {
 				if (pids[i].zombie)
 					continue;
-				pids[i].cmd = pid_proc_cmdline(i);
-				
+
 				// cpu time
 				pid_get_cpu_sandbox(i, &utime, &stime);
 				if (pids[i].utime <= utime)
@@ -200,8 +193,6 @@ void PidThread::run() {
 				
 				store(i, 1, clocktick);
 				
-				if (pids[i].cmd)
-					free(pids[i].cmd);
 			}
 		}
 		// remove closed process entries from database
