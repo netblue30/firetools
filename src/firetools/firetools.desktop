@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Firejail Tools
-Comment=Firejail user interface
+Comment=Firejail tools and stats
 Exec=firetools
 Icon=firetools
 Terminal=false

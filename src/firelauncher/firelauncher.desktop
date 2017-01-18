@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Firejail Launcher
+Comment=Firejail Launcher
+Exec=firelauncher
+Icon=firelauncher
+Terminal=false
+Type=Application
+Categories=Qt;Utility;Security;
+Keywords=jail;security;seccomp;
