@@ -268,7 +268,7 @@ struct DefaultApp {
 DefaultApp dapps[] = {
 	// browser
 	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox.png" },
-	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", ":resources/firefox.png"},
+	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", "firefox"},
 	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", "icecat"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
@@ -278,7 +278,7 @@ DefaultApp dapps[] = {
 
 	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
-	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":resources/icedove.png" },
+	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":thunderbird" },
 
 	// pdf etc.
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
