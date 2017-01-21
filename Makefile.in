@@ -1,4 +1,4 @@
-all: src firetools.1 firejail-ui.1
+all: src firetools.1 firejail-ui.1 firelauncher.1 
 
 datarootdir=@datarootdir@
 PREFIX=@prefix@
@@ -19,6 +19,9 @@ src: firetools_config_extras.h
 
 firetools.1: src/man/firetools.txt
 	./mkman.sh $(VERSION) src/man/firetools.txt firetools.1
+
+firelauncher.1: src/man/firelauncher.txt
+	./mkman.sh $(VERSION) src/man/firelauncher.txt firelauncher.1
 
 firejail-ui.1: src/man/firejail-ui.txt
 	./mkman.sh $(VERSION) src/man/firejail-ui.txt firejail-ui.1
@@ -70,6 +73,9 @@ install: all
 	rm -f firejail-ui.1.gz
 	gzip -n9 firejail-ui.1
 	install -c -m 0644 firejail-ui.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
+	rm -f firelauncher.1.gz
+	gzip -n9 firelauncher.1
+	install -c -m 0644 firelauncher.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
 
 uninstall:;
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firelauncher
@@ -84,6 +90,7 @@ uninstall:;
 	rm -fr $(DESTDIR)/$(PREFIX)/share/doc/firetools
 	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firetools.1*
 	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firejail-ui.1*
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/firelauncher.1*
 	rm -fr $(DESTDIR)/$(PREFIX)/lib/firetools
 
 dist:

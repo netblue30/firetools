@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 		fc.show();
 
 	// configure system tray
-	QSystemTrayIcon icon(QIcon(":resources/firetools.png"));
+	QSystemTrayIcon icon(QIcon(":resources/firelauncher.png"));
 	icon.show();	
 	icon.setToolTip("Firetools (click to open)");
 	QMenu *trayIconMenu = new QMenu(&fc);

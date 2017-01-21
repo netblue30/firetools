@@ -26,6 +26,7 @@
 #endif
 
 #include "../../firetools_config_extras.h"
+#include "../../firetools_config.h"
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "applications.h"
@@ -168,6 +169,23 @@ void MainWindow::newSandbox() {
 	(void) rv;
 }
 
+void MainWindow::runAbout() {
+	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firelauncher.png\"></td>";
+	msg += "<td>" + tr(
+		"Firelauncher is a simple sandbox launcher, providing and storing shortcuts to "
+		"preconfigured Firejail sandboxes for several popular Linux applications. "
+		"The program is part of Firetools package.<br/><br/>"
+		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
+		"breaches by restricting the running environment of  untrusted  applications "
+		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 
+		tr("Firetools version:") + " " + PACKAGE_VERSION + "<br/>" +
+		tr("QT version: ") + " " + QT_VERSION_STR + "<br/>" +
+		tr("License:") + " GPL v2<br/>" +
+		tr("Homepage:") + " " + QString(PACKAGE_URL) + "</td></tr></table><br/><br/>";
+
+	QMessageBox::about(this, tr("About"), msg);
+}
+
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
@@ -188,13 +206,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 	if (event->button() == Qt::LeftButton) {
-//		int x = event->pos().x();
-//		int y = event->pos().y();
-//
-//		if (x >= 0 && x < 64 &&
-//			   y >= 4 && y <= 15)
-//			   runTools();
-
 		dragPosition_ = event->globalPos() - frameGeometry().topLeft();
 		event->accept();
 		active_index_ = -1;
@@ -405,10 +416,9 @@ void MainWindow::createLocalActions() {
 	connect(runtools, SIGNAL(triggered()), this, SLOT(runTools()));
 	addAction(runtools);
 
-	QAction *qminimize = new QAction(tr("&Minimize"), this);
-	connect(qminimize, SIGNAL(triggered()), this, SLOT(showMinimized()));
-//	connect(qminimize, SIGNAL(triggered()), stats_, SLOT(showMinimized()));
-	addAction(qminimize);
+	QAction *about = new QAction(tr("&About"), this);
+	connect(about, SIGNAL(triggered()), this, SLOT(runAbout()));
+	addAction(about);
 
 	QAction *separator1 = new QAction(this);
 	separator1->setSeparator(true);
@@ -434,8 +444,11 @@ void MainWindow::createLocalActions() {
 	separator2->setSeparator(true);
 	addAction(separator2);
 
+	QAction *qminimize = new QAction(tr("&Minimize"), this);
+	connect(qminimize, SIGNAL(triggered()), this, SLOT(showMinimized()));
+	addAction(qminimize);
+
 	QAction *qquit = new QAction(tr("&Quit"), this);
-	//	qa->setShortcut(tr("Ctrl+Q"));
 	connect(qquit, SIGNAL(triggered()), this, SLOT(main_quit()));
 	addAction(qquit);
 }

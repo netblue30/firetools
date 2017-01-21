@@ -4,7 +4,7 @@ firejail-ui \- Firejail user interface
 .SH SYNOPSIS
 firejail-ui [OPTIONS]
 .SH DESCRIPTION
-This  manual  page  documents  briefly firejail-ui, the sandbox configuration wizard.
+This  manual  page  documents  briefly firejail-ui, the sandbox configuration wizard for Firejail sandbox.
 .SH OPTIONS
 .TP
 \fB\-\-debug\fR

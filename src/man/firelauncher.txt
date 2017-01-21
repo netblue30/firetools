@@ -1,15 +1,17 @@
-.TH FIREMGR 1 "MONTH YEAR" "VERSION" "firemgr man page"
+.TH FIREMGR 1 "MONTH YEAR" "VERSION" "firelauncher man page"
 .SH NAME
-firemgr \- Firejail file manager
+firelauncher \- Firejail sandbox launcher
 .SH SYNOPSIS
-firemgr [OPTIONS] sandbox-pid
+firelauncher [OPTIONS]
 .SH DESCRIPTION
-This  manual  page  documents  briefly firemgr, a file manager for
-Firejail security sandbox. firemgr provides a user interface to manage files and folders
-inside a Firejail sandbox. The file system inside the sandbox is created on the fly
-when the sandbox is started. Depending on sandbox configuration, the file system
-could be very different from the host file system.
+This  manual  page  documents  briefly firelauncher, a simple Firejail sandbox launcher.
+Part of Firetools package, the program provides and  stores shortcuts to preconfigured Firejail sandboxes
+for several popular Linux applications.
+
 .SH OPTIONS
+.TP
+\fB\-\-autostart\fR
+Configure firelauncher to run automatically in system tray when X11 session is started.
 .TP
 \fB\-\-debug\fR
 Print debug messages.
