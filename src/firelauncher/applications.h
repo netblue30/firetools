@@ -27,7 +27,7 @@
 #define MARGIN 5
 #define AFRAMES 6	// animation frames
 #define ADELAY 20		// animation delay
-#define ROWS 6
+#define ROWS 8
 
 // applications.cpp
 struct Application {

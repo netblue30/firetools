@@ -15,6 +15,8 @@ Reiner Herrmann
 	- various fixes
 Warren Togami (https://github.com/wtogami)
 	- rewrite of mkrpm.sh, Fedora packaging cleanup
+Piraty (https://github.com/Piraty)
+	- use system's icons when available 
 	
 Terminal icon (gnome-terminal.png) taken from Gnome project, license LGPL v3 or CC BY-SA 3.0.
 

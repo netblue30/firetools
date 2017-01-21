@@ -136,7 +136,7 @@ QIcon Application::loadIcon(QString name) {
 			printf("\t- full path\n");
 		return QIcon(name);
 	}
-	
+
 	// look for the file in firejail config directory under /home/user
 	QString conf = QDir::homePath() + "/.config/firetools/" + name + ".png";
 	QFileInfo checkFile1(conf);
@@ -241,6 +241,18 @@ QIcon Application::loadIcon(QString name) {
 			printf("\t- fromTheme\n");
 		return QIcon::fromTheme(name);
 	}
+
+	// hardcoded icons
+	if (name == "firefox" || name == "firefox-esr" || name == "iceweasel" || name == "icecat") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return QIcon(":resources/firefox.png");
+	}
+	else if (name == "icedove" || name == "thunderbird") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return QIcon(":resources/icedove.png");
+	}		
 	
 	// create a new icon
 	if (arg_debug)
@@ -266,6 +278,10 @@ struct DefaultApp {
 };
 
 DefaultApp dapps[] = {
+	// firetools
+	{ "firetools", "", "Firetools", "firetools", "firetools" },
+	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", "firejail-ui" },
+	
 	// browser
 	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox.png" },
 	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", "firefox"},
@@ -278,18 +294,27 @@ DefaultApp dapps[] = {
 
 	// mail
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
-	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", ":thunderbird" },
-
-	// pdf etc.
-	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
-	{ "fbreader", "", "eBook reader", "firejail fbreader", "FBReader" },
-	{ "cherrytree", "", "CherryTree note taking application", "firejail cherrytree", "cherrytree"},
+	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", "thunderbird" },
 
 	// bittorrent
 	{ "transmission-gtk", "", "Transmission BitTorrent Client", "firejail transmission-gtk", "transmission" },
 	{ "transmission-qt", "transmission-gtk", "Transmission BitTorrent Client", "firejail transmission-qt", "transmission" },
 	{ "deluge", "", "Deluge BitTorrent Client", "firejail deluge", "deluge" },
 	{ "qbittorrent", "", "qBittorrent Client", "firejail qbittorrent", "qbittorrent" },
+
+	// viewers
+	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
+	{ "qpdfview", "", "qPDFView", "firejail qpdfview", "qpdfview" },
+	{ "xpdf", "", "Xpdf", "firejail xpdf", "xpdf" },
+	{ "fbreader", "", "eBook reader", "firejail fbreader", "FBReader" },
+	{ "cherrytree", "", "CherryTree note taking application", "firejail cherrytree", "cherrytree"},
+	{ "gpicview", "", "GPicView", "firejail gpicview", "gpicview" },
+	{ "gthumb", "", "gThumbView", "firejail gthumb", "gthumb" },
+	{ "okular", "", "Okular", "firejail okular", "okular" },
+	{ "eom", "", "Eye of MATE", "firejail eom", "eom" },
+	{ "eog", "", "Eye of Gnome", "firejail eog", "eog" },
+	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
+	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "calibre-gui" },
 
 	// media player
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
@@ -299,6 +324,15 @@ DefaultApp dapps[] = {
 	{ "gnome-mplayer", "", "GNOME MPlayer", "firejail gnome-mplayer", "gnome-mplayer" },
 	{ "clementine", "", "Clementine", "firejail clementine", "application-x-clementine" },
 	{ "deadbeef", "", "DeaDBeeF", "firejail deadbeef", "deadbeef" },
+	{ "mpv", "", "MPV", "firejail mpv", "mpv" },
+	{ "smplayer", "", "SMPlayer", "firejail smplayer", "smplayer" },
+	{ "kino", "", "Kino", "firejail kino", "kino" },
+
+	// editor
+	{ "gimp", "", "Gimp", "firejail gimp", "gimp" },
+	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
+	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
+
 
 	// chat
 	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },

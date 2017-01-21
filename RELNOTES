@@ -1,5 +1,8 @@
 firetools (0.9.45) baseline; urgency=low
   * development version
+  * split firetools in two distinct executables: firelauncher and firetools
+  * added firejail-ui, a configuration wizard for firejail
+  * bugfixes
  -- netblue30 <netblue30@yahoo.com>  Fri, 11 Nov 2016 08:00:00 -0500
 
 firetools (0.9.44) baseline; urgency=low

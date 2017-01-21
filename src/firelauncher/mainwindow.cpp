@@ -188,12 +188,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 	if (event->button() == Qt::LeftButton) {
-		int x = event->pos().x();
-		int y = event->pos().y();
-
-		if (x >= 0 && x < 64 &&
-			   y >= 4 && y <= 15)
-			   runTools();
+//		int x = event->pos().x();
+//		int y = event->pos().y();
+//
+//		if (x >= 0 && x < 64 &&
+//			   y >= 4 && y <= 15)
+//			   runTools();
 
 		dragPosition_ = event->globalPos() - frameGeometry().topLeft();
 		event->accept();
@@ -293,9 +293,9 @@ void MainWindow::paintEvent(QPaintEvent *) {
 	
 
 	painter.setFont(QFont("Sans", TOP, QFont::Normal));
-	QPen pen2(Qt::white);
-	painter.setPen(pen2);
-	painter.drawText(MARGIN * 2, TOP + MARGIN / 2, "Firetools");
+//	QPen pen2(Qt::white);
+//	painter.setPen(pen2);
+//	painter.drawText(MARGIN * 2, TOP + MARGIN / 2, "Firetools");
 
 	if (animation_id_ > 0) {
 		animation_id_--;
