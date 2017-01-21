@@ -253,6 +253,11 @@ QIcon Application::loadIcon(QString name) {
 			printf("\t- default icon\n");
 		return QIcon(":resources/icedove.png");
 	}		
+	else if (name == "calibre-gui") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return QIcon(":resources/calibre.png");
+	}		
 	
 	// create a new icon
 	if (arg_debug)
