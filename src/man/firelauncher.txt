@@ -1,4 +1,4 @@
-.TH FIREMGR 1 "MONTH YEAR" "VERSION" "firelauncher man page"
+.TH FIRELAUNCHER 1 "MONTH YEAR" "VERSION" "firelauncher man page"
 .SH NAME
 firelauncher \- Firejail sandbox launcher
 .SH SYNOPSIS
@@ -35,6 +35,7 @@ This program is free software; you can redistribute it and/or modify it under th
 Homepage: http://firejail.sourceforge.net
 .SH SEE ALSO
 \&\flfirejail\fR\|(1),
+\&\flfirejail-ui\fR\|(1),
 \&\flfiretools\fR\|(1)
 
 

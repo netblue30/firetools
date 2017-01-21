@@ -33,20 +33,20 @@ int svg_not_found = 0;
 // desktop file content for autostart
 static const char *deskfile_minimize = 
 "[Desktop Entry]\n"
-"Name=Firejail Tools\n"
-"Comment=Firejail user interface\n"
-"Exec=firetools --minimize\n"
-"Icon=firetools\n"
+"Name=Firejail Launcher\n"
+"Comment=Firejail Launcher\n"
+"Exec=firelauncher --minimize\n"
+"Icon=firelauncher\n"
 "Terminal=false\n"
 "Type=Application\n"
-"Categories=Qt;System;Security;\n";
+"Categories=Qt;Utility;Security;\n";
 
 
 static void usage() {
-	printf("Firetools - graphical user interface for Firejail security sandbox\n\n");
-	printf("Usage: firetools [options]\n\n");
+	printf("firelauncher - Firejail sandbox launcher\n\n");
+	printf("Usage: firelauncher [options]\n\n");
 	printf("Options:\n");
-	printf("\t--autostart - configure Firetools to run automatically in system tray\n");
+	printf("\t--autostart - configure firelauncher to run automatically in system tray\n");
 	printf("\t\twhen X11 session is started\n\n");
 	printf("\t--debug - debug mode\n\n");
 	printf("\t--help - this help screen\n\n");
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 			
 			// create desktop file
 			char *autofile;
-			if (asprintf(&autofile, "%s/.config/autostart/firetools.desktop", home) == -1)
+			if (asprintf(&autofile, "%s/.config/autostart/firelauncher.desktop", home) == -1)
 				errExit("asprintf");
 			FILE *fp = fopen(autofile, "w");
 			if (!fp) {
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 			}
 			fprintf(fp, "%s\n", deskfile_minimize);
 			fclose(fp);
-			printf("Firetools autostart configured\n");
+			printf("firelauncher autostart configured\n");
 			return 0;
 		}
 		else if (strcmp(argv[i], "--minimize") == 0)

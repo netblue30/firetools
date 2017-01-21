@@ -31,7 +31,12 @@ int svg_not_found = 0;
 
 
 static void usage() {
-printf("todo\n");
+	printf("Firetools - Graphical tools collection for Firejail security sandbox\n\n");
+	printf("Usage: firetools [options]\n\n");
+	printf("Options:\n");
+	printf("\t--debug - debug mode\n\n");
+	printf("\t--help - this help screen\n\n");
+	printf("\t--version - print software version and exit\n\n");
 }
 
 int main(int argc, char *argv[]) {

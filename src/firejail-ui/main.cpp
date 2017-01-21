@@ -31,17 +31,16 @@
 
 int arg_debug = 0;
 int arg_nofiretools = 0;
-int svg_not_found = 0;
 int kernel_major;
 int kernel_minor;
 
 static void usage() {
-	printf("Firejail-ui - graphical user interface for Firejail security sandbox\n\n");
+	printf("Firejail-ui - Firejail sandbox configuration wizard\n\n");
 	printf("Usage: firejail-ui [options]\n\n");
 	printf("Options:\n");
 	printf("\t--debug - debug mode\n\n");
 	printf("\t--help - this help screen\n\n");
-	printf("\t--nofiretools - disable stats & tools checkbox\n");
+	printf("\t--nofiretools - disable stats & tools checkbox\n\n");
 	printf("\t--version - print software version and exit\n\n");
 }
 
