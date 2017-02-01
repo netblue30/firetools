@@ -62,7 +62,7 @@ echo "cd src/firetools && $QMAKE && cd ../.." >> sanitizer.sh
 chmod +x sanitizer.sh
 
 cp confdefs.h firetools_config.h
-AC_OUTPUT(Makefile src/debmenu/Makefile)
+AC_OUTPUT(Makefile)
 
 echo
 echo "Required run time packages:"

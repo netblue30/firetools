@@ -1,4 +1,4 @@
-APPS = firelauncher fmgr debmenu firejail-ui firetools
+APPS = firelauncher fmgr firejail-ui firetools
 .PHONY: apps $(APPS)
 apps: $(APPS)
 $(APPS):
