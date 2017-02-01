@@ -7,3 +7,15 @@ using Qt4 or Qt5 libraries.
 Home page: https://l3net.wordpress.com/projects/firejail/#firetools
 
 Download: http://sourceforge.net/projects/firejail/files/firetools/
+
+## Compile & Install
+
+`````
+$ git clone  https://github.com/netblue30/firetools
+$ cd firetools
+$ ./configure
+$ make
+$ sudo make install
+`````
+
+

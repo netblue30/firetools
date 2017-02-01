@@ -172,7 +172,7 @@ void MainWindow::newSandbox() {
 void MainWindow::runAbout() {
 	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firelauncher.png\"></td>";
 	msg += "<td>" + tr(
-		"Firelauncher is a simple sandbox launcher, providing and storing shortcuts to "
+		"Firelauncher is a simple sandbox launcher. It provides and stores shortcuts to "
 		"preconfigured Firejail sandboxes for several popular Linux applications. "
 		"The program is part of Firetools package.<br/><br/>"
 		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
