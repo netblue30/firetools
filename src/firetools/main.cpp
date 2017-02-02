@@ -22,7 +22,7 @@
 #include <QSystemTrayIcon>
 #include <QLibraryInfo>
 
-#include "firelauncher.h"
+#include "firetools.h"
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "../../firetools_config.h"
@@ -43,7 +43,7 @@ static const char *deskfile_minimize =
 
 
 static void usage() {
-	printf("firelauncher - Firejail sandbox launcher\n\n");
+	printf("firetools - Firejail sandbox launcher\n\n");
 	printf("Usage: firelauncher [options]\n\n");
 	printf("Options:\n");
 	printf("\t--autostart - configure firelauncher to run automatically in system tray\n");
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
 	free(path);	
 	
 	// initialize resources
-	Q_INIT_RESOURCE(firelauncher);
+	Q_INIT_RESOURCE(firetools);
 
 	QApplication app(argc, argv);
 	MainWindow fc;

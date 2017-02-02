@@ -1,6 +1,6 @@
 AC_PREREQ([2.68])
 AC_INIT(firetools, 0.9.45, netblue30@yahoo.com, , http://firejail.wordpress.com)
-AC_CONFIG_SRCDIR([src/fstats/main.cpp])
+AC_CONFIG_SRCDIR([src/firetools/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
 
 AC_PROG_CC
@@ -48,10 +48,10 @@ fi
 
 $QMAKE -v
 
-cd src/firelauncher && $QMAKE && cd ../..
-cd src/fmgr && $QMAKE && cd ../..
+cd src/firetools && $QMAKE && cd ../..
 cd src/firejail-ui && $QMAKE && cd ../..
 cd src/fstats && $QMAKE && cd ../..
+cd src/fmgr && $QMAKE && cd ../..
 
 # build sanitizer.sh file
 echo "#!/bin/bash" >sanitizer.sh

@@ -1,4 +1,4 @@
-APPS = firelauncher fmgr firejail-ui fstats
+APPS = firetools firejail-ui fstats fmgr
 .PHONY: apps $(APPS)
 apps: $(APPS)
 $(APPS):

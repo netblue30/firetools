@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
-#include "firelauncher.h"
+#include "firetools.h"
 #include "applications.h"
 #include "../common/utils.h"
 #include <QDirIterator>
