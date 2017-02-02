@@ -23,6 +23,7 @@
 #include "firetools.h"
 #include "applications.h"
 #include "../common/utils.h"
+#include "../../firetools_config_extras.h"
 #include <QDirIterator>
 #include <QPainter>
 QList<Application> applist;
@@ -284,7 +285,7 @@ struct DefaultApp {
 
 DefaultApp dapps[] = {
 	// firetools
-	{ "firetools", "", "Firetools", "firetools", "firetools" },
+	{ "firetools", "", "Firetools", PACKAGE_LIBDIR "/fstats", ":resources/fstats" },
 	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", "firejail-ui" },
 	
 	// browser

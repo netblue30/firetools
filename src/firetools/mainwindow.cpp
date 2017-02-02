@@ -159,7 +159,7 @@ void MainWindow::run() {
 
 void MainWindow::runTools() {
 	// start fstats as a separate process
-	int rv = system("firetools &");
+	int rv = system(PACKAGE_LIBDIR "/fstats &");
 	(void) rv;
 }
 
@@ -170,11 +170,12 @@ void MainWindow::newSandbox() {
 }
 
 void MainWindow::runAbout() {
-	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firelauncher.png\"></td>";
+	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firetools.png\"></td>";
 	msg += "<td>" + tr(
-		"Firelauncher is a simple sandbox launcher. It provides and stores shortcuts to "
-		"preconfigured Firejail sandboxes for several popular Linux applications. "
-		"The program is part of Firetools package.<br/><br/>"
+		"Firetools provides and  stores shortcuts to preconfigured Firejail "
+		"sandboxes for several popular Linux applications. It also provides "
+		"a number of tools to manage running sandboxes.<br/>"
+		"<br/>"
 		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 		"breaches by restricting the running environment of  untrusted  applications "
 		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 

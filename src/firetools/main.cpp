@@ -33,20 +33,20 @@ int svg_not_found = 0;
 // desktop file content for autostart
 static const char *deskfile_minimize = 
 "[Desktop Entry]\n"
-"Name=Firejail Launcher\n"
-"Comment=Firejail Launcher\n"
-"Exec=firelauncher --minimize\n"
-"Icon=firelauncher\n"
+"Name=Firetools\n"
+"Comment=Firejail tools & stats\n"
+"Exec=firetools --minimize\n"
+"Icon=firetools\n"
 "Terminal=false\n"
 "Type=Application\n"
-"Categories=Qt;Utility;Security;\n";
+"Categories=Qt;System;Security;\n";
 
 
 static void usage() {
-	printf("firetools - Firejail sandbox launcher\n\n");
-	printf("Usage: firelauncher [options]\n\n");
+	printf("firetools - Firejail tools and stats utility\n\n");
+	printf("Usage: firetools [options]\n\n");
 	printf("Options:\n");
-	printf("\t--autostart - configure firelauncher to run automatically in system tray\n");
+	printf("\t--autostart - configure firetools to run automatically in system tray\n");
 	printf("\t\twhen X11 session is started\n\n");
 	printf("\t--debug - debug mode\n\n");
 	printf("\t--help - this help screen\n\n");
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 		fc.show();
 
 	// configure system tray
-	QSystemTrayIcon icon(QIcon(":resources/firelauncher.png"));
+	QSystemTrayIcon icon(QIcon(":resources/firetools.png"));
 	icon.show();	
 	icon.setToolTip("Firetools (click to open)");
 	QMenu *trayIconMenu = new QMenu(&fc);

@@ -194,7 +194,7 @@ void Wizard::accept() {
 	printf("Sandbox started, exiting firejail-ui...\n");
 
 	if (field("mon").toBool()) {
-		int rv = system("firetools &");
+		int rv = system(PACKAGE_LIBDIR "/fstats &");
 		(void) rv;
 	}
 

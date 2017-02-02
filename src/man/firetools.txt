@@ -4,15 +4,14 @@ Firetools \- Graphical tools collection for Firejail security sandbox
 .SH SYNOPSIS
 firetools [OPTIONS]
 .SH DESCRIPTION
-Firetools is a collection of graphical tools for Firejail security sandbox. The
-collection contains a sandbox launcher and tools utility (firetools), and a sandbox wizard (firejail-ui).
-firetools utility provides and  stores shortcuts to preconfigured Firejail sandboxes
-for several popular Linux applications.
+Firetools provides and  stores shortcuts to preconfigured Firejail sandboxes
+for several popular Linux applications. It also provides a number of tools to manage
+running sandboxes.
 
 .SH OPTIONS
 .TP
 \fB\-\-autostart\fR
-Configure firelauncher to run automatically in system tray when X11 session is started.
+Configure firetools to run automatically in system tray when X11 session is started.
 .TP
 \fB\-\-debug\fR
 Print debug messages.
@@ -39,6 +38,5 @@ Homepage: http://firejail.sourceforge.net
 .SH SEE ALSO
 \&\flfirejail\fR\|(1),
 \&\flfirejail-ui\fR\|(1),
-\&\flfirelauncher\fR\|(1)
 
 

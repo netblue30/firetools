@@ -664,9 +664,12 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		}
 	}
 	else if (linkstr == "about") {
-		QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firetools.png\"></td>";
+		QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/fstats.png\"></td>";
 		msg += "<td>" + tr(
-			"Firetools is the graphical user interface component of Firejail.<br/><br/>"
+			"Firetools provides and  stores shortcuts to preconfigured Firejail "
+			"sandboxes for several popular Linux applications. It also provides "
+			"a number of tools to manage running sandboxes.<br/>"
+			"<br/>"
 			"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 			"breaches by restricting the running environment of  untrusted  applications "
 			"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 
@@ -674,7 +677,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 			tr("QT version: ") + " " + QT_VERSION_STR + "<br/>" +
 			tr("License:") + " GPL v2<br/>" +
 			tr("Homepage:") + " " + QString(PACKAGE_URL) + "</td></tr></table><br/><br/>";
-	
+
 		QMessageBox::about(this, tr("About"), msg);
 		
 	}
@@ -688,7 +691,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	}
 	else if (linkstr == "launcher") {
 		// start firejail-ui as a separate process
-		int rv = system("firelauncher &");
+		int rv = system("firetools &");
 		(void) rv;
 	}
 	else {
