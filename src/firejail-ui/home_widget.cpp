@@ -67,6 +67,9 @@ void HomeWidget::readFiles() {
 		if (!S_ISDIR(s.st_mode))
 			continue;
 
+		if (arg_debug)
+			printf("configuring homewidget entry %s\n", entry->d_name);
+
 		QCheckBox *box = new QCheckBox(entry->d_name);
 		QListWidgetItem *item = new QListWidgetItem();
 		addItem(item);

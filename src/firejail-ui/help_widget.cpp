@@ -37,8 +37,10 @@ HelpWidget::HelpWidget(QWidget * parent): QDialog(parent) {
 	const char *fname = PACKAGE_LIBDIR "/uihelp";
 //todo error recovery
 	FILE *fp = fopen(fname, "r");
-	if (!fp)
-		errExit("fopen");
+	if (!fp) {
+		fprintf(stderr, "Error: cannot find uihelp file in %s\n", fname);
+		return;
+	}
 	char buf[MAXBUF];
 	while (fgets(buf, MAXBUF, fp))
 		message += QString(buf);

@@ -115,8 +115,10 @@ AppEntry::AppEntry(char *line) {
 AppEntry* appdb_load_file(void) {
 	const char *fname = PACKAGE_LIBDIR "/uimenus";
 	FILE *fp = fopen(fname, "r");
-	if (!fp)
+	if (!fp) {
+		fprintf(stderr, "Error: cannot find uimenus file in %s\n", fname);
 		return 0;
+	}
 	AppEntry *retval = 0;
 	AppEntry *last = 0;
 	

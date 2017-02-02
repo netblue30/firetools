@@ -6,7 +6,7 @@ TOP=`pwd`
 CODE_ARCHIVE="$1-$2.tar.xz"
 CODE_DIR="$1-$2"
 INSTALL_DIR=$TOP
-INSTALL_DIR+="/debian/usr"
+INSTALL_DIR+="/debian"
 DEBIAN_CTRL_DIR=$TOP
 DEBIAN_CTRL_DIR+="/debian/DEBIAN"
 
@@ -19,14 +19,17 @@ echo "*****************************************"
 tar -xJvf $CODE_ARCHIVE
 mkdir -p $INSTALL_DIR
 cd $CODE_DIR
-./configure --prefix=$INSTALL_DIR
-make && make install
+./configure --prefix=/usr
+make
+DESTDIR=$INSTALL_DIR make install
 
 cd ..
 echo "*****************************************"
 SIZE=`du -s debian/usr`
 echo "install size $SIZE"
 echo "*****************************************"
+
+INSTALL_DIR+="/usr"
 
 mv $INSTALL_DIR/share/doc/firetools/RELNOTES $INSTALL_DIR/share/doc/firetools/changelog.Debian
 gzip -9 $INSTALL_DIR/share/doc/firetools/changelog.Debian
