@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Firejail Tools
-Comment=Firejail tools and stats
-Exec=firetools
-Icon=firetools
-Terminal=false
-Type=Application
-Categories=Qt;System;Security;
-Keywords=jail;security;seccomp;

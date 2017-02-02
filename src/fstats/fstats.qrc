@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-   <file>resources/firetools.png</file>
+   <file>resources/fstats.png</file>
  </qresource>
 </RCC>

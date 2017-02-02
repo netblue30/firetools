@@ -23,7 +23,7 @@
 #include <pwd.h>
 #include <QWidget>
 #include <QDialog>
-#include "firetools.h"
+#include "fstats.h"
 
 class QTextBrowser;
 class QUrl;

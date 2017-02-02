@@ -20,7 +20,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include <QString>
-#include "firetools.h"
+#include "fstats.h"
 
 class DbPid;
 QString graph(int id, DbPid *dbpid, int cycle, GraphType gt);

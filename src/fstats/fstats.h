@@ -17,8 +17,8 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#ifndef FIRETOOLS_H
-#define FIRETOOLS_H
+#ifndef FSTATS_H
+#define FSTATS_H
 #include "../common/common.h"
 
 typedef enum {

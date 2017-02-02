@@ -31,8 +31,8 @@ int svg_not_found = 0;
 
 
 static void usage() {
-	printf("Firetools - Graphical tools collection for Firejail security sandbox\n\n");
-	printf("Usage: firetools [options]\n\n");
+	printf("fstats - Stats & tools for Firetools project\n\n");
+	printf("Usage: fstats [options]\n\n");
 	printf("Options:\n");
 	printf("\t--debug - debug mode\n\n");
 	printf("\t--help - this help screen\n\n");
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 		else if (strcmp(argv[i], "--version") == 0) {
-			printf("Firetools version " PACKAGE_VERSION "\n");
+			printf("fstats version " PACKAGE_VERSION "\n");
 			return 0;
 		}
 		else {
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 	free(path);	
 	
 	// initialize resources
-	Q_INIT_RESOURCE(firetools);
+	Q_INIT_RESOURCE(fstats);
 
 	QApplication app(argc, argv);
 	StatsDialog sd;

@@ -20,7 +20,7 @@
 #ifndef DB_H
 #define DB_H
 
-#include "firetools.h"
+#include "fstats.h"
 #include "dbpid.h"
 
 
