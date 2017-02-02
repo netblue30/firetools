@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-   <file>resources/firelauncher.png</file>
+   <file>resources/firetools.png</file>
    <file>resources/icedove.png</file>
    <file>resources/firefox.png</file>
    <file>resources/calibre.png</file>
