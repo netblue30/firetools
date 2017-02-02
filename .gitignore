@@ -13,6 +13,8 @@ build/
 *.1.gz
 src/firejail-ui/moc*
 src/firejail-ui/qrc*
+src/fstats/moc*
+src/fstats/qrc*
 src/firelauncher/moc*
 src/firelauncher/qrc*
 src/firetools/moc*
