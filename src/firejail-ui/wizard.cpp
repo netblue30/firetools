@@ -52,6 +52,7 @@ QString global_subtitle(
 );
 HomeWidget *global_home_widget;
 QString global_ifname = "";
+bool global_dns_enabled = false;
 
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
@@ -145,6 +146,22 @@ void Wizard::accept() {
 			printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
 		}
 		
+		// dns
+		if (global_dns_enabled) {
+			QString dns1 = field("dns1").toString();
+			if (!dns1.isEmpty()) {
+				char *d1 = dns1.toUtf8().data();
+				dprintf(fd, "dns %s\n", d1);
+				printf("dns %s\n", d1);
+			}
+			QString dns2 = field("dns2").toString();
+			if (!dns2.isEmpty()) {
+				char *d2 = dns2.toUtf8().data();
+				dprintf(fd, "dns %s\n", d2);
+				printf("dns %s\n", d2);
+			}
+		}
+		
 		// multimedia
 		if (field("nosound").toBool()) {
 			dprintf(fd, "nosound\n");
@@ -174,6 +191,7 @@ void Wizard::accept() {
 			dprintf(fd, "noroot\n");
 			printf("noroot\n");
 		}
+		
 		printf("############# end of profile file\n");
 		printf("\n");
 	}
@@ -380,6 +398,29 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	connect(whitelisted_home_, SIGNAL(toggled(bool)), this, SLOT(setHome(bool)));
 	global_home_widget = home_;
 
+
+	
+	dns1_ = new QLineEdit;
+	dns1_->setText("8.8.8.8");
+	dns1_->setMaximumWidth(150);
+	dns1_->setFixedWidth(170);
+	registerField("dns1", dns1_);
+	
+	dns2_ = new QLineEdit;
+	dns2_->setText("8.8.4.4");
+	dns2_->setMaximumWidth(150);
+	dns2_->setFixedWidth(170);
+	registerField("dns2", dns2_);
+
+	QGroupBox *dns_box = new QGroupBox(tr("DNS"));
+	dns_box->setCheckable(true);
+	dns_box->setChecked(false);
+	connect(dns_box, SIGNAL(toggled(bool)), this, SLOT(setDns(bool)));
+	QVBoxLayout *dns_box_layout = new QVBoxLayout;
+	dns_box_layout->addWidget(dns1_);
+	dns_box_layout->addWidget(dns2_);
+	dns_box->setLayout(dns_box_layout);
+
 	QWidget *w = new QWidget;
 	w->setMinimumHeight(8);
 	QGridLayout *layout = new QGridLayout;
@@ -388,7 +429,40 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	layout->addWidget(fs_box, 2, 0);
 	layout->addWidget(home_box, 2, 1, 2, 1);
 	layout->addWidget(net_box, 3, 0);
+	layout->addWidget(dns_box, 4, 0, 1, 2);
 	setLayout(layout);
+}
+
+bool ConfigPage::validatePage() {
+	if (global_dns_enabled) {
+		uint32_t addr;
+
+		QString ip = dns1_->text();
+		if (!ip.isEmpty()) {
+			const char *str = ip.toUtf8().data();
+			if (atoip(str, &addr)) {
+				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip); 
+				return false;
+			}
+		}
+		
+		ip = dns2_->text();
+		if (!ip.isEmpty()) {
+			const char *str = ip.toUtf8().data();
+			if (atoip(str, &addr)) {
+				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip); 
+				return false;
+			}
+		}
+
+		return true;
+	}
+	else
+		return true;
+}
+
+void ConfigPage::setDns(bool on) {
+	global_dns_enabled = on;
 }
 
 void ConfigPage::setHome(bool active) {

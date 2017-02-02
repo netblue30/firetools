@@ -74,12 +74,14 @@ class ConfigPage : public QWizardPage {
 
 public:
 	ConfigPage(QWidget *parent = 0);
+	bool validatePage();
 
 	int nextId() const;
 
 
 public slots:
 	void setHome(bool);
+	void setDns(bool);
 
 private:
 	// filesystem
@@ -93,6 +95,12 @@ private:
 	QRadioButton *sysnetwork_;
 	QRadioButton *nonetwork_;
 	QRadioButton *netnamespace_;
+	
+	// DNS
+	QLineEdit *dns1_;
+	QLineEdit *dns2_;
+	QCheckBox *dns1check_;
+	QCheckBox *dns2check_;
 };
 
 class ConfigPage2 : public QWizardPage {

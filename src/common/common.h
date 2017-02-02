@@ -63,6 +63,16 @@ static inline uint8_t mask2bits(uint32_t mask) {
 static inline int atoip(const char *str, uint32_t *ip) {
 	unsigned a, b, c, d;
 
+	// allow only numbers
+	const char *ptr = str;
+	while (*ptr != '\0') {
+		if (isdigit(*ptr) || *ptr == '.')
+			;
+		else
+			return 1;
+		ptr++;
+	}
+
 	if (sscanf(str, "%u.%u.%u.%u", &a, &b, &c, &d) != 4 || a > 255 || b > 255 || c > 255 || d > 255)
 		return 1;
 		
