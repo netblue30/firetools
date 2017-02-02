@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 			
 			// create desktop file
 			char *autofile;
-			if (asprintf(&autofile, "%s/.config/autostart/firelauncher.desktop", home) == -1)
+			if (asprintf(&autofile, "%s/.config/autostart/firetools.desktop", home) == -1)
 				errExit("asprintf");
 			FILE *fp = fopen(autofile, "w");
 			if (!fp) {
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 			}
 			fprintf(fp, "%s\n", deskfile_minimize);
 			fclose(fp);
-			printf("firelauncher autostart configured\n");
+			printf("firetools autostart configured\n");
 			return 0;
 		}
 		else if (strcmp(argv[i], "--minimize") == 0)

@@ -27,6 +27,7 @@ class QCheckBox;
 class QLabel;
 class QLineEdit;
 class QRadioButton;
+class QPushButton;
 class HomeWidget;
 class QListWidget;
 class QListWidgetItem;
@@ -56,6 +57,7 @@ public:
 private slots:
 	void groupClicked(QListWidgetItem*);
 	void appClicked(QListWidgetItem*);
+	void browseClicked();
 
 private:
 	AppEntry *appdb_;
@@ -64,6 +66,7 @@ private:
 	QLineEdit *command_;
 	QRadioButton *use_default_;
 	QRadioButton *use_custom_;
+	QPushButton *browse_;
 };
 
 class ConfigPage : public QWizardPage {

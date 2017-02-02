@@ -15,8 +15,6 @@ src/firejail-ui/moc*
 src/firejail-ui/qrc*
 src/fstats/moc*
 src/fstats/qrc*
-src/firelauncher/moc*
-src/firelauncher/qrc*
 src/firetools/moc*
 src/firetools/qrc*
 src/fmgr/moc*

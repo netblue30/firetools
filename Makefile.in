@@ -20,9 +20,6 @@ src: firetools_config_extras.h
 firetools.1: src/man/firetools.txt
 	./mkman.sh $(VERSION) src/man/firetools.txt firetools.1
 
-firelauncher.1: src/man/firelauncher.txt
-	./mkman.sh $(VERSION) src/man/firelauncher.txt firelauncher.1
-
 firejail-ui.1: src/man/firejail-ui.txt
 	./mkman.sh $(VERSION) src/man/firejail-ui.txt firejail-ui.1
 

@@ -33,6 +33,8 @@
 #include <QLineEdit>
 #include <QListWidgetItem>
 #include <QProcess>
+#include <QPushButton>
+#include <QFileDialog>
 #include "../../firetools_config_extras.h"
 #include "wizard.h"
 #include "home_widget.h"
@@ -215,14 +217,20 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *app_box = new QGroupBox(tr("Step 1: Chose an application"));
 	app_box->setFont(bold);
 	
-	QLabel *label1 = new QLabel(tr("Choose an application form the menus below, or type in the program name."));
+	QLabel *label1 = new QLabel(tr("Choose an application form the menus below"));
 	label1->setFont(oldFont);
 	QGridLayout *app_box_layout = new QGridLayout;
 	group_ = new QListWidget;
 	group_->setFont(oldFont);
 	command_ = new QLineEdit;
 	command_->setFont(oldFont);
-	QLabel *label2 = new QLabel("Program:");
+	
+	browse_ = new QPushButton("browse filesystem");
+	QIcon icon(":resources/gnome-fs-directory.png");
+	browse_->setIcon(icon);
+	connect(browse_, SIGNAL(clicked()), this, SLOT(browseClicked()));
+	
+	QLabel *label2 = new QLabel("or type in the program name:");
 	label2->setFont(oldFont);
 	app_ = new QListWidget;
 	app_->setFont(oldFont);
@@ -230,7 +238,8 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	app_box_layout->addWidget(label1, 0, 0, 1, 2);
 	app_box_layout->addWidget(group_, 1, 0);
 	app_box_layout->addWidget(app_, 1, 1);
-	app_box_layout->addWidget(label2, 2, 0);
+	app_box_layout->addWidget(browse_, 2, 0);
+	app_box_layout->addWidget(label2, 2, 1);
 	app_box_layout->addWidget(command_, 3, 0, 1, 2);
 	app_box->setLayout(app_box_layout);
 	
@@ -265,6 +274,19 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	            
 	registerField("command*", command_);
 	registerField("use_custom", use_custom_); 
+}
+
+void ApplicationPage::browseClicked() {
+	QString fname = QFileDialog::getOpenFileName(this, tr("Choose Application"));
+	
+	// check the file is an executable
+	const char *cmd = fname.toUtf8().data();
+	if (arg_debug)
+		printf("Command: %s\n", cmd);	
+	if (access(cmd, X_OK))
+		QMessageBox::warning(this, "Error", "The file is not an executable program" ); 
+	else
+		command_->setText(fname);
 }
 
 void ApplicationPage::groupClicked(QListWidgetItem *item) {
