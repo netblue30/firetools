@@ -4,7 +4,7 @@ Firetools \- Graphical tools collection for Firejail security sandbox
 .SH SYNOPSIS
 firetools [OPTIONS]
 .SH DESCRIPTION
-Firetools provides and  stores shortcuts to preconfigured Firejail sandboxes
+Firetools stores shortcuts to preconfigured Firejail sandboxes
 for several popular Linux applications. It also provides a number of tools to manage
 running sandboxes.
 

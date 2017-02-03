@@ -666,7 +666,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	else if (linkstr == "about") {
 		QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/fstats.png\"></td>";
 		msg += "<td>" + tr(
-			"Firetools provides and  stores shortcuts to preconfigured Firejail "
+			"Firetools stores shortcuts to preconfigured Firejail "
 			"sandboxes for several popular Linux applications. It also provides "
 			"a number of tools to manage running sandboxes.<br/>"
 			"<br/>"
