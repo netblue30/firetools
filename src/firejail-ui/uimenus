@@ -29,6 +29,7 @@ Editors;TeXworks;/usr/bin/texworks
 Editors;X2;/usr/bin/x2
 Editors;Xedit;xedit
 Editors;xJed;/usr/bin/xjed
+Editors;Notes;/usr/bin/xfce4-notes
 Emulators;VirtualBox;/usr/bin/virtualbox
 File Management;File Roller Archive Manager;/usr/bin/file-roller
 File Management;Brasero CD/DVD Burning Application;/usr/bin/brasero
@@ -48,6 +49,7 @@ File Management;Thunar File Manager;/usr/bin/thunar
 File Management;Worker File Manager;/usr/bin/worker
 File Management;Xarchiver;/usr/bin/xarchiver
 File Management;Xfe File Manager;/usr/bin/xfe
+File Management;Desktop Search;/usr/bin/tracker-needle
 Games;0 A.D.;/usr/games/0ad
 Games;2048 puzzle;/usr/games/2048-qt
 Games;3dchess;/usr/games/3Dc
@@ -117,6 +119,9 @@ Graphics;Whitedune;/usr/bin/whitedune
 Graphics;XPaint;/usr/bin/xpaint
 Graphics;X Window Snapshot;xwd | xwud*
 Graphics;Shotwell Photo Manager;/usr/bin/shotwell
+Graphics;Screenshot;/usr/bin/xfce4-screenshooter
+Graphics;Ristretto Image Viewer;/usr/bin/ristretto
+Graphics;Simple Scan;/usr/bin/simple-scan
 Help;Xman;xman
 Help;yelp;/usr/bin/yelp
 Network;Chromium;/usr/bin/chromium
@@ -145,6 +150,7 @@ Network;X Chat;/usr/bin/xchat
 Network;xtightvncviewer;/usr/bin/xtightvncviewer
 Network;Thunderbird;/usr/bin/thunderbird
 Network;Pidgin;/usr/bin/pidgin
+Network;Remmina Remote Desktop Client;/usr/bin/remmina
 Office;Calibre eBook reader;/usr/bin/calibre
 Office;LibreOffice Base;/usr/bin/lobase
 Office;LibreOffice Calc;/usr/bin/localc
@@ -156,10 +162,13 @@ Office;LibreOffice;/usr/bin/libreoffice
 Office;LibreOffice Writer;/usr/bin/lowriter
 Office;Scribus;/usr/bin/scribus
 Office;zathura;/usr/bin/zathura
+Office;Dictionary;/usr/bin/xfce4-dict
+Office;Orage Calendar;/usr/bin/orage
 Programming;Geany;/usr/bin/geany
 Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
 Science;Xcalc;xcalc
+Science;Gnome Calculator;/usr/bin/gnome-calculator
 Sound;Alsamixergui;/usr/bin/alsamixergui
 Sound;Amarok;/usr/bin/amarok
 Sound;AScd;/usr/bin/ascd
@@ -190,6 +199,7 @@ Sound;PulseAudio Volume Control;/usr/bin/pavucontrol
 Sound;PulseAudio Volume Meter;/usr/bin/pavumeter
 Sound;Rmedigicontrol;/usr/bin/rmedigicontrol
 Sound;Rhythmbox;/usr/bin/rhythmbox
+Sound;Sound Juicer;/usr/bin/sound-juicer
 System;About Myself;/usr/bin/userinfo
 System;Disk Management;/usr/bin/usermount
 System;Editres;editres
@@ -210,6 +220,7 @@ System;Xkill;xkill
 System;Xload;xload
 System;Xrefresh;xrefresh
 System;Xvidtune;xvidtune
+System;Orage Globaltime;/usr/bin/globaltime
 Terminal Emulators;Gnome Terminal;/usr/bin/gnome-terminal
 Terminal Emulators;LXTerminal;/usr/bin/lxterminal
 Terminal Emulators;Rxvt-Unicode (Black, Xft);urxvt
