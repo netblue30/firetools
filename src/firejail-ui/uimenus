@@ -30,8 +30,11 @@ Editors;X2;/usr/bin/x2
 Editors;Xedit;xedit
 Editors;xJed;/usr/bin/xjed
 Editors;Notes;/usr/bin/xfce4-notes
+Editors;Pluma;/usr/bin/pluma
+Editors;Xed;/usr/bin/xed
 Emulators;VirtualBox;/usr/bin/virtualbox
 File Management;File Roller Archive Manager;/usr/bin/file-roller
+File Management;Engrampa;/usr/bin/engrampa
 File Management;Brasero CD/DVD Burning Application;/usr/bin/brasero
 File Management;Caja File Manager;/usr/bin/caja
 File Management;Dolphin File Manager;/usr/bin/dolphin
@@ -120,6 +123,8 @@ Graphics;XPaint;/usr/bin/xpaint
 Graphics;X Window Snapshot;xwd | xwud*
 Graphics;Shotwell Photo Manager;/usr/bin/shotwell
 Graphics;Screenshot;/usr/bin/xfce4-screenshooter
+Graphics;Gnome Screenshot;/usr/bin/gnome-screenshot
+Graphics;Mate Screenshot;/usr/bin/mate-screenshot
 Graphics;Ristretto Image Viewer;/usr/bin/ristretto
 Graphics;Simple Scan;/usr/bin/simple-scan
 Help;Xman;xman
@@ -169,6 +174,7 @@ Programming;TkWish8.6;x-terminal-emulator -e /usr/bin/wish8.6
 Science;galculator;/usr/bin/galculator
 Science;Xcalc;xcalc
 Science;Gnome Calculator;/usr/bin/gnome-calculator
+Science;Calculator;/usr/bin/mate-calc
 Sound;Alsamixergui;/usr/bin/alsamixergui
 Sound;Amarok;/usr/bin/amarok
 Sound;AScd;/usr/bin/ascd
@@ -260,17 +266,23 @@ Video;SMPlayer;/usr/bin/smplayer
 Video;SMTube;/usr/bin/smtube
 Video;Snappy;/usr/bin/snappy
 Video;Totem;/usr/bin/totem
+Video;Xplayer;/usr/bin/xplayer
 Video;tvtime;/usr/bin/tvtime
 Video;VLC media player;/usr/bin/qvlc
 Video;Voctomix;/usr/bin/voctogui
 Video;vokoscreen;/usr/bin/vokoscreen
 Video;Xine;/usr/bin/xine
 Viewers;Evince;/usr/bin/evince
+Viewers;Atril;/usr/bin/atril
+Viewers;Xreader;/usr/bin/xreader
 Viewers;Eye of MATE;/usr/bin/eom
 Viewers;Eye of Gnome;/usr/bin/eog
+Viewers;Xviewer;/usr/bin/xviewer
 Viewers;Geeqie;/usr/bin/geeqie
 Viewers;GPicView;/usr/bin/gpicview
 Viewers;gThumb Image Viewer;/usr/bin/gthumb
+Viewers;Pix Image Viewer;/usr/bin/pix
+
 Viewers;Gwenview;/usr/bin/gwenview
 Viewers;Mirage;/usr/bin/mirage
 Viewers;nomacs;/usr/bin/nomacs
