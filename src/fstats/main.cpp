@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Firetools Authors
+ * Copyright (C) 2015-2017 Firetools Authors
  *
  * This file is part of firetools project
  *
