@@ -6,6 +6,13 @@ Build and install: ./configure && make && sudo make install
 Documentation and support: http://firejail.sourceforge.net
 License: GPL v2 or later
 
+Setting up a compilation environment on Debian/Ubuntu:
+$ sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 firejail xterm git
+
+Compile and install:
+$ git clone https://github.com/netblue30/firetools
+$ cd firetools
+$ ./configure --prefix=/usr && make && sudo make install
 
 Firetools Authors:
 
