@@ -172,10 +172,12 @@ void MainWindow::newSandbox() {
 void MainWindow::runAbout() {
 	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firetools.png\"></td>";
 	msg += "<td>" + tr(
-		"Firetools stores shortcuts to preconfigured Firejail "
-		"sandboxes for several popular Linux applications. It also provides "
-		"a number of tools to manage running sandboxes.<br/>"
-		"<br/>"
+	
+		"Firetools is a GUI application for Firejail. "
+		"It offers a system tray launcher for sandboxed apps, "
+		"sandbox editing, management, and statistics. "
+		"The software package also includes a sandbox configuration wizard, firejail-ui.<br/><br/>"
+
 		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 		"breaches by restricting the running environment of  untrusted  applications "
 		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 
