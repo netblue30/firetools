@@ -3,7 +3,7 @@ Firetools is the graphical user interface of Firajail security sandbox.
 Download: http://sourceforge.net/projects/firejail/files/
 Dependencies: firejail, Qt4 or Qt5 library, qmake
 Build and install: ./configure && make && sudo make install
-Documentation and support: http://firejail.sourceforge.net
+Documentation and support: http://firejail.wordpress.com
 License: GPL v2 or later
 
 Setting up a compilation environment on Debian/Ubuntu:
@@ -37,7 +37,5 @@ license LGPL
 
 fmgr and firejail-ui icons (emblem-symbolic-link.png, view-refresh.png) taken from Adwaita project
 (http://gnome-look.org/content/show.php/?content=144237), license GPL
-
-
 
 Copyright (C) 2015 Firetools Authors

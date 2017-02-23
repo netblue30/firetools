@@ -1,11 +1,10 @@
-firetools (0.9.45) baseline; urgency=low
-  * development version
+firetools (0.9.46) baseline; urgency=low
   * split firetools in two distinct executables: firelauncher and firetools
   * added firejail-ui, a configuration wizard for firejail
   * move make dist from .tar.bz2 to .tar.xz
   * implemented detached signatures
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Fri, 11 Nov 2016 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Wed, 22 Feb 2017 08:00:00 -0500
 
 firetools (0.9.44) baseline; urgency=low
   * support for firejail --x11 detection

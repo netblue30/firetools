@@ -12,5 +12,5 @@ Description: Firejail graphical user interface program.
  breaches by restricting the running environment of untrusted applications
  using Linux namespaces, seccmp-bpf and Linux capabilities.
  .
- Firetools is the graphical interface of Firejail. Built using Qt4 library,
+ Firetools is the graphical interface of Firejail. Built using Qt4/Qt5 library,
  it provides a sandbox launcher, editing, management and statistics.
