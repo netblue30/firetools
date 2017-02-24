@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.44"
+VER="0.9.46"
 
 cd ~
 rm -fr rpmbuild
@@ -14,21 +14,31 @@ cd ~/rpmbuild
 
 mkdir -p firetools-$VER/usr/bin
 install -m 755 /usr/bin/firetools firetools-$VER/usr/bin/.
-install -m 755 /usr/bin/firemgr firetools-$VER/usr/bin/.
+install -m 755 /usr/bin/firejail-ui firetools-$VER/usr/bin/.
 
-mkdir -p firetools-$VER/usr/share/man/man1
-install -m 644 /usr/share/man/man1/firetools.1.gz firetools-$VER/usr/share/man/man1/.
-install -m 644 /usr/share/man/man1/firemgr.1.gz firetools-$VER/usr/share/man/man1/.
+mkdir -p firetools-$VER/usr/lib/firetools
+install  -m 755 /usr/lib/firetools/fmgr firetools-$VER/usr/lib/firetools/.
+install  -m 755 /usr/lib/firetools/fstats firetools-$VER/usr/lib/firetools/.
+install  -m 644 /usr/lib/firetools/uimenus firetools-$VER/usr/lib/firetools/.
+install  -m 644 /usr/lib/firetools/uihelp firetools-$VER/usr/lib/firetools/.
+
+mkdir -p firetools-$VER/usr/share/applications/
+install -m 644 /usr/share/applications/firetools.desktop firetools-$VER/usr/share/applications/.
+install -m 644 /usr/share/applications/firejail-ui.desktop firetools-$VER/usr/share/applications/.
+
+mkdir -p  firetools-$VER/usr/share/pixmaps
+install -m 644 /usr/share/pixmaps/firetools.png firetools-$VER/usr/share/pixmaps/.
+install -m 644 /usr/share/pixmaps/firejail-ui.png firetools-$VER/usr/share/pixmaps/.
 
 mkdir -p firetools-$VER/usr/share/doc/firetools
 install -m 644 /usr/share/doc/firetools/COPYING firetools-$VER/usr/share/doc/firetools/.
 install -m 644 /usr/share/doc/firetools/README firetools-$VER/usr/share/doc/firetools/.
 install -m 644 /usr/share/doc/firetools/RELNOTES firetools-$VER/usr/share/doc/firetools/.
 
-mkdir -p firetools-$VER/usr/share/applications/
-install -m 644 /usr/share/applications/firetools.desktop firetools-$VER/usr/share/applications/.
-mkdir -p  firetools-$VER/usr/share/pixmaps
-install -m 644 /usr/share/pixmaps/firetools.png firetools-$VER/usr/share/pixmaps/.
+mkdir -p firetools-$VER/usr/share/man/man1
+install -m 644 /usr/share/man/man1/firetools.1.gz firetools-$VER/usr/share/man/man1/.
+install -m 644 /usr/share/man/man1/firejail-ui.1.gz firetools-$VER/usr/share/man/man1/.
+
 
 tar -czvf firetools-$VER.tar.gz firetools-$VER
 cp firetools-$VER.tar.gz SOURCES/.
@@ -70,9 +80,24 @@ rm -rf %{buildroot}
 %{_docdir}/*
 %{_mandir}/*
 /usr/share/applications/firetools.desktop
+/usr/share/applications/firejail-ui.desktop
 /usr/share/pixmaps/firetools.png
+/usr/share/pixmaps/firejail-ui.png
+/usr/lib/firetools/fmgr
+/usr/lib/firetools/fstats
+/usr/lib/firetools/uihelp
+/usr/lib/firetools/uimenus
  
 %changelog
+
+* Fri Feb 24 2017 netblue30 <netblue30@yahoo.com> 0.9.46-1
+ - split firetools in two distinct executables
+ - updated the default list of applications for firetools
+ - added firejail-ui, a configuration wizard for firejail
+ - move make dist from .tar.bz2 to .tar.xz
+ - implemented detached signatures
+ - bugfixes
+
 * Mon Oct 24 2016 netblue30 <netblue30@yahoo.com> 0.9.44-1
  - support for firejail --x11 detection
  - bugfixes

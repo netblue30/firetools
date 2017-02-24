@@ -23,4 +23,7 @@ $ make
 $ sudo make install
 `````
 
+On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"
+
+
 

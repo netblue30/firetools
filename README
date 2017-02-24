@@ -13,6 +13,7 @@ Compile and install:
 $ git clone https://github.com/netblue30/firetools
 $ cd firetools
 $ ./configure --prefix=/usr && make && sudo make install
+On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"
 
 Firetools Authors:
 
