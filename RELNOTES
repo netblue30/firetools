@@ -1,5 +1,6 @@
 firetools (0.9.46) baseline; urgency=low
-  * split firetools in two distinct executables: firelauncher and firetools
+  * split firetools in two distinct executables
+  * updated the default list of applications for firetools
   * added firejail-ui, a configuration wizard for firejail
   * move make dist from .tar.bz2 to .tar.xz
   * implemented detached signatures
