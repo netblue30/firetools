@@ -26,10 +26,7 @@ firejail-ui.1: src/man/firejail-ui.txt
 clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 
 distclean: clean
-	rm -f `find src/firetools -name Makefile`
-	rm -f `find src/fmgr -name Makefile`
-	rm -f `find src/firejail-ui -name Makefile`
-	rm -f `find src/debmenu -name Makefile`
+	make -C src distclean
 	rm -f firetools_config.h firetools_config_extras.h Makefile config.status config.log
 	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
 	rm -f  src/fmgr/config.log src/fmgr/config.status #fedora fix
