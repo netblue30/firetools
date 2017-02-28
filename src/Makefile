@@ -8,3 +8,8 @@ clean:;
 	for dir in $(APPS); do \
 		$(MAKE) -C $$dir clean; \
 	done
+
+distclean:;
+	for dir in $(APPS); do \
+		$(MAKE) -C $$dir distclean; \
+	done

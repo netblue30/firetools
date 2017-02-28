@@ -20,7 +20,7 @@ $ git clone  https://github.com/netblue30/firetools
 $ cd firetools
 $ ./configure
 $ make
-$ sudo make install
+$ sudo make install-strip
 `````
 
 On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"

@@ -26,10 +26,7 @@ firejail-ui.1: src/man/firejail-ui.txt
 clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 
 distclean: clean
-	rm -f `find src/firetools -name Makefile`
-	rm -f `find src/fmgr -name Makefile`
-	rm -f `find src/firejail-ui -name Makefile`
-	rm -f `find src/debmenu -name Makefile`
+	make -C src distclean
 	rm -f firetools_config.h firetools_config_extras.h Makefile config.status config.log
 	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
 	rm -f  src/fmgr/config.log src/fmgr/config.status #fedora fix
@@ -39,8 +36,7 @@ distclean: clean
 	rm -f sanitizer.sh
 
 	
-install: all
-	cd build; strip *; cd ..
+realinstall:
 	mkdir -p $(DESTDIR)/$(PREFIX)/bin
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/applications
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/pixmaps
@@ -66,6 +62,13 @@ install: all
 	rm -f firejail-ui.1.gz
 	gzip -n9 firejail-ui.1
 	install -c -m 0644 firejail-ui.1.gz $(DESTDIR)/$(PREFIX)/share/man/man1/.
+
+install: all
+	$(MAKE) realinstall
+
+install-strip: all
+	strip build/*
+	$(MAKE) realinstall
 
 uninstall:;
 	rm -f $(DESTDIR)/$(PREFIX)/bin/firetools

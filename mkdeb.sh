@@ -21,7 +21,7 @@ mkdir -p $INSTALL_DIR
 cd $CODE_DIR
 ./configure --prefix=/usr
 make
-DESTDIR=$INSTALL_DIR make install
+DESTDIR=$INSTALL_DIR make install-strip
 
 cd ..
 echo "*****************************************"
