@@ -8,6 +8,8 @@ Home page: https://l3net.wordpress.com/projects/firejail/#firetools
 
 Download: http://sourceforge.net/projects/firejail/files/firetools/
 
+[![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=aAnW3Ii0y-4)
+
 ## Setting up a compilation environment on Debian/Ubuntu:
 `````
 $ sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 git
