@@ -27,7 +27,7 @@ typedef struct {
 	unsigned char zombie;
 	pid_t parent;
 	uid_t uid;
-	char *user;
+//	char *user;
 //	char *cmd;
 	unsigned utime;
 	unsigned stime;
