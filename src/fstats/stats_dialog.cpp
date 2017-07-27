@@ -48,6 +48,9 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")), pid_x11_(0),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
 
+	// clean storage area
+	cleanStorage();
+
 	procView_ = new QTextBrowser;
 	procView_->setOpenLinks(false);
 	procView_->setOpenExternalLinks(false);
@@ -93,6 +96,13 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	thread_ = new PidThread();
 	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
 	
+}
+
+void StatsDialog::cleanStorage() {
+	storage_dns_ = "";
+	storage_caps_ = "";
+	storage_seccomp_ = "";
+	storage_tree_ = "";
 }
 
 QString StatsDialog::header() {
@@ -182,35 +192,41 @@ void StatsDialog::updateTree() {
 		return;
 	}
 
-	QString msg = header();
-	msg += "<hr><table><tr><td width=\"5\"></td><td>";
-		
-	char *str = 0;
-	char *cmd;
-	if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
-		str = run_program(cmd);
-		char *ptr = str;
-		// htmlize!
-		while (*ptr != 0) {
-			if (*ptr == '\n') {
-				*ptr = '\0';
-				msg += QString(str) + "<br/>\n";
-				ptr++;
-				
-				while (*ptr == ' ') {
-					msg += "&nbsp;&nbsp;";
+	QString msg = storage_tree_;
+	if (msg.isEmpty()) {
+		if (arg_debug)
+			printf("reading process tree configuration\n");
+		msg = header();
+		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+			
+		char *str = 0;
+		char *cmd;
+		if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
+			str = run_program(cmd);
+			char *ptr = str;
+			// htmlize!
+			while (*ptr != 0) {
+				if (*ptr == '\n') {
+					*ptr = '\0';
+					msg += QString(str) + "<br/>\n";
 					ptr++;
-				}	
-				str = ptr;
-				continue;
+					
+					while (*ptr == ' ') {
+						msg += "&nbsp;&nbsp;";
+						ptr++;
+					}	
+					str = ptr;
+					continue;
+				}
+				ptr++;
 			}
-			ptr++;
-		}
-		free(cmd);
-	}		
-
-	msg += "</td></tr></table>";
-	procView_->setHtml(msg);
+			free(cmd);
+		}		
+	
+		msg += "</td></tr></table>";
+		procView_->setHtml(msg);
+		storage_tree_ = msg;
+	}
 }
 
 void StatsDialog::updateSeccomp() {
@@ -226,35 +242,41 @@ void StatsDialog::updateSeccomp() {
 		return;
 	}
 
-	QString msg = header();
-	msg += "<hr><table><tr><td width=\"5\"></td><td>";
-		
-	char *str = 0;
-	char *cmd;
-	if (asprintf(&cmd, "firejail --seccomp.print=%d", pid_) != -1) {
-		str = run_program(cmd);
-		char *ptr = str;
-		// htmlize!
-		while (*ptr != 0) {
-			if (*ptr == '\n') {
-				*ptr = '\0';
-				msg += QString(str) + "<br/>\n";
-				ptr++;
-				
-				while (*ptr == ' ') {
-					msg += "&nbsp;&nbsp;";
+	QString msg = storage_seccomp_;
+	if (msg.isEmpty()) {
+		if (arg_debug)
+			printf("reading seccomp configuration\n");
+		QString msg = header();
+		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+			
+		char *str = 0;
+		char *cmd;
+		if (asprintf(&cmd, "firejail --seccomp.print=%d", pid_) != -1) {
+			str = run_program(cmd);
+			char *ptr = str;
+			// htmlize!
+			while (*ptr != 0) {
+				if (*ptr == '\n') {
+					*ptr = '\0';
+					msg += QString(str) + "<br/>\n";
 					ptr++;
-				}	
-				str = ptr;
-				continue;
+					
+					while (*ptr == ' ') {
+						msg += "&nbsp;&nbsp;";
+						ptr++;
+					}	
+					str = ptr;
+					continue;
+				}
+				ptr++;
 			}
-			ptr++;
-		}
-		free(cmd);
-	}		
-
-	msg += "</td></tr></table>";
-	procView_->setHtml(msg);
+			free(cmd);
+		}		
+	
+		msg += "</td></tr></table>";
+		procView_->setHtml(msg);
+		storage_seccomp_ = msg;
+	}
 }
 
 void StatsDialog::updateCaps() {
@@ -270,41 +292,47 @@ void StatsDialog::updateCaps() {
 		return;
 	}
 
-	QString msg = header();
-	msg += "<hr><table><tr><td width=\"5\"></td><td>";
-		
-	char *str = 0;
-	char *cmd;
-	if (asprintf(&cmd, "firejail --caps.print=%d", pid_) != -1) {
-		str = run_program(cmd);
-		char *ptr = str;
-		// htmlize!
-		int cnt = 0;
-		while (*ptr != 0) {
-			if (*ptr == '\n') {
-				// print only caps supported by the current kernel
-				if (cnt >= caps_cnt_)
-					break;
-				cnt++;
-				
-				*ptr = '\0';
-				msg += QString(str) + "<br/>\n";
+	QString msg = storage_caps_;
+	if (msg.isEmpty()) {
+		if (arg_debug)
+			printf("reading caps configuration\n");
+		msg = header();
+		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+			
+		char *str = 0;
+		char *cmd;
+		if (asprintf(&cmd, "firejail --caps.print=%d", pid_) != -1) {
+			str = run_program(cmd);
+			char *ptr = str;
+			// htmlize!
+			int cnt = 0;
+			while (*ptr != 0) {
+				if (*ptr == '\n') {
+					// print only caps supported by the current kernel
+					if (cnt >= caps_cnt_)
+						break;
+					cnt++;
+					
+					*ptr = '\0';
+					msg += QString(str) + "<br/>\n";
+					ptr++;
+					
+	//				while (*ptr == ' ') {
+	//					msg += "&nbsp;&nbsp;";
+	//					ptr++;
+	//				}	
+					str = ptr;
+					continue;
+				}
 				ptr++;
-				
-//				while (*ptr == ' ') {
-//					msg += "&nbsp;&nbsp;";
-//					ptr++;
-//				}	
-				str = ptr;
-				continue;
 			}
-			ptr++;
-		}
-		free(cmd);
-	}		
-
-	msg += "</pre></td></tr></table>";
-	procView_->setHtml(msg);
+			free(cmd);
+		}		
+	
+		msg += "</pre></td></tr></table>";
+		procView_->setHtml(msg);
+		storage_caps_ = msg;
+	}
 }
 
 void StatsDialog::updateDns() {
@@ -320,36 +348,43 @@ void StatsDialog::updateDns() {
 		return;
 	}
 
-	QString msg = header();
-	msg += "<hr><table><tr><td width=\"5\"></td><td>";
-		
-	char *str = 0;
-	char *cmd;
-	if (asprintf(&cmd, "firejail --dns.print=%d", pid_) != -1) {
-		str = run_program(cmd);
-		char *ptr = str;
-
-		// htmlize!
-		while (*ptr != 0) {
-			if (*ptr == '\n') {
-				*ptr = '\0';
-				msg += QString(str) + "<br/>\n";
-				ptr++;
-				
-				while (*ptr == ' ') {
-					msg += "&nbsp;&nbsp;";
+	QString msg = storage_dns_;
+	if (msg.isEmpty()) {
+		if (arg_debug)
+			printf("reading dns configuration\n");
+			
+		msg = header();
+		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+			
+		char *str = 0;
+		char *cmd;
+		if (asprintf(&cmd, "firejail --dns.print=%d", pid_) != -1) {
+			str = run_program(cmd);
+			char *ptr = str;
+	
+			// htmlize!
+			while (*ptr != 0) {
+				if (*ptr == '\n') {
+					*ptr = '\0';
+					msg += QString(str) + "<br/>\n";
 					ptr++;
-				}	
-				str = ptr;
-				continue;
+					
+					while (*ptr == ' ') {
+						msg += "&nbsp;&nbsp;";
+						ptr++;
+					}	
+					str = ptr;
+					continue;
+				}
+				ptr++;
 			}
-			ptr++;
-		}
-	}		
-	free(cmd);
-
-	msg += "</td></tr></table>";
-	procView_->setHtml(msg);
+		}		
+		free(cmd);
+	
+		msg += "</td></tr></table>";
+		procView_->setHtml(msg);
+		storage_dns_ = msg;
+	}
 }
 
 void StatsDialog::kernelSecuritySettings() {
@@ -586,6 +621,7 @@ void StatsDialog::cycleReady() {
 }
 
 void StatsDialog::anchorClicked(const QUrl & link) {
+	cleanStorage(); // full storage cleanup on any click
 	QString linkstr = link.toString();
 	
 	if (linkstr == "top") {

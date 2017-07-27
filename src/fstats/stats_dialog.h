@@ -49,6 +49,7 @@ private:
 	void updateSeccomp();	
 	void updateDns();	
 	void updateCaps();	
+	void cleanStorage();
 
 private:
 	QTextBrowser *procView_;
@@ -79,6 +80,12 @@ private:
 	bool no_network_;
 
 	PidThread *thread_;
+	
+	// storage for various sandbox settings
+	QString storage_dns_;
+	QString storage_caps_;
+	QString storage_seccomp_;
+	QString storage_tree_;
 };
 
 
