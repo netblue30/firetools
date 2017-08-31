@@ -122,6 +122,24 @@ char *get_home_directory() {
 	return 0;
 }
 
+// create firetools directory if it doesn't exist
+void create_config_directory() {
+	struct stat s;
+	char *path;
+	char *homedir = get_home_directory();
+	if (asprintf(&path, "%s/.config/firetools", homedir) == -1)
+		errExit("asprintf");
+	free(homedir);
+	if (stat(path, &s) == -1) {
+		/* coverity[toctou] */
+		int rv = mkdir(path, 0755);
+		if (rv == -1) {
+			fprintf(stderr, "Error: cannot create %s directory\n", path);
+			exit(1);
+		}
+	}
+	free(path);
+}
 
 int sargc;
 char *sargv[SARG_MAX];

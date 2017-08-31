@@ -35,6 +35,9 @@ char *get_config_file_name(const char *name);
 // get the full path of the home directory; returns allocated memory
 char *get_home_directory();
 
+// create ~/.config/firetools directory if it doesn't exist
+void create_config_directory();
+
 // split a line into words
 #define SARG_MAX 128
 extern int sargc;
