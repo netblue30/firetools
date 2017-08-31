@@ -52,6 +52,7 @@ void config_read_screen_size(int *x, int *y) {
 			ptr += 2;
 			if (sscanf(ptr, "%d", x) != 1) {
 				fprintf(stderr, "Error: invalid X size in ~/.config/firetools/fmgr.config\n");
+				fclose(fp);
 				return;
 			}
 		}
@@ -59,6 +60,7 @@ void config_read_screen_size(int *x, int *y) {
 			ptr += 2;
 			if (sscanf(ptr, "%d", y) != 1) {
 				fprintf(stderr, "Error: invalid Y size in ~/.config/firetools/fmgr.config\n");
+				fclose(fp);
 				return;
 			}
 		}
