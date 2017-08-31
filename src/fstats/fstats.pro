@@ -11,6 +11,7 @@ QT += widgets
                 dbpid.cpp \
                  graph.cpp \
                   ../common/utils.cpp \
-                  ../common/pid.cpp
+                  ../common/pid.cpp \
+                  config.cpp
 RESOURCES = fstats.qrc
 TARGET=../../build/fstats

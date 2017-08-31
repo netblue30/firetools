@@ -122,6 +122,19 @@ char *get_home_directory() {
 	return 0;
 }
 
+// get config directory name; returns allocated memory
+char *get_config_directory() {
+	char *homedir = get_home_directory();
+	if (!homedir)
+		return 0;
+	
+	char *rv;
+	if (asprintf(&rv, "%s/.config/firetools", homedir) == -1)
+		errExit("asprintf");
+	free(homedir);
+	return rv;
+}
+
 // create firetools directory if it doesn't exist
 void create_config_directory() {
 	struct stat s;

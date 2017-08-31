@@ -35,6 +35,7 @@ Q_OBJECT
 
 public:
 	StatsDialog();
+	~StatsDialog();
 
 public slots:
 	void cycleReady();

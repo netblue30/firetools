@@ -31,4 +31,8 @@ typedef enum {
 extern int arg_debug;
 extern int svg_not_found;
 
+// config.cpp
+void config_read_screen_size(int *x, int *y);
+void config_write_screen_size(int x, int y);
+
 #endif

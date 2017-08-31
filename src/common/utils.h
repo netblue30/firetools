@@ -35,6 +35,9 @@ char *get_config_file_name(const char *name);
 // get the full path of the home directory; returns allocated memory
 char *get_home_directory();
 
+// get config directory name; returns allocated memory
+char *get_config_directory();
+
 // create ~/.config/firetools directory if it doesn't exist
 void create_config_directory();
 

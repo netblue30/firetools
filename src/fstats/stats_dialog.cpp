@@ -36,6 +36,7 @@
 #include "../../firetools_config.h"
 #include "../../firetools_config_extras.h"
 #include "pid_thread.h"
+#include "fstats.h"
 extern bool data_ready;
 
 static QString getName(pid_t pid);
@@ -61,7 +62,12 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(procView_, 0, 0);
 	setLayout(layout);
-	resize(650, 650);
+	
+	// set screen size and title
+	int x;
+	int y;
+	config_read_screen_size(&x, &y);
+ 	resize(x, y);
 	setWindowTitle(tr("Firetools"));
 	
 	// detect if joining a sandbox is possible on this system
@@ -96,6 +102,11 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	thread_ = new PidThread();
 	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
 	
+}
+
+StatsDialog::~StatsDialog() {
+	if (!isMaximized())
+		config_write_screen_size(width(), height());
 }
 
 void StatsDialog::cleanStorage() {
