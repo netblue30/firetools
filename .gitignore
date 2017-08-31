@@ -19,3 +19,7 @@ src/firetools/moc*
 src/firetools/qrc*
 src/fmgr/moc*
 src/fmgr/qrc*
+src/firejail-ui/.qmake.stash
+src/firetools/.qmake.stash
+src/fmgr/.qmake.stash
+src/fstats/.qmake.stash
