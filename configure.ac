@@ -13,6 +13,17 @@ AC_PROG_RANLIB
 AC_CHECK_LIB([pthread], [main], [], AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
 
+
+HAVE_FATAL_WARNINGS=""
+AC_ARG_ENABLE([fatal_warnings],
+    AS_HELP_STRING([--enable-fatal-warnings], [-W -Wall -Werror]))
+AS_IF([test "x$enable_fatal_warnings" = "xyes"], [
+	HAVE_FATAL_WARNINGS="-W -Wall -Werror"
+	AC_SUBST(HAVE_FATAL_WARNINGS)
+])
+
+
+
 QMAKE=""
 AC_ARG_WITH(
     qmake,
@@ -48,18 +59,10 @@ fi
 
 $QMAKE -v
 
-cd src/firetools && $QMAKE && cd ../..
-cd src/firejail-ui && $QMAKE && cd ../..
-cd src/fstats && $QMAKE && cd ../..
-cd src/fmgr && $QMAKE && cd ../..
-
-# build sanitizer.sh file
-echo "#!/bin/bash" >sanitizer.sh
-echo "export CFLAGS=-fsanitize=address" >> sanitizer.sh
-echo "export CXXFLAGS=-fsanitize=address" >> sanitizer.sh
-echo "export LDFLAGS=-lasan" >> sanitizer.sh
-echo "cd src/firetools && $QMAKE && cd ../.." >> sanitizer.sh
-chmod +x sanitizer.sh
+cd src/firetools && CXXFLAGS="$CXXFLAGS $HAVE_FATAL_WARNINGS" $QMAKE && cd ../..
+cd src/firejail-ui && CXXFLAGS="$CXXFLAGS $HAVE_FATAL_WARNINGS" $QMAKE && cd ../..
+cd src/fstats && CXXFLAGS="$CXXFLAGS $HAVE_FATAL_WARNINGS" $QMAKE && cd ../..
+cd src/fmgr && CXXFLAGS="$CXXFLAGS $HAVE_FATAL_WARNINGS" $QMAKE && cd ../..
 
 cp confdefs.h firetools_config.h
 AC_OUTPUT(Makefile)
