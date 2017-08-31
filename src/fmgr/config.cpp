@@ -17,12 +17,12 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include "fstats.h"
+#include "fmgr.h"
 #include "../common/utils.h"
 
-#define DEFAULT_X_SIZE 650
-#define DEFAULT_Y_SIZE 650
-#define MINSIZE 400
+#define DEFAULT_X_SIZE 500
+#define DEFAULT_Y_SIZE 500
+#define MINSIZE 500
 #define BUFSIZE 4096
 
 void config_read_screen_size(int *x, int *y) {
@@ -35,7 +35,7 @@ void config_read_screen_size(int *x, int *y) {
 	if (!cfgdir)
 		return;
 	char *fname;
-	if (asprintf(&fname, "%s/fstats.config", cfgdir) == -1)
+	if (asprintf(&fname, "%s/fmgr.config", cfgdir) == -1)
 		errExit("asprintf");
 	FILE *fp = fopen(fname, "r");
 	free(fname);
@@ -51,14 +51,14 @@ void config_read_screen_size(int *x, int *y) {
 		if (strncmp(ptr, "x ", 2) == 0) {
 			ptr += 2;
 			if (sscanf(ptr, "%d", x) != 1) {
-				fprintf(stderr, "Error: invalid X size in ~/.config/firetools/fstats.config\n");
+				fprintf(stderr, "Error: invalid X size in ~/.config/firetools/fmgr.config\n");
 				return;
 			}
 		}
 		else if (strncmp(ptr, "y ", 2) == 0) {
 			ptr += 2;
 			if (sscanf(ptr, "%d", y) != 1) {
-				fprintf(stderr, "Error: invalid Y size in ~/.config/firetools/fstats.config\n");
+				fprintf(stderr, "Error: invalid Y size in ~/.config/firetools/fmgr.config\n");
 				return;
 			}
 		}
@@ -75,7 +75,7 @@ void config_write_screen_size(int x, int y) {
 	if (!cfgdir)
 		return;
 	char *fname;
-	if (asprintf(&fname, "%s/fstats.config", cfgdir) == -1)
+	if (asprintf(&fname, "%s/fmgr.config", cfgdir) == -1)
 		errExit("asprintf");
 	FILE *fp = fopen(fname, "w");
 	free(fname);

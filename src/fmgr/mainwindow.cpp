@@ -111,7 +111,11 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 
 	setCentralWidget(mainWidget);
 	setMinimumWidth(500);
-	resize(500, 500);
+	// set screen size and title
+	int x;
+	int y;
+	config_read_screen_size(&x, &y);
+ 	resize(x, y);
 	char *title;
 	if (asprintf(&title, "Firejail Sandbox %d", pid) == -1)
 		errExit("asprintf");
@@ -119,6 +123,10 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	free(title);
 }
 
+MainWindow::~MainWindow() {
+	if (!isMaximized())
+		config_write_screen_size(width(), height());
+}
 
 void MainWindow::print_files(const char *path) {
 	// replace ' ' with '\ '

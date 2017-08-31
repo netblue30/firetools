@@ -31,6 +31,7 @@ Q_OBJECT
 
 public:
 	MainWindow(pid_t pid, QWidget *parent = 0);
+	~MainWindow();
 
 private slots:
 	void handleUp();

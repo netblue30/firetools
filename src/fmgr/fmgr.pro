@@ -4,7 +4,7 @@ QMAKE_LFLAGS += $$(LDFLAGS) -Wl,-z,relro -Wl,-z,now
 QT += widgets
  HEADERS       = fmgr.h mainwindow.h topwidget.h fs.h
  SOURCES       = mainwindow.cpp topwidget.cpp main.cpp \
-		  ../common/utils.cpp fs.cpp
+		  ../common/utils.cpp fs.cpp config.cpp
 	
                  
 RESOURCES = fmgr.qrc
