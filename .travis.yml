@@ -1,0 +1,7 @@
+language: c++
+dist: trusty
+sudo: true
+
+script:
+  - sudo apt-get -y install libqt4-dev qt4-qmake
+  - ( cd firetools ; ./configure --prefix=/usr && make && sudo make install )
