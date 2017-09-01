@@ -59,8 +59,8 @@ int main(int argc, char *argv[]) {
 		}		
 	}
 
-	struct stat s;	
 #if QT_VERSION >= 0x050000
+	struct stat s;	
 	// test run time dependencies - print warning and continue program
 	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
 	ppath += "/imageformats/libqsvg.so";

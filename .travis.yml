@@ -4,4 +4,4 @@ sudo: true
 
 script:
   - sudo apt-get -y install libqt4-dev qt4-qmake
-  - ( cd firetools ; ./configure --prefix=/usr && make && sudo make install )
+  - ( cd firetools ; ./configure --enable-fatal-warnings --prefix=/usr && make && sudo make install )
