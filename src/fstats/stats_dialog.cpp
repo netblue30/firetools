@@ -113,7 +113,6 @@ void StatsDialog::cleanStorage() {
 	storage_dns_ = "";
 	storage_caps_ = "";
 	storage_seccomp_ = "";
-	storage_tree_ = "";
 }
 
 QString StatsDialog::header() {
@@ -203,41 +202,37 @@ void StatsDialog::updateTree() {
 		return;
 	}
 
-	QString msg = storage_tree_;
-	if (msg.isEmpty()) {
-		if (arg_debug)
-			printf("reading process tree configuration\n");
-		msg = header();
-		msg += "<hr><table><tr><td width=\"5\"></td><td>";
-			
-		char *str = 0;
-		char *cmd;
-		if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
-			str = run_program(cmd);
-			char *ptr = str;
-			// htmlize!
-			while (*ptr != 0) {
-				if (*ptr == '\n') {
-					*ptr = '\0';
-					msg += QString(str) + "<br/>\n";
-					ptr++;
-					
-					while (*ptr == ' ') {
-						msg += "&nbsp;&nbsp;";
-						ptr++;
-					}	
-					str = ptr;
-					continue;
-				}
+	if (arg_debug)
+		printf("reading process tree configuration\n");
+	QString msg = header();
+	msg += "<hr><table><tr><td width=\"5\"></td><td>";
+		
+	char *str = 0;
+	char *cmd;
+	if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
+		str = run_program(cmd);
+		char *ptr = str;
+		// htmlize!
+		while (*ptr != 0) {
+			if (*ptr == '\n') {
+				*ptr = '\0';
+				msg += QString(str) + "<br/>\n";
 				ptr++;
+				
+				while (*ptr == ' ') {
+					msg += "&nbsp;&nbsp;";
+					ptr++;
+				}	
+				str = ptr;
+				continue;
 			}
-			free(cmd);
-		}		
-	
-		msg += "</td></tr></table>";
-		procView_->setHtml(msg);
-		storage_tree_ = msg;
-	}
+			ptr++;
+		}
+		free(cmd);
+	}		
+
+	msg += "</td></tr></table>";
+	procView_->setHtml(msg);
 }
 
 void StatsDialog::updateSeccomp() {
