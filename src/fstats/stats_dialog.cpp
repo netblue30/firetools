@@ -40,13 +40,15 @@
 extern bool data_ready;
 
 static QString getName(pid_t pid);
+static QString getProfile(pid_t pid);
 static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
 
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
-	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")), pid_x11_(0),
+	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
+	profile_(QString("")), pid_x11_(0),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
 
 	// clean storage area
@@ -500,6 +502,7 @@ void StatsDialog::updatePid() {
 		kernelSecuritySettings();
 		pid_noroot_ = userNamespace(pid_);
 		pid_name_ = getName(pid_);
+		profile_ = getProfile(pid_);
 		pid_x11_ = getX11Display(pid_);
 		pid_initialized_ = true;
 	}
@@ -516,6 +519,9 @@ void StatsDialog::updatePid() {
 	if (!pid_name_.isEmpty())
 		msg += "<tr><td width=\"5\"></td><td><b>Sandbox name:</b> " + pid_name_ + "</td></tr>";
 	msg += "<tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr>";
+	if (!profile_.isEmpty())
+		msg += "<tr><td width=\"5\"></td><td><b>Profile:</b> " + profile_ + "</td></tr>";
+	// add 
 	msg += "</table><br/>";
 
 	msg += "<table>";
@@ -799,8 +805,26 @@ static QString getName(pid_t pid) {
 		errExit("asprintf");
 	FILE *fp = fopen(fname, "r");
 	if (fp) {
-		char name[50];
-		if (fgets(name, 50, fp))
+		char name[250];
+		if (fgets(name, 250, fp))
+			retval = QString(name);
+		fclose(fp);
+	}
+	free(fname);
+	
+	return retval;
+}
+
+static QString getProfile(pid_t pid) {
+	QString retval("");
+
+	char *fname;
+	if (asprintf(&fname, "/run/firejail/profile/%d", (int) pid) == -1)
+		errExit("asprintf");
+	FILE *fp = fopen(fname, "r");
+	if (fp) {
+		char name[250];
+		if (fgets(name, 250, fp))
 			retval = QString(name);
 		fclose(fp);
 	}

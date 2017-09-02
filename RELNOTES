@@ -2,6 +2,7 @@ firetools (0.9.46.1) baseline; urgency=low
   * development version
   * modif: removed the periodic window update for seccomp, caps,
      and dns
+  * feature: print security profile name
   * enhancement: save window size for fmgr and fstats upon exit
      and restore it next time the program is started
   * enhancement: --enable-fatal-warnings configuration
