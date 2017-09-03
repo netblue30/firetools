@@ -53,6 +53,7 @@ QString global_subtitle(
 HomeWidget *global_home_widget;
 QString global_ifname = "";
 bool global_dns_enabled = false;
+bool global_protocol_enabled = false;
 
 Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
@@ -162,6 +163,31 @@ void Wizard::accept() {
 			}
 		}
 		
+		// network protocol
+		if (global_protocol_enabled) {
+			if (field("protocol_unix").toBool() ||
+			    field("protocol_inet").toBool() ||
+			    field("protocol_inet6").toBool() ||
+			    field("protocol_netlink").toBool() ||
+			    field("protocol_packet").toBool()) {
+				QString protocol = QString("protocol ");
+				if (field("protocol_unix").toBool())
+					protocol += QString("unix,");
+				if (field("protocol_inet").toBool())
+					protocol += QString("inet,");				
+				if (field("protocol_inet6").toBool())
+					protocol += QString("inet6,");				
+				if (field("protocol_netlink").toBool())
+					protocol += QString("netlink,");				
+				if (field("protocol_packet").toBool())
+					protocol += QString("packet");				
+				
+				char *str = protocol.toUtf8().data();
+				dprintf(fd, "%s\n", str);
+				printf("%s\n", str);
+			}
+		}
+		
 		// multimedia
 		if (field("nosound").toBool()) {
 			dprintf(fd, "nosound\n");
@@ -174,6 +200,18 @@ void Wizard::accept() {
 		if (field("nox11").toBool()) {
 			dprintf(fd, "x11 none\n");
 			printf("x11 none\n");
+		}
+		if (field("nodvd").toBool()) {
+			dprintf(fd, "nodvd\n");
+			printf("nodvd\n");
+		}
+		if (field("novideo").toBool()) {
+			dprintf(fd, "novideo\n");
+			printf("novideo\n");
+		}
+		if (field("notv").toBool()) {
+			dprintf(fd, "notv\n");
+			printf("notv\n");
 		}
 		
 			
@@ -306,11 +344,13 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 
 void ApplicationPage::browseClicked() {
 	QString fname = QFileDialog::getOpenFileName(this, tr("Choose Application"));
-	
+	if (fname.isNull())
+		return;
+		
 	// check the file is an executable
 	const char *cmd = fname.toUtf8().data();
 	if (arg_debug)
-		printf("Command: %s\n", cmd);	
+		printf("Command: %s\n", cmd);
 	if (access(cmd, X_OK))
 		QMessageBox::warning(this, "Error", "The file is not an executable program" ); 
 	else
@@ -420,7 +460,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	global_home_widget = home_;
 
 
-	
+	// DNS	
 	dns1_ = new QLineEdit;
 	dns1_->setText("8.8.8.8");
 	dns1_->setMaximumWidth(150);
@@ -443,6 +483,36 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	dns_box_layout->addWidget(dns2_);
 	dns_box->setLayout(dns_box_layout);
 
+	// protocol
+	protocol_unix_ = new QCheckBox("unix");
+	protocol_unix_->setChecked(true);
+	registerField("protocol_unix", protocol_unix_);
+	protocol_inet_ = new QCheckBox("inet");
+	protocol_inet_->setChecked(true);
+	registerField("protocol_inet", protocol_inet_);
+	protocol_inet6_ = new QCheckBox("inet6");
+	protocol_inet6_->setChecked(true);
+	registerField("protocol_inet6", protocol_inet6_);
+	protocol_netlink_ = new QCheckBox("netlink");
+	protocol_netlink_->setChecked(false);
+	registerField("protocol_netlink", protocol_netlink_);
+	protocol_packet_ = new QCheckBox("packet");
+	protocol_packet_->setChecked(false);
+	registerField("protocol_packet", protocol_packet_);
+	
+	QGroupBox *protocol_box = new QGroupBox(tr("Network Protocol"));
+	protocol_box->setCheckable(true);
+	protocol_box->setChecked(false);
+	protocol_box->setStyleSheet("QGroupBox { color : black; }");
+	connect(protocol_box, SIGNAL(toggled(bool)), this, SLOT(setProtocol(bool)));
+	QGridLayout *protocol_box_layout = new QGridLayout;
+	protocol_box_layout->addWidget(protocol_unix_, 0, 0);
+	protocol_box_layout->addWidget(protocol_inet_, 0, 1);
+	protocol_box_layout->addWidget(protocol_inet6_, 1, 0);
+	protocol_box_layout->addWidget(protocol_netlink_, 1, 1);
+	protocol_box_layout->addWidget(protocol_packet_, 2, 0);
+	protocol_box->setLayout(protocol_box_layout);
+
 	QWidget *w = new QWidget;
 	w->setMinimumHeight(8);
 	QGridLayout *layout = new QGridLayout;
@@ -451,7 +521,8 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	layout->addWidget(fs_box, 2, 0);
 	layout->addWidget(home_box, 2, 1, 2, 1);
 	layout->addWidget(net_box, 3, 0);
-	layout->addWidget(dns_box, 4, 0, 1, 2);
+	layout->addWidget(dns_box, 4, 0);
+	layout->addWidget(protocol_box, 4, 1);
 	setLayout(layout);
 }
 
@@ -487,6 +558,10 @@ void ConfigPage::setDns(bool on) {
 	global_dns_enabled = on;
 }
 
+void ConfigPage::setProtocol(bool on) {
+	global_protocol_enabled = on;
+}
+
 void ConfigPage::setHome(bool active) {
 	home_->setEnabled(active);
 }
@@ -506,18 +581,32 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	nosound_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nosound", nosound_);
 	
+	nodvd_ = new QCheckBox("Disable CD-ROM/DVD devices");
+	nodvd_->setStyleSheet("QCheckBox { color : black; }");
+	registerField("nodvd", nodvd_);
+	
+	novideo_ = new QCheckBox("Disable video camera devices");
+	novideo_->setStyleSheet("QCheckBox { color : black; }");
+	registerField("novideo", novideo_);
+	
+	notv_ = new QCheckBox("Disable TV/DVB devices");
+	notv_->setStyleSheet("QCheckBox { color : black; }");
+	registerField("notv", notv_);
+
 	no3d_ = new QCheckBox("Disable 3D acceleration");
 	no3d_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("no3d", no3d_);
 	
 	nox11_ = new QCheckBox("Disable X11 support");
-	nox11_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nox11", nox11_);
 	
 	QGroupBox *multimed_box = new QGroupBox(tr("Multimedia"));
 	multimed_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *multimed_box_layout = new QVBoxLayout;
 	multimed_box_layout->addWidget(nosound_);
+	multimed_box_layout->addWidget(novideo_);
+	multimed_box_layout->addWidget(nodvd_);
+	multimed_box_layout->addWidget(notv_);
 	multimed_box_layout->addWidget(no3d_);
 	multimed_box_layout->addWidget(nox11_);
 	multimed_box->setLayout(multimed_box_layout);

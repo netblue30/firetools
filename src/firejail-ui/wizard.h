@@ -82,6 +82,7 @@ public:
 public slots:
 	void setHome(bool);
 	void setDns(bool);
+	void setProtocol(bool);
 
 private:
 	// filesystem
@@ -101,6 +102,13 @@ private:
 	QLineEdit *dns2_;
 	QCheckBox *dns1check_;
 	QCheckBox *dns2check_;
+	
+	// protocol
+	QCheckBox *protocol_unix_;
+	QCheckBox *protocol_inet_;
+	QCheckBox *protocol_inet6_;
+	QCheckBox *protocol_netlink_;
+	QCheckBox *protocol_packet_;
 };
 
 class ConfigPage2 : public QWizardPage {
@@ -118,6 +126,9 @@ private:
 	// multimedia
 	QCheckBox *nosound_;
 	QCheckBox *no3d_;
+	QCheckBox *nodvd_;
+	QCheckBox *novideo_;
+	QCheckBox *notv_;
 	QCheckBox *nox11_;
 	
 	// kernel

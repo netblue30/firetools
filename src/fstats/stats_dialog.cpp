@@ -450,7 +450,10 @@ void StatsDialog::kernelSecuritySettings() {
 		return;
 	str = run_program(cmd);
 	if (str) {
-		pid_protocol_ = QString(str);
+		if (strncmp(str, "Cannot", 6) == 0)
+			pid_protocol_ = QString("disabled");
+		else
+			pid_protocol_ = QString(str);
 	}
 	free(cmd);
 

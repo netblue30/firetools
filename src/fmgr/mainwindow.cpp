@@ -166,6 +166,12 @@ void MainWindow::print_files(const char *path) {
 	char *ptr = strtok(out, "\n");
 	rows = 0;
 	while (ptr) {
+		// skip warnings and errors
+		if (strncmp(ptr, "Warning:", 8) == 0 ||
+		    strncmp(ptr, "Error:", 6) == 0) {
+			ptr = strtok(NULL, "\n");
+			continue;
+		}		
 		split_command(ptr);
 		
 		// adjust the list in order to accept file names with spaces
