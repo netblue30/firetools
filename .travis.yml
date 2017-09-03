@@ -3,5 +3,5 @@ dist: trusty
 sudo: true
 
 script:
-  - sudo apt-get -y install libqt4-dev qt4-qmake
-  - ( cd firetools ; ./configure --enable-fatal-warnings --prefix=/usr && make && sudo make install )
+  - sudo apt-get -y install libqt4-dev qt4-qmake lintian
+  - ( cd firetools ; ./configure --enable-fatal-warnings --prefix=/usr && make && sudo make install && make deb)

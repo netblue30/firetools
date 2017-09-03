@@ -8,6 +8,8 @@ Home page: https://l3net.wordpress.com/projects/firejail/#firetools
 
 Download: http://sourceforge.net/projects/firejail/files/firetools/
 
+Travis-CI status: https://travis-ci.org/netblue30/firetools
+
 [![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=aAnW3Ii0y-4)
 
 ## Setting up a compilation environment on Debian/Ubuntu:
