@@ -2,10 +2,15 @@ firetools (0.9.46.1) baseline; urgency=low
   * development version
   * modif: removed the periodic window update for seccomp, caps,
      and dns
-  * feature: print security profile name
+  * feature: memory deny exec stats support 
+  * feature: print security profile name in stats window
+  * feature: protocol support in firejail-ui
+  * feature: nodvd support in firejail-ui
+  * feature: novideo support in firejail-ui
+  * feature: notv support in firejail-ui
   * enhancement: save window size for fmgr and fstats upon exit
      and restore it next time the program is started
-  * enhancement: --enable-fatal-warnings configuration
+  * enhancement: --enable-fatal-warnings compile configuration
   * Travis CI integration
   * bugfixes
  -- netblue30 <netblue30@yahoo.com>  Tue, 28 Feb 2017 08:00:00 -0500

@@ -287,6 +287,7 @@ void StatsDialog::updateSeccomp() {
 	}
 }
 
+
 void StatsDialog::updateCaps() {
 	int cycle = Db::instance().getCycle();
 	assert(cycle < DbPid::MAXCYCLE);
@@ -404,6 +405,7 @@ void StatsDialog::kernelSecuritySettings() {
 	pid_caps_ = QString("");
 	pid_cpu_cores_ = QString("");
 	pid_protocol_ = QString("");
+	pid_mem_deny_exec_ = QString("disabled");
 
 	// caps
 	char *cmd;
@@ -457,6 +459,14 @@ void StatsDialog::kernelSecuritySettings() {
 	}
 	free(cmd);
 
+	if (asprintf(&cmd, "firejail --ls=%d /run/firejail/mnt", pid_) == -1)
+		return;
+	str = run_program(cmd);
+	if (str) {
+		if (strstr(str, "seccomp.mdwx"))
+			pid_mem_deny_exec_ = "enabled";
+	}
+	free(cmd);
 }
 
 
@@ -569,11 +579,18 @@ void StatsDialog::updatePid() {
 		msg += QString("<td><b>Protocols:</b> disabled</td>");
 	msg += "</td></tr>";
 
+	msg += "<tr><td></td>";
+
 	// X11 display
 	if (pid_x11_) {
-		msg += "<tr><td></td><td><b>X11 Dispaly:</b> " + QString::number(pid_x11_) + "</td></tr>";
+		msg += "<td><b>X11 Dispaly:</b> " + QString::number(pid_x11_) + "</td>";
 	}
-	
+	else
+		msg +="<td></td>";
+
+	// memory deny exec
+	msg += "<td><b>Memory deny exec:</b> " + pid_mem_deny_exec_ + "</td></tr>";
+
 	// graph type
 	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
