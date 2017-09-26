@@ -274,7 +274,7 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	app_box->setFont(bold);
 	app_box->setStyleSheet("QGroupBox { color : black; }");
 	
-	QLabel *label1 = new QLabel(tr("Choose an application form the menus below"));
+	QLabel *label1 = new QLabel(tr("Choose an application from the menus below"));
 	label1->setFont(oldFont);
 	label1->setStyleSheet("QLabel { color : black; }");
 
