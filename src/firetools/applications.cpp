@@ -326,6 +326,7 @@ DefaultApp dapps[] = {
 	// media players, audio/video tools
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
 	{ "amarok", "", "Amarok", "firejail amarok", "amarok" },
+	{ "dragon", "", "Dragom Player", "firejail dragon", "dragonplayer" },
 	{ "rhythmbox", "", "Rhythmbox", "firejail rhythmbox", "rhythmbox" },
 	{ "totem", "", "Totem", "firejail totem", "totem" },
 	{ "audacious", "", "Audacious", "firejail audacious", "audacious" },
@@ -342,6 +343,7 @@ DefaultApp dapps[] = {
 	{ "gimp", "", "Gimp", "firejail gimp", "gimp" },
 	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
 	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
+	{ "digikam", "", "digiKam", "firejail digikam", "digikam" },
 
 
 	// chat
