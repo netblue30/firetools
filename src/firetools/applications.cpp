@@ -323,17 +323,20 @@ DefaultApp dapps[] = {
 	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
 	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "calibre-gui" },
 
-	// media player
+	// media players, audio/video tools
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
+	{ "amarok", "", "Amarok", "firejail amarok", "amarok" },
 	{ "rhythmbox", "", "Rhythmbox", "firejail rhythmbox", "rhythmbox" },
 	{ "totem", "", "Totem", "firejail totem", "totem" },
 	{ "audacious", "", "Audacious", "firejail audacious", "audacious" },
 	{ "gnome-mplayer", "", "GNOME MPlayer", "firejail gnome-mplayer", "gnome-mplayer" },
 	{ "clementine", "", "Clementine", "firejail clementine", "application-x-clementine" },
 	{ "deadbeef", "", "DeaDBeeF", "firejail deadbeef", "deadbeef" },
-	{ "mpv", "", "MPV", "firejail mpv", "mpv" },
+	{ "mpv", "", "MPV", "firejail mpv  --player-operation-mode=pseudo-gui", "mpv" },
 	{ "smplayer", "", "SMPlayer", "firejail smplayer", "smplayer" },
 	{ "kino", "", "Kino", "firejail kino", "kino" },
+	{ "ghb", "", "HandBrake", "firejail ghb", "hb-icon" },
+	{ "audacity", "", "Audacity", "firejail audacity", "audacity" },
 
 	// editor
 	{ "gimp", "", "Gimp", "firejail gimp", "gimp" },
@@ -353,6 +356,16 @@ DefaultApp dapps[] = {
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal" },
 	{ "lxterminal", "", "LXDE terminal", "firejail lxterminal", "lxterminal" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
+	
+	// games
+	{ "0ad", "", "0AD", "firejail 0ad", "0ad" },
+	{ "warzone2100", "", "Warzone 2100", "firejail warzone2100", "warzone2100" },
+	{ "etr", "", "Extreme Tux Racer", "firejail etr", "etr" },
+	{ "torcs", "", "TORCS", "firejail torcs", "torcs" },
+	{ "supertux2", "", "Super Tux", "firejail supertux2", "supertux" },
+	{ "frozen-bubble", "", "Frozen-Bubble", "firejail frozen-bubble", "frozen-bubble" },
+	{ "2048-qt", "", "2048", "firejail 2048-qt", "2048-qt" },
+	
 	{ 0, 0, 0, 0, 0 }
 };
 
