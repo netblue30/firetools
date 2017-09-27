@@ -320,10 +320,14 @@ DefaultApp dapps[] = {
 	{ "okular", "", "Okular", "firejail okular", "okular" },
 	{ "eom", "", "Eye of MATE", "firejail eom", "eom" },
 	{ "eog", "", "Eye of Gnome", "firejail eog", "eog" },
+	{ "pix", "", "Pix", "firejail pix", "pix" },
+	{ "xviewer", "", "xviewer", "firejail xviewer", "xviewer" },
 	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
 	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "calibre-gui" },
+	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
 
 	// media players, audio/video tools
+	{ "xplayer", "", "xplayer", "firejail xplayer", "xplayer" },
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
 	{ "amarok", "", "Amarok", "firejail amarok", "amarok" },
 	{ "dragon", "", "Dragom Player", "firejail dragon", "dragonplayer" },
@@ -344,6 +348,7 @@ DefaultApp dapps[] = {
 	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
 	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
 	{ "digikam", "", "digiKam", "firejail digikam", "digikam" },
+	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer" },
 
 
 	// chat
