@@ -133,8 +133,22 @@ in the current theme.
 // compare strings 
 static inline bool compare_ignore_case(QString q1, QString q2) {
 	q1 = q1.toLower();
-	q2 =q2.toLower();
+	q2 = q2.toLower();
 	return q1 == q2;
+}
+
+static QString walk(QString path, QString name) {
+	QDirIterator it(path, QDirIterator::Subdirectories);
+	while (it.hasNext()) {
+		it.next();
+		QFileInfo fi = it.fileInfo();
+		if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
+			if (arg_debug)
+				printf("\t- %s\n", fi.canonicalFilePath().toUtf8().data());
+			return fi.canonicalFilePath();
+		}
+	}
+	return QString("");
 }
 
 QIcon Application::loadIcon(QString name) {
@@ -171,55 +185,27 @@ QIcon Application::loadIcon(QString name) {
 			return QIcon(conf);
 		}
 
-		QDirIterator it("/usr/share/icons/hicolor/scalable", QDirIterator::Subdirectories);
-		while (it.hasNext()) {
-			it.next();
-			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
-				if (arg_debug)
-					printf("\t- svg\n");
-				return QIcon(fi.canonicalFilePath());
-			}
-		}
+		QString qstr = walk("/usr/share/icons/hicolor/scalable", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
 	}
 
 	{
-		QDirIterator it("/usr/share/icons/hicolor/64x64", QDirIterator::Subdirectories);
-		while (it.hasNext()) {
-			it.next();
-			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
-				if (arg_debug)
-					printf("\t- /usr/share/icons/hicolor/64x64\n");
-				return QIcon(fi.canonicalFilePath());
-			}
-		}
+		QString qstr = walk("/usr/share/icons/hicolor/64x64", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
 	}
 	
 	{
-		QDirIterator it("/usr/share/icons/hicolor/128x128", QDirIterator::Subdirectories);
-		while (it.hasNext()) {
-			it.next();
-			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
-				if (arg_debug)
-					printf("\t- /usr/share/icons/hicolor/128x128\n");
-				return QIcon(fi.canonicalFilePath());
-			}
-		}
+		QString qstr = walk("/usr/share/icons/hicolor/128x128", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
 	}
 	
 	{
-		QDirIterator it("/usr/share/icons/hicolor/256x256", QDirIterator::Subdirectories);
-		while (it.hasNext()) {
-			it.next();
-			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
-				if (arg_debug)
-					printf("\t- /usr/share/icons/hicolor/256x256\n");
-				return QIcon(fi.canonicalFilePath());
-			}
-		}
+		QString qstr = walk("/usr/share/icons/hicolor/256x256", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
 	}
 
 	{	
@@ -268,6 +254,13 @@ QIcon Application::loadIcon(QString name) {
 		return QIcon(":resources/calibre.png");
 	}		
 	
+	// we failed to get an icon so far, look all over /usr/share/icons directory
+	{
+		QString qstr = walk("/usr/share/icons", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
+	}
+
 	// create a new icon
 	if (arg_debug)
 		printf("\t- created\n");
