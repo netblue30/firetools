@@ -129,6 +129,14 @@ available for download at: http://www.freedesktop.org/software/icon-theme/. I
 mplementations are required to look in the "hicolor" theme if an icon was not found 
 in the current theme. 
 */
+
+// compare strings 
+static inline bool compare_ignore_case(QString q1, QString q2) {
+	q1 = q1.toLower();
+	q2 =q2.toLower();
+	return q1 == q2;
+}
+
 QIcon Application::loadIcon(QString name) {
 	if (arg_debug)
 		printf("searching icon %s\n", name.toLocal8Bit().data());
@@ -167,7 +175,7 @@ QIcon Application::loadIcon(QString name) {
 		while (it.hasNext()) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && fi.baseName() == name) {
+			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
 				if (arg_debug)
 					printf("\t- svg\n");
 				return QIcon(fi.canonicalFilePath());
@@ -180,7 +188,7 @@ QIcon Application::loadIcon(QString name) {
 		while (it.hasNext()) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && fi.baseName() == name) {
+			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
 				if (arg_debug)
 					printf("\t- /usr/share/icons/hicolor/64x64\n");
 				return QIcon(fi.canonicalFilePath());
@@ -193,7 +201,7 @@ QIcon Application::loadIcon(QString name) {
 		while (it.hasNext()) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && fi.baseName() == name) {
+			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
 				if (arg_debug)
 					printf("\t- /usr/share/icons/hicolor/128x128\n");
 				return QIcon(fi.canonicalFilePath());
@@ -206,7 +214,7 @@ QIcon Application::loadIcon(QString name) {
 		while (it.hasNext()) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && fi.baseName() == name) {
+			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
 				if (arg_debug)
 					printf("\t- /usr/share/icons/hicolor/256x256\n");
 				return QIcon(fi.canonicalFilePath());
@@ -219,7 +227,7 @@ QIcon Application::loadIcon(QString name) {
 		while (it.hasNext()) {
 			it.next();
 			QFileInfo fi = it.fileInfo();
-			if (fi.isFile() && fi.baseName() == name) {
+			if (fi.isFile() && compare_ignore_case(fi.baseName(), name)) {
 				if (arg_debug)
 					printf("\t- /usr/share/pixmaps\n");
 				QIcon icon = QIcon(fi.canonicalFilePath());
