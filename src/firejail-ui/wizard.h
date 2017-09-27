@@ -53,8 +53,12 @@ public:
 	ApplicationPage(QWidget *parent = 0);
 
 	int nextId() const;
-	
+
+protected:
+	void keyPressEvent(QKeyEvent *event);
+
 private slots:
+	void groupChanged(QListWidgetItem * current, QListWidgetItem * previous);
 	void groupClicked(QListWidgetItem*);
 	void appClicked(QListWidgetItem*);
 	void browseClicked();

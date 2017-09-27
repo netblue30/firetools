@@ -335,11 +335,40 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	// connect widgets
 	connect(group_, SIGNAL(itemClicked(QListWidgetItem*)), 
 	            this, SLOT(groupClicked(QListWidgetItem*)));
+	connect(group_, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), 
+	            this, SLOT(groupChanged(QListWidgetItem*,QListWidgetItem*)));
 	connect(app_, SIGNAL(itemClicked(QListWidgetItem*)), 
 	            this, SLOT(appClicked(QListWidgetItem*)));
 	            
 	registerField("command*", command_);
 	registerField("use_custom", use_custom_); 
+	
+//	setFocusPolicy(Qt::StrongFocus);
+}
+
+void ApplicationPage::groupChanged(QListWidgetItem * current, QListWidgetItem * previous) {
+	(void) previous;
+	groupClicked(current);
+}
+
+
+
+void ApplicationPage::keyPressEvent(QKeyEvent *event) {
+	switch (event->key()) {
+		case Qt::Key_Return:
+			printf("Return pressed\n");
+			if (group_->hasFocus()) {
+				printf("group focus\n'");
+				groupClicked(group_->currentItem());
+			}
+			else if (app_->hasFocus()) {
+				printf("app focus\n'");
+				appClicked(app_->currentItem());
+			}
+			break;
+		default:
+			QWizardPage::keyPressEvent(event);
+	}
 }
 
 void ApplicationPage::browseClicked() {
