@@ -27,8 +27,12 @@ Piraty (https://github.com/Piraty)
 	- use system's icons when available 
 Topi Miettinen (https://github.com/topimiettinen)
 	- change labels to black to be visible with dark themes and various other fixes
-	
+dmio (https://github.com/dmio)
+	- detect and switch qt versions with autotools
+
 Terminal icon (gnome-terminal.png) taken from Gnome project, license LGPL v3 or CC BY-SA 3.0.
+
+Libreoffice-writer (libreoffice-writer.png) taken from Gnome project, license LGPL v3 or CC BY-SA 3.0.
 
 Icedove icon (icedove.png) taken from Debian project, license MPL 1.1 or GPL v2 or LGPL v2.1.
 
