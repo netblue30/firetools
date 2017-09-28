@@ -1,5 +1,4 @@
-firetools (0.9.46.1) baseline; urgency=low
-  * development version
+firetools (0.9.50) baseline; urgency=low
   * modif: removed the periodic window update for seccomp, caps,
      and dns
   * feature: memory deny exec stats support 
@@ -10,10 +9,12 @@ firetools (0.9.46.1) baseline; urgency=low
   * feature: notv support in firejail-ui
   * enhancement: save window size for fmgr and fstats upon exit
      and restore it next time the program is started
+  * enhancement: updated default application list
+  * enhancement: rework icon search for firetools launcher
   * enhancement: --enable-fatal-warnings compile configuration
   * Travis CI integration
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Tue, 28 Feb 2017 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Thu, 28 Sep 2017 08:00:00 -0500
 
 firetools (0.9.46) baseline; urgency=low
   * split firetools in two distinct executables

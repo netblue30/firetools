@@ -20,7 +20,7 @@ tar -xJvf $CODE_ARCHIVE
 mkdir -p $INSTALL_DIR
 cd $CODE_DIR
 ./configure --prefix=/usr
-make
+make -j2
 DESTDIR=$INSTALL_DIR make install-strip
 
 cd ..
