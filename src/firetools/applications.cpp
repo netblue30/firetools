@@ -175,7 +175,7 @@ QIcon Application::loadIcon(QString name) {
 			printf("\t- local config dir, jpg file\n");
 		return QIcon(conf);
 	}
-	
+
 	if (!svg_not_found) {
 		conf = QDir::homePath() + "/.config/firetools/" + name + ".svg";
 		QFileInfo checkFile3(conf);
@@ -184,10 +184,6 @@ QIcon Application::loadIcon(QString name) {
 				printf("\t- local config dir, svg file\n");
 			return QIcon(conf);
 		}
-
-		QString qstr = walk("/usr/share/icons/hicolor/scalable", name);
-		if (!qstr.isEmpty())
-			return QIcon(qstr);
 	}
 
 	{
@@ -235,6 +231,12 @@ QIcon Application::loadIcon(QString name) {
 		if (arg_debug)
 			printf("\t- fromTheme\n");
 		return QIcon::fromTheme(name);
+	}
+
+	if (!svg_not_found) {
+		QString qstr = walk("/usr/share/icons/hicolor/scalable", name);
+		if (!qstr.isEmpty())
+			return QIcon(qstr);
 	}
 
 	// hardcoded icons
