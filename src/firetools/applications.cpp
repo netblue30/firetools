@@ -388,6 +388,7 @@ DefaultApp dapps[] = {
 	{ "supertux2", "", "Super Tux", "firejail supertux2", "supertux" },
 	{ "frozen-bubble", "", "Frozen-Bubble", "firejail frozen-bubble", "frozen-bubble" },
 	{ "2048-qt", "", "2048", "firejail 2048-qt", "2048-qt" },
+	{ "pingus", "", "Pingus2048", "firejail pingus", "pingus" },
 	
 	{ 0, 0, 0, 0, 0 }
 };
