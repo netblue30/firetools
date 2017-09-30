@@ -219,35 +219,6 @@ QIcon Application::loadIcon(QString name) {
 		}
 	}
 
-#if 0
-	// hardcoded icons
-	if (name == "firefox" || name == "firefox-esr" || name == "iceweasel" || name == "icecat") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return resize48x48(QIcon(":resources/firefox.png"));
-	}
-	else if (name == "icedove" || name == "thunderbird") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return resize48x48(QIcon(":resources/icedove.png"));
-	}		
-	else if (name == "calibre-gui") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return resize48x48(QIcon(":resources/calibre.png"));
-	}		
-	else if (name == "xterm" || name == "gnome-terminal") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return resize48x48(QIcon(":resources/gnome-terminal.png"));
-	}		
-	else if (name == "lowriter") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return resize48x48(QIcon(":resources/libreoffice-writer.png"));
-	}		
-#endif
-
 	{
 		QString qstr = walk("/usr/share/icons/hicolor/48x48", name);
 		if (!qstr.isEmpty()) {
@@ -369,7 +340,7 @@ DefaultApp dapps[] = {
 	{ "pix", "", "Pix", "firejail pix", "pix" },
 	{ "xviewer", "", "xviewer", "firejail xviewer", "xviewer" },
 	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
-	{ "calibre", "", "Calibre eBook reader", "firejail calibre", ":resources/calibre.png" },
+	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "/usr/share/calibre/images/lt.png" },
 	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
 
 	// media players, audio/video tools
