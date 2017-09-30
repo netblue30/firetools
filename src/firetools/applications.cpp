@@ -378,7 +378,6 @@ DefaultApp dapps[] = {
 	// etc
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal.png" },
-	{ "lxterminal", "", "LXDE terminal", "firejail lxterminal", "lxterminal" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
 	
 	// games
