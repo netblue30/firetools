@@ -151,14 +151,47 @@ static QString walk(QString path, QString name) {
 	return QString("");
 }
 
+static QIcon resize48x48(QIcon icon) {
+	QSize sz = icon.actualSize(QSize(64, 64));
+	if (arg_debug)
+		printf("\t- input pixmap: w %d, h %d\n", sz.width(), sz.height());
+
+	QPixmap pix = icon.pixmap(sz.height(), sz.width());
+	QPixmap pixin = pix.scaled(48, 48);
+
+	QPixmap pixout(64, 64);
+	pixout.fill(QColor(0, 0, 0, 0));
+	QPainter *paint = new QPainter(&pixout);
+	paint->drawPixmap(8, 8, pixin);
+	if (arg_debug)
+		printf("\t- output pixmap: w %d, h %d\n", pixout.width(), pixout.height());
+	paint->end();
+	return QIcon(pixout);		
+}
+
 QIcon Application::loadIcon(QString name) {
 	if (arg_debug)
 		printf("searching icon %s\n", name.toLocal8Bit().data());
-	if (name.startsWith('/') || name.startsWith(":resources")) {
+	
+	if (name == ":resources/fstats" || name == ":resources/firejail-ui") {
+		if (arg_debug)
+			printf("\t- resource\n");
+		return QIcon(name); // not resized, using the real 64x64 size
+	}
+			
+	if (name.startsWith(":resources")) {
+		if (arg_debug)
+			printf("\t- resource\n");
+		return resize48x48(QIcon(name));
+	}
+	
+	if (name.startsWith('/')) {
 		if (arg_debug)
 			printf("\t- full path\n");
-		return QIcon(name);
+		return resize48x48(QIcon(name));
 	}
+
+
 
 	// look for the file in firejail config directory under /home/user
 	QString conf = QDir::homePath() + "/.config/firetools/" + name + ".png";
@@ -186,22 +219,58 @@ QIcon Application::loadIcon(QString name) {
 		}
 	}
 
+#if 0
+	// hardcoded icons
+	if (name == "firefox" || name == "firefox-esr" || name == "iceweasel" || name == "icecat") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return resize48x48(QIcon(":resources/firefox.png"));
+	}
+	else if (name == "icedove" || name == "thunderbird") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return resize48x48(QIcon(":resources/icedove.png"));
+	}		
+	else if (name == "calibre-gui") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return resize48x48(QIcon(":resources/calibre.png"));
+	}		
+	else if (name == "xterm" || name == "gnome-terminal") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return resize48x48(QIcon(":resources/gnome-terminal.png"));
+	}		
+	else if (name == "lowriter") {
+		if (arg_debug)
+			printf("\t- default icon\n");
+		return resize48x48(QIcon(":resources/libreoffice-writer.png"));
+	}		
+#endif
+
+	{
+		QString qstr = walk("/usr/share/icons/hicolor/48x48", name);
+		if (!qstr.isEmpty()) {
+			return resize48x48(QIcon(qstr));
+		}
+	}
+
 	{
 		QString qstr = walk("/usr/share/icons/hicolor/64x64", name);
 		if (!qstr.isEmpty())
-			return QIcon(qstr);
+			return resize48x48(QIcon(qstr));
 	}
 	
 	{
 		QString qstr = walk("/usr/share/icons/hicolor/128x128", name);
 		if (!qstr.isEmpty())
-			return QIcon(qstr);
+			return resize48x48(QIcon(qstr));
 	}
 	
 	{
 		QString qstr = walk("/usr/share/icons/hicolor/256x256", name);
 		if (!qstr.isEmpty())
-			return QIcon(qstr);
+			return resize48x48(QIcon(qstr));
 	}
 
 	{	
@@ -213,16 +282,7 @@ QIcon Application::loadIcon(QString name) {
 				if (arg_debug)
 					printf("\t- /usr/share/pixmaps\n");
 				QIcon icon = QIcon(fi.canonicalFilePath());
-//#if 0 // scale				
-				QSize sz = icon.actualSize(QSize(64, 64));
-				if (sz.height() < 64 && sz.width() < 64) {
-					QPixmap pix = icon.pixmap(sz.height(), sz.width());
-					QPixmap newpix = pix.scaled(50, 50);
-					return QIcon(newpix);
-				}
-//#endif
-				return icon;
-				
+				return resize48x48(icon);
 			}
 		}
 	}	
@@ -230,37 +290,21 @@ QIcon Application::loadIcon(QString name) {
 	if (QIcon::hasThemeIcon(name)) {
 		if (arg_debug)
 			printf("\t- fromTheme\n");
-		return QIcon::fromTheme(name);
+		return resize48x48(QIcon::fromTheme(name));
 	}
 
 	if (!svg_not_found) {
 		QString qstr = walk("/usr/share/icons/hicolor/scalable", name);
 		if (!qstr.isEmpty())
-			return QIcon(qstr);
+			return resize48x48(QIcon(qstr));
 	}
 
-	// hardcoded icons
-	if (name == "firefox" || name == "firefox-esr" || name == "iceweasel" || name == "icecat") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return QIcon(":resources/firefox.png");
-	}
-	else if (name == "icedove" || name == "thunderbird") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return QIcon(":resources/icedove.png");
-	}		
-	else if (name == "calibre-gui") {
-		if (arg_debug)
-			printf("\t- default icon\n");
-		return QIcon(":resources/calibre.png");
-	}		
 	
 	// we failed to get an icon so far, look all over /usr/share/icons directory
 	{
 		QString qstr = walk("/usr/share/icons", name);
 		if (!qstr.isEmpty())
-			return QIcon(qstr);
+			return resize48x48(QIcon(qstr));
 	}
 
 	// create a new icon
@@ -289,12 +333,12 @@ struct DefaultApp {
 DefaultApp dapps[] = {
 	// firetools
 	{ "firetools", "", "Firetools", PACKAGE_LIBDIR "/fstats", ":resources/fstats" },
-	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", "firejail-ui" },
+	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", ":resources/firejail-ui" },
 	
 	// browser
-	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox.png" },
-	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", "firefox"},
-	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", "icecat"},
+	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox" },
+	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", ":resources/firefox"},
+	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", ":resources/firefox"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
 	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
@@ -302,7 +346,7 @@ DefaultApp dapps[] = {
 	{ "netsurf", "", "Netsurf Web Browser", "firejail netsurf", "netsurf" },
 
 	// mail
-	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove.png" },
+	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove" },
 	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", "thunderbird" },
 
 	// bittorrent
@@ -325,7 +369,7 @@ DefaultApp dapps[] = {
 	{ "pix", "", "Pix", "firejail pix", "pix" },
 	{ "xviewer", "", "xviewer", "firejail xviewer", "xviewer" },
 	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
-	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "calibre-gui" },
+	{ "calibre", "", "Calibre eBook reader", "firejail calibre", ":resources/calibre.png" },
 	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
 
 	// media players, audio/video tools
@@ -350,7 +394,7 @@ DefaultApp dapps[] = {
 	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
 	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
 	{ "digikam", "", "digiKam", "firejail digikam", "digikam" },
-	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer" },
+	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer.png" },
 
 
 	// chat
@@ -362,7 +406,7 @@ DefaultApp dapps[] = {
 	
 	// etc
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
-	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal" },
+	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal.png" },
 	{ "lxterminal", "", "LXDE terminal", "firejail lxterminal", "lxterminal" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
 	
@@ -370,7 +414,6 @@ DefaultApp dapps[] = {
 	{ "0ad", "", "0AD", "firejail 0ad", "0ad" },
 	{ "warzone2100", "", "Warzone 2100", "firejail warzone2100", "warzone2100" },
 	{ "etr", "", "Extreme Tux Racer", "firejail etr", "etr" },
-	{ "torcs", "", "TORCS", "firejail torcs", "torcs" },
 	{ "supertux2", "", "Super Tux", "firejail supertux2", "supertux" },
 	{ "frozen-bubble", "", "Frozen-Bubble", "firejail frozen-bubble", "frozen-bubble" },
 	{ "2048-qt", "", "2048", "firejail 2048-qt", "2048-qt" },
