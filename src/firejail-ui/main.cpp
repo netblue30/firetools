@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: a Linux kernel 3.x or newer is required in order to run Firejail\n");
 		exit(1);
 	}
+
 	if (arg_debug)
 		printf("Linux kernel version %d.%d\n", kernel_major, kernel_minor);
 	

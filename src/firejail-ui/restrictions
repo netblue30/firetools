@@ -1,6 +1,6 @@
 Sandbox feature dependencies:
 
-- seccomp, nonewpriv - kernel 3.5 (done)
+- seccomp, nonewprivs, protocol - kernel 3.5 (done)
 - noroot - kernel 3.8 (done)
 - overlayfs - kernel 3.18
 - nox11 only with a network namespace (done)

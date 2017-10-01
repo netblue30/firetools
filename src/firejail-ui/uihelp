@@ -9,7 +9,7 @@ get a trace with all network requests and all file accessed by your application.
 Personal user files are located in home directory.  
 By default Firejail denies access to some of the most sensitive files there, 
 such as password and encryption keys.  
-To enance your privacy, these are some of the options available:<br>
+To enhance your privacy, these are some of the options available:<br>
 <blockquote>
 <i><b>Restrict home directory:</b> Choose private user directories visible inside the sandbox. 
 By default, with the exception of some well-known password and encryption files, 
@@ -36,7 +36,7 @@ coming in or going out of the sandbox.<br/><br/>
 the sandbox will use the system DNS server.<br/><br/>
 <i><b>Protocol:</b></i> Select what networking protocols are allowed: unix (regular 
 Unix inter-process communication), inet (IPv4), inet6 (IPv6), netlink (socket communication with Linux 
-kernel), packt (Ethernet-level protocols).
+kernel), packet (Ethernet-level protocols).
 </blockquote>
 <b>Multimedia</b><br/><br/>
 If the application is not using sound or 3D acceleration, it is always a good idea to drop the support 

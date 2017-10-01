@@ -157,12 +157,23 @@ static QIcon resize48x48(QIcon icon) {
 		printf("\t- input pixmap: w %d, h %d\n", sz.width(), sz.height());
 
 	QPixmap pix = icon.pixmap(sz.height(), sz.width());
-	QPixmap pixin = pix.scaled(48, 48);
+	QPixmap pixin;
+	int delta = 0;
+	
+	if (sz.height() ==  sz.width() && sz.height() <= 40) {
+		pixin = pix.scaled(40, 40);
+		delta = 12;
+	}
+	else {	
+		pixin = pix.scaled(48, 48);
+		delta = 8;
+	}
+	
 
 	QPixmap pixout(64, 64);
 	pixout.fill(QColor(0, 0, 0, 0));
 	QPainter *paint = new QPainter(&pixout);
-	paint->drawPixmap(8, 8, pixin);
+	paint->drawPixmap(delta, delta, pixin);
 	if (arg_debug)
 		printf("\t- output pixmap: w %d, h %d\n", pixout.width(), pixout.height());
 	paint->end();
@@ -387,7 +398,7 @@ DefaultApp dapps[] = {
 	{ "supertux2", "", "Super Tux", "firejail supertux2", "supertux" },
 	{ "frozen-bubble", "", "Frozen-Bubble", "firejail frozen-bubble", "frozen-bubble" },
 	{ "2048-qt", "", "2048", "firejail 2048-qt", "2048-qt" },
-	{ "pingus", "", "Pingus2048", "firejail pingus", "pingus" },
+	{ "pingus", "", "Pingus", "firejail pingus", "pingus" },
 	
 	{ 0, 0, 0, 0, 0 }
 };

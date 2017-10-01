@@ -532,7 +532,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *protocol_box = new QGroupBox(tr("Network Protocol"));
 	protocol_box->setCheckable(true);
 	protocol_box->setChecked(false);
-	protocol_box->setStyleSheet("QGroupBox { color : black; }");
+//	protocol_box->setStyleSheet("QGroupBox { color : black; }");
 	connect(protocol_box, SIGNAL(toggled(bool)), this, SLOT(setProtocol(bool)));
 	QGridLayout *protocol_box_layout = new QGridLayout;
 	protocol_box_layout->addWidget(protocol_unix_, 0, 0);
@@ -541,6 +541,11 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	protocol_box_layout->addWidget(protocol_netlink_, 1, 1);
 	protocol_box_layout->addWidget(protocol_packet_, 2, 0);
 	protocol_box->setLayout(protocol_box_layout);
+	if (kernel_major == 3 && kernel_minor < 5) {
+	   	if (arg_debug)
+	   		printf("disabling protocol\n");
+		protocol_box->setEnabled(false);
+	}
 
 	QWidget *w = new QWidget;
 	w->setMinimumHeight(8);
