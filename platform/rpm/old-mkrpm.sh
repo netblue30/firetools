@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.46"
+VER="0.9.50"
 
 cd ~
 rm -fr rpmbuild
@@ -89,6 +89,8 @@ rm -rf %{buildroot}
 /usr/lib/firetools/uimenus
  
 %changelog
+
+* Mon Oct 2 2017 netblue30 <netblue30@yahoo.com> 0.9.50-1
 
 * Fri Feb 24 2017 netblue30 <netblue30@yahoo.com> 0.9.46-1
  - split firetools in two distinct executables
