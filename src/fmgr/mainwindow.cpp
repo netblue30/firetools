@@ -215,17 +215,26 @@ void MainWindow::print_files(const char *path) {
 				
 				// fs flags
 				QString s = fs_->checkFile(QString(sargv[4]));
-				if (s == "B")
+
+				if (s.contains("B"))
 					s = "Blacklist";
-				else if ( s == "T")
+				else if (s.contains("T") && s.contains("R"))
+					s = "Temporary-RO";
+				else if (s.contains("T"))
 					s = "Temporary";
-				else if ( s== "R")
-					s = "Read-only";
-				else if ( s== "C")
-					s = "Clone";
-				else if ( s== "W")
-					s = "Whitelist";
-				else if (s == "WR")
+				else if (s.contains("G")) {
+					if (s.contains("R"))
+						s = "Generated-RO";
+					else
+						s = "Generated";
+				}
+				else if (s.contains("C")) {
+					if (s.contains("R"))
+						s = "Clone-RO";
+					else
+						s = "Clone";
+				}
+				else if (s.contains("R"))
 					s = "Read-only";
 
 				QTableWidgetItem *item =  new QTableWidgetItem(s);

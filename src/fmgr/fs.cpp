@@ -54,13 +54,13 @@ void FS::initialize(pid_t pid) {
 			paths_.append(QString(ptr + 10));
 			ops_.append(QString("R"));
 		}
-		else if (strncmp(ptr, "whitelist ", 10) == 0 ) {
-			paths_.append(QString(ptr + 10));
-			ops_.append(QString("W"));
-		}
 		else if (strncmp(ptr, "clone ", 6) == 0 ) {
 			paths_.append(QString(ptr + 6));
 			ops_.append(QString("C"));
+		}
+		else if (strncmp(ptr, "create ", 7) == 0 ) {
+			paths_.append(QString(ptr + 7));
+			ops_.append(QString("G")); // generated
 		}
 
 		ptr = strtok(NULL, "\n");
@@ -87,13 +87,7 @@ QString FS::checkFile(QString file) {
 		}
 	}
 
-	QString rv = str;
-	if (str.endsWith("B"))
-		rv = "B";
-	if (str.endsWith("T"))
-		rv = "T";
-	
 	if (arg_debug) 
-		printf("checkFile database %s, result %s\n", str.toUtf8().constData(), rv.toUtf8().constData());
-	return rv;
+		printf("checkFile database %s, result %s\n", full_path.toUtf8().constData(), str.toUtf8().constData());
+	return str;
 }
