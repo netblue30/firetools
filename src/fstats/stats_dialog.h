@@ -50,6 +50,7 @@ private:
 	void updateSeccomp();	
 	void updateDns();	
 	void updateCaps();	
+	void updateFirewall();
 	void cleanStorage();
 
 private:
@@ -61,6 +62,7 @@ private:
 #define MODE_SECCOMP 3
 #define MODE_DNS 4
 #define MODE_CAPS 5
+#define MODE_FIREWALL 6
 	int mode_;
 	int pid_;	// pid value for mode 1
 	uid_t uid_;

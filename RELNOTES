@@ -1,5 +1,6 @@
 firetools (0.9.51) baseline; urgency=low
   * development version
+  * feature: firewall support in stats window
   * bugfixes
  -- netblue30 <netblue30@yahoo.com>  Sat, 30 Sep 2017 13:00:00 -0500
 

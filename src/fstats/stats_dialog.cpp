@@ -140,7 +140,7 @@ QString StatsDialog::header() {
 		msg += "</td></tr></table>";
 	}
 	
-	else if (mode_ == MODE_TREE || mode_ == MODE_SECCOMP || mode_ == MODE_DNS || mode_ == MODE_CAPS) {
+	else {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"top\">Home</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"back\">" + QString::number(pid_) + "</a>";
@@ -190,17 +190,32 @@ void StatsDialog::updateTop() {
 	procView_->setHtml(msg);
 }
 
-
-void StatsDialog::updateTree() {
-	int cycle = Db::instance().getCycle();
-	assert(cycle < DbPid::MAXCYCLE);
+void StatsDialog::updateFirewall() {
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
-		QString msg = "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
+		return;
+	}
+
+	if (arg_debug)
+		printf("reading firewallconfiguration\n");
+	QString msg = header() + "<hr>";
+
+	char *cmd;
+	if (asprintf(&cmd, "firejail --netfilter.print=%d", pid_) != -1) {
+		char *str = run_program(cmd);
+		if (str)
+			msg += "<pre>" + QString(str) + "</pre>";
+	}
+
+	procView_->setHtml(msg);
+
+}
+
+void StatsDialog::updateTree() {
+	DbPid *dbptr = Db::instance().findPid(pid_);
+	if (!dbptr) {
+		mode_ = MODE_TOP;
 		return;
 	}
 
@@ -238,15 +253,9 @@ void StatsDialog::updateTree() {
 }
 
 void StatsDialog::updateSeccomp() {
-	int cycle = Db::instance().getCycle();
-	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
-		QString msg = "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
 		return;
 	}
 
@@ -289,15 +298,9 @@ void StatsDialog::updateSeccomp() {
 
 
 void StatsDialog::updateCaps() {
-	int cycle = Db::instance().getCycle();
-	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
-		QString msg = "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
 		return;
 	}
 
@@ -325,11 +328,6 @@ void StatsDialog::updateCaps() {
 					*ptr = '\0';
 					msg += QString(str) + "<br/>\n";
 					ptr++;
-					
-	//				while (*ptr == ' ') {
-	//					msg += "&nbsp;&nbsp;";
-	//					ptr++;
-	//				}	
 					str = ptr;
 					continue;
 				}
@@ -345,15 +343,9 @@ void StatsDialog::updateCaps() {
 }
 
 void StatsDialog::updateDns() {
-	int cycle = Db::instance().getCycle();
-	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
-		QString msg = "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
 		return;
 	}
 
@@ -450,6 +442,7 @@ void StatsDialog::kernelSecuritySettings() {
 	// protocols
 	if (asprintf(&cmd, "firejail --protocol.print=%d", pid_) == -1)
 		return;
+
 	str = run_program(cmd);
 	if (str) {
 		if (strncmp(str, "Cannot", 6) == 0)
@@ -492,21 +485,13 @@ void StatsDialog::updatePid() {
 	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *ptr = Db::instance().findPid(pid_);
 	if (!ptr) {
-		msg += "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
 		return;
 	}
 
 	const char *cmd = ptr->getCmd();
 	if (!cmd) {
-		msg += "Process not found!<br/>";
-		msg += "<hr>" + header();
-		procView_->setHtml(msg);
 		mode_ = MODE_TOP;
-		QTimer::singleShot(2000, this, SLOT(cycleReady()));
 		return;
 	}
 
@@ -595,16 +580,22 @@ void StatsDialog::updatePid() {
 	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
 	if (graph_type_ == GRAPH_4MIN) {
-		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td></tr>\n";
+		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
 	}
 	else if (graph_type_ == GRAPH_1H) {
-		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td></tr>\n";
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td>";
 	}
 	else if (graph_type_ == GRAPH_12H) {
-		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td></tr>\n";
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td>";
 	}
 	else
 		assert(0);
+
+	// netfilter
+	if (ptr->networkDisabled() == false && no_network_ == false)
+		msg += "<td><b>Firewall</b>: <a href=\"firewall\">enabled</a></td></tr>\n";
+	else
+		msg += "<td><b>Firewall</b>: system firewall</td></tr>\n";
 
 	// graphs
 	msg += "<tr></tr>";
@@ -650,6 +641,8 @@ void StatsDialog::cycleReady() {
 		updateDns();
 	else if (mode_ == MODE_CAPS)
 		updateCaps();
+	else if (mode_ == MODE_FIREWALL)
+		updateFirewall();
 }
 
 void StatsDialog::anchorClicked(const QUrl & link) {
@@ -670,7 +663,10 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 			mode_ = MODE_PID;
 		else if (mode_ == MODE_CAPS)
 			mode_ = MODE_PID;
-		else if (mode_ == MODE_TOP);
+		else if (mode_ == MODE_FIREWALL)
+			mode_ = MODE_PID;
+		else if (mode_ == MODE_TOP)
+			;
 		else
 			assert(0);
 	}
@@ -694,6 +690,9 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	}
 	else if (linkstr == "dns") {
 		mode_ = MODE_DNS;
+	}
+	else if (linkstr == "firewall") {
+		mode_ = MODE_FIREWALL;
 	}
 	else if (linkstr == "shut") {
 		QMessageBox msgBox;
