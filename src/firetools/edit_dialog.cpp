@@ -95,6 +95,7 @@ EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
 	setWindowTitle(tr("Edit Sandbox"));
 }	
 
+// Help dialog
 void EditDialog::help() {
 	QMessageBox msgBox;
 	

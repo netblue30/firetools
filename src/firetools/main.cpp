@@ -42,6 +42,7 @@ static const char *deskfile_minimize =
 "Categories=Qt;System;Security;\n";
 
 
+// Usage instructions for the command line output
 static void usage() {
 	printf("firetools - Firejail tools and stats utility\n\n");
 	printf("Usage: firetools [options]\n\n");

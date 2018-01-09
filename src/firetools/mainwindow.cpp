@@ -123,6 +123,7 @@ void MainWindow::edit() {
 	}
 }
 
+// Remove application from the list
 void MainWindow::remove() {
 //printf("line %d, active index %d, name %s\n", __LINE__, active_index_, 
 //	applist[active_index_].name_.toLocal8Bit().constData());
@@ -145,6 +146,7 @@ void MainWindow::remove() {
 }
 
 
+// Run application
 void MainWindow::run() {
 	int index = active_index_;
 	if (index != -1) {
@@ -157,18 +159,21 @@ void MainWindow::run() {
 	QTimer::singleShot(0, this, SLOT(update()));
 }
 
+// Run statistics tools
 void MainWindow::runTools() {
 	// start fstats as a separate process
 	int rv = system(PACKAGE_LIBDIR "/fstats &");
 	(void) rv;
 }
 
+// Start firejail-ui
 void MainWindow::newSandbox() {
 	// start firejail-ui as a separate process
 	int rv = system("firejail-ui &");
 	(void) rv;
 }
 
+// About window
 void MainWindow::runAbout() {
 	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firetools.png\"></td>";
 	msg += "<td>" + tr(
@@ -189,6 +194,7 @@ void MainWindow::runAbout() {
 	QMessageBox::about(this, tr("About"), msg);
 }
 
+// Mouse events: mouse release
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
@@ -207,6 +213,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 	}
 }
 
+// Mouse events: mouse press
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 	if (event->button() == Qt::LeftButton) {
 		dragPosition_ = event->globalPos() - frameGeometry().topLeft();
@@ -238,6 +245,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 }
 
 
+// Mouse events
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 	if (event->buttons() & Qt::LeftButton) {
 		move(event->globalPos() - dragPosition_);
@@ -245,7 +253,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 	}
 }
 
-
+// Mouse events: double-click
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event) {
 	if (event->button() == Qt::LeftButton) {
 		QPoint pos = event->pos();
@@ -338,6 +346,7 @@ void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 
 QSize MainWindow::sizeHint() const
 {
+// Window size hint
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
 	
@@ -456,6 +465,7 @@ void MainWindow::createLocalActions() {
 	addAction(qquit);
 }
 
+// Help dialog
 void MainWindow::help() {
 	QMessageBox msgBox;
 	
@@ -482,6 +492,7 @@ void MainWindow::help() {
 	QMessageBox::about(this, tr("Firejail Launcher"), txt);
 }
 
+// Shutdown sequence
 void MainWindow::main_quit() {
 	printf("exiting...\n");
 
