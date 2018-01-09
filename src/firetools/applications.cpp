@@ -305,6 +305,7 @@ QIcon Application::loadIcon(QString name) {
 }
 
 
+// Default application configurations for the app launcher
 struct DefaultApp {
 	const char *name;
 	const char *alias;
@@ -324,6 +325,7 @@ DefaultApp dapps[] = {
 	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", ":resources/firefox"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
+	{ "google-chrome", "", "Google Chrome", "firejail google-chrome", "google-chrome"},
 	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
 	{ "opera", "", "Opera Web Browser", "firejail opera", "opera" },
 	{ "netsurf", "", "Netsurf Web Browser", "firejail netsurf", "netsurf" },
@@ -391,6 +393,13 @@ DefaultApp dapps[] = {
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal.png" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
+
+	// Pw managers
+	{ "keepass", "", "keepass", "firejail keepass", "keepass" },
+	{ "keepass2", "", "keepass2", "firejail keepass2", "keepass2" },
+	{ "keepassx", "", "keepassx", "firejail keepassx", "keepassx" },
+	{ "keepassx2", "", "keepassx2", "firejail keepassx2", "keepassx2" },
+	{ "keepassxc", "", "keepassxc", "firejail keepassxc", "keepassxc" },
 	
 	// Games
 	{ "0ad", "", "0AD", "firejail 0ad", "0ad" },
