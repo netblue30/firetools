@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
    <file>resources/firetools.png</file>
+   <file>resources/firetools-minimal.png</file>
    <file>resources/fstats.png</file>
    <file>resources/firejail-ui.png</file>
    <file>resources/icedove.png</file>

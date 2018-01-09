@@ -46,6 +46,7 @@ rm -rf $RPM_BUILD_ROOT/%{_docdir}/
 %{_mandir}/*
 %{_datadir}/applications/firetools.desktop
 %{_datadir}/pixmaps/firetools.png
+%{_datadir}/pixmaps/firetools-minimal.png
  
 
 %changelog

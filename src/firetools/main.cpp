@@ -135,8 +135,8 @@ int main(int argc, char *argv[]) {
 	if (!arg_minimize)
 		fc.show();
 
-	// configure system tray
-	QSystemTrayIcon icon(QIcon(":resources/firetools.png"));
+	// Configure system tray
+	QSystemTrayIcon icon(QIcon(":resources/firetools-minimal.png"));
 	icon.show();	
 	icon.setToolTip("Firetools (click to open)");
 	QMenu *trayIconMenu = new QMenu(&fc);
