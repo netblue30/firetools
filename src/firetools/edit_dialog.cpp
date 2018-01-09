@@ -35,7 +35,7 @@
 
 
 EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
-	// editing
+	// Editing
 	QLabel *lname = new QLabel;
 	lname->setText(tr("Name"));
 	name_ = new QLineEdit;
@@ -53,7 +53,7 @@ EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
 	cmd_ = new QLineEdit;
 	cmd_->setText(cmd);
 
-	// buttons
+	// Buttons
     	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                      | QDialogButtonBox::Cancel);
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -66,7 +66,7 @@ EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
 	QLabel *icon_txt3 = new QLabel("You can supply your own icon by placing it in ~/.config/firetools.");
 
 
-	// layout- editing
+	// Layout - editing
 	QGridLayout *layout = new QGridLayout;
 	layout->addItem(new QSpacerItem(30, 15), 0, 0);
 	layout->addItem(new QSpacerItem(300, 15), 0, 2);
@@ -78,14 +78,14 @@ EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
 	layout->addWidget(lcmd, 3, 1);
 	layout->addWidget(cmd_, 3, 2);
 	
-	// icon note
+	// Icon note
 	layout->addItem(new QSpacerItem(10,20), 4, 0);
 	layout->addWidget(icon_txt1, 5, 1, 1, 2);
 	layout->addWidget(icon_txt2, 6, 1, 1, 2);
 	layout->addWidget(icon_txt3, 7, 1, 1, 2);
 	layout->addItem(new QSpacerItem(30, 15), 8, 0);
 	
-	// layout - buttons
+	// Layout - buttons
 	layout->addItem(new QSpacerItem(30, 30), 9, 0);
 	layout->addWidget(helpButton, 10, 1);
 	layout->addWidget(buttonBox, 10, 2);
