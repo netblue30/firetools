@@ -401,6 +401,7 @@ DefaultApp dapps[] = {
 
 
 	// Chat
+	{ "signal-desktop", "", "Signal", "firejail signal-desktop", ":resources/signal-desktop.png" },
 	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },
 	{ "xchat", "", "XChat", "firejail xchat", "xchat" },
 	{ "hexchat", "", "HexChat", "firejail hexchat", "hexchat" },

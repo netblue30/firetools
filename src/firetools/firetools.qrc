@@ -8,5 +8,6 @@
    <file>resources/firefox.png</file>
    <file>resources/libreoffice-writer.png</file>
    <file>resources/gnome-terminal.png</file>
+   <file>resources/signal-desktop.png</file>
 </qresource>
 </RCC>
