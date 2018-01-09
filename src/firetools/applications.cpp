@@ -89,6 +89,7 @@ Application::Application(const char *name):
 	app_icon_ = loadIcon(icon_);
 }
 
+// Save the app's configuration
 int Application::saveConfig() {
 	char *fname = get_config_file_name(name_.toLocal8Bit().constData());
 	if (!fname)
@@ -293,14 +294,31 @@ QIcon Application::loadIcon(QString name) {
 	// Create a new icon
 	if (arg_debug)
 		printf("\t- created\n");
+	
+	// Create a new QPixmap instance for icons
 	QPixmap pix(64, 64);
-	pix.fill(Qt::red);
+
+	// Set the background color for generated icons
+	QColor iconBackgroundColor(68, 68, 68);
+
+	// Fill the icon with a color
+	pix.fill(iconBackgroundColor);
+
+
+	// Create a QPainter instance
 	QPainter painter( &pix );
+
+	// Set color and font for the painter
 	painter.setPen(Qt::white);
 	painter.setFont(QFont("Sans"));
+
+	// Draw application's name to the icon
 	painter.drawText(3, 20, name);
 	painter.end();
+
+	// Use generated pixmap as an icon
 	QIcon icon(pix);
+
 	return icon;
 }
 

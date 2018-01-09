@@ -99,7 +99,6 @@ void MainWindow::edit() {
 				else
 					QMessageBox::critical(this, tr("Firejail Tools"),
 						tr("<br/>Sandbox already defined.<br/><br/><br/>"));
-				
 			}
 		}
 		
@@ -270,64 +269,97 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event) {
 	}
 }
 
+// Main window visual design
 void MainWindow::paintEvent(QPaintEvent *) {
+	// Count the number applications and put the value to the variable
 	int nelem = applist.count();
+
+	// Columns is the amount of applications divided by number of rows + 1
 	int cols = nelem / ROWS + 1;
 
+	// Start painting
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
-	QSize sz = sizeHint();
-	painter.fillRect(QRect(0, 0, sz.width(), sz.height()), QBrush(QColor(255, 20, 20)));
 
+	// Window size hint
+	QSize sz = sizeHint();
+
+	// Window rectangle size coordinates
+	QRect windowRectSize(0, 0, sz.width(), sz.height());
+
+	// Background color for the main window
+	// (dark gray)
+	QBrush windowBackgroundColor(QColor(68, 68, 68));
+
+	// Fills the given rectangle with the specified color values.
+	// https://doc.qt.io/qt-5.10/qpainter.html#drawRect
+	painter.fillRect(windowRectSize, windowBackgroundColor);
+
+	// Loop icons to rows
 	int i = 0;
 	int j = 0;
 	for (; i < nelem; i++, j++) {
 		if (j >= ROWS)
 			j = 0;
-			
+		
+		// Select icon from the looped items
 		QIcon icon = applist[i].app_icon_;
+
 		int sz = 64 ;
 		if (active_index_ == i)
 			sz -= animation_id_ * 3;
-			
-		QPixmap pixmap = icon.pixmap(QSize(sz, sz), QIcon::Normal, QIcon::On);
-		painter.drawPixmap(QPoint(MARGIN * 2 + (64 - sz) / 2 + (i / ROWS) * 64, MARGIN *2 + j * 64 + TOP + (64 - sz) / 2), pixmap);
+		
+
+		// More details and examples:
+		// - https://doc.qt.io/qt-5.10/qpainter.html#drawPixmap
+
+		// Target
+		int pixmapTargetXposition = MARGIN * 2 + (64 - sz) / 2 + (i / ROWS) * 64;
+		int pixmapTargetYposition = MARGIN *2 + j * 64 + TOP + (64 - sz) / 2;
+
+		QPoint pixmapTarget(pixmapTargetXposition, pixmapTargetYposition);
+
+		// Source
+		int pixmapWidth = sz;
+		int pixmapHeight = sz;
+
+		QSize pixmapSize(pixmapWidth, pixmapHeight);
+
+		// "The QPixmap class is an off-screen image representation that can be used as a paint device."
+		// - https://doc.qt.io/qt-5.10/qpixmap.html
+		// "Returns a pixmap with the requested size, mode, and state,"
+		// - https://doc.qt.io/qt-5.10/qicon.html#pixmap
+		QPixmap pixmap = icon.pixmap(pixmapSize, QIcon::Normal, QIcon::On);
+		
+
+		// Paint pixmap items
+		painter.drawPixmap(pixmapTarget, pixmap);
 	}
 
-	// vertical bars
-	QPen pen1(Qt::black);
-	painter.setPen(pen1);
-	for (i = 0; i < cols; i++) {
-		painter.drawLine(MARGIN * 2 + i * 64 + 21, MARGIN * 2 + TOP, MARGIN * 2 + i * 64 + 21, MARGIN * 2 + ROWS * 64 + TOP);
-		painter.drawLine(MARGIN * 2 + i * 64 + 43, MARGIN * 2 + TOP, MARGIN * 2 + i * 64 + 43, MARGIN * 2 + ROWS * 64 + TOP);
-		painter.drawLine(MARGIN * 2 + i * 64 + 64, MARGIN * 2 + TOP, MARGIN * 2 + i * 64 + 64, MARGIN * 2 + ROWS * 64 + TOP);
-	}
-	
-	// horizontal bars
-	for (i = 0; i < ROWS - 1; i++) {
-		painter.drawLine(MARGIN * 2, MARGIN * 2 + 64 * (i + 1) - 1 + TOP,
-			MARGIN * 2 + 64 * cols, MARGIN * 2 + 64 * (i + 1) - 1 + TOP);
 
-	}
+	// Close button
+	// Rectangle size & coordinates for the close button
+	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 8, 8, 12, 3);
 
-	// close button
-	painter.fillRect(QRect(MARGIN * 2 + cols * 64 - 8, 8, 12, 3), QBrush(Qt::white));
-	
+	// Color for the close button
+	QBrush closeButtonRectColor(Qt::white);
 
+	// Fills the given rectangle with the color
+	painter.fillRect(closeButtonRectSize, closeButtonRectColor);
+
+
+	// Default font
 	painter.setFont(QFont("Sans", TOP, QFont::Normal));
-//	QPen pen2(Qt::white);
-//	painter.setPen(pen2);
-//	painter.drawText(MARGIN * 2, TOP + MARGIN / 2, "Firetools");
 
+	// Animation timer detay if animations are enabled
 	if (animation_id_ > 0) {
 		animation_id_--;
 		QTimer::singleShot(ADELAY, this, SLOT(update()));
 	}
-	
-	
 }
 
 
+// Window resize
 void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
@@ -344,9 +376,8 @@ void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 }
 
 
-QSize MainWindow::sizeHint() const
-{
 // Window size hint
+QSize MainWindow::sizeHint() const {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
 	
