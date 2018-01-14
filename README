@@ -18,13 +18,21 @@ On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"
 Firetools Authors:
 
 netblue30 (netblue30@yahoo.com)
+Daniel Schildt (https://github.com/d2s)
+	- ignore built packages in .gitignore
+	- grayscale icon for launcher
+	- fix/add comments throughout the code
+	- add more auto-detected apps
+	- improve visual style
+	- reduce margins, improve usability
+	- add signal-desktop icon
 Reiner Herrmann
 	- Debian and Ubuntu integration
 	- various fixes
 Warren Togami (https://github.com/wtogami)
 	- rewrite of mkrpm.sh, Fedora packaging cleanup
 Piraty (https://github.com/Piraty)
-	- use system's icons when available 
+	- use system's icons when available
 Topi Miettinen (https://github.com/topimiettinen)
 	- change labels to black to be visible with dark themes and various other fixes
 dmio (https://github.com/dmio)
