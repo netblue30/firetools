@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Firetools Authors
+ * Copyright (C) 2015-2018 Firetools Authors
  *
  * This file is part of firetools project
  *
@@ -44,7 +44,7 @@ private:
 	void print_files(const char *path);
 	QString build_path();
 	QString build_line();
-	
+
 private:
 	pid_t pid_;
 	TopWidget *top_;

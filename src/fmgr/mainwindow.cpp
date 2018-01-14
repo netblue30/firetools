@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Firetools Authors
+ * Copyright (C) 2015-2018 Firetools Authors
  *
  * This file is part of firetools project
  *
@@ -39,7 +39,7 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 			tr("<br/><b>Firejail</b> software not found. Please install it.<br/><br/><br/>"));
 		exit(1);
 	}
-	
+
 	// verify sandbox
 	{
 		char *cmd;
@@ -54,21 +54,21 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 			exit(1);
 		}
 	}
-	
+
 	// initialize FS
 	fs_ = new FS(pid);
-	
+
 	top_ = new TopWidget(this);
 	connect(top_, SIGNAL(upClicked()), this, SLOT(handleUp()));
 	connect(top_, SIGNAL(rootClicked()), this, SLOT(handleRoot()));
 	connect(top_, SIGNAL(refreshClicked()), this, SLOT(handleRefresh()));
 	connect(top_, SIGNAL(homeClicked()), this, SLOT(handleHome()));
-	
+
 	line_ = new QLineEdit(this);
 	QString txt = build_line();
 	line_->setText(txt);
 	line_->setReadOnly(true);
-	
+
 	table_ = new QTableWidget(0, 6, this);
 	QStringList header;
 	header.append(" ");
@@ -85,7 +85,7 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	table_->setColumnWidth(3, 100);
 	table_->setColumnWidth(4, 100);
 	table_->setColumnWidth(5, 500);
-	table_->horizontalHeader()->setStretchLastSection(true);	
+	table_->horizontalHeader()->setStretchLastSection(true);
 	table_->setShowGrid(false);
 	table_->setColumnHidden(0, true);
 	connect(table_, SIGNAL(cellClicked(int, int)), this, SLOT (cellClicked(int, int)));
@@ -95,7 +95,7 @@ MainWindow::MainWindow(pid_t pid, QWidget *parent): QMainWindow(parent), pid_(pi
 	empty1->setMinimumWidth(30);
 	QWidget *empty2 = new QWidget(this);
 	empty2->setMinimumWidth(10);
-	
+
 	QGridLayout *mainLayout = new QGridLayout;
 	mainLayout->addWidget(top_, 0, 0);
 	mainLayout->addWidget(empty1, 0, 1);
@@ -135,10 +135,10 @@ void MainWindow::print_files(const char *path) {
 		qpath.replace(" ", "\\ ");
 		path =  qpath.toUtf8().constData();
 	}
-	
+
 	if (arg_debug)
-		printf("print_files path %s\n", path); 
-	
+		printf("print_files path %s\n", path);
+
 	char *cmd;
 	if (asprintf(&cmd, "firejail --ls=%d %s 2>&1", pid_, path) == -1)
 		errExit("asprintf");
@@ -162,7 +162,7 @@ void MainWindow::print_files(const char *path) {
 
 	// fs flags
 	fs_->checkPath(QString(path));
-	
+
 	char *ptr = strtok(out, "\n");
 	rows = 0;
 	while (ptr) {
@@ -171,9 +171,9 @@ void MainWindow::print_files(const char *path) {
 		    strncmp(ptr, "Error:", 6) == 0) {
 			ptr = strtok(NULL, "\n");
 			continue;
-		}		
+		}
 		split_command(ptr);
-		
+
 		// adjust the list in order to accept file names with spaces
 		if (sargc > 5) {
 			char *ptr = sargv[4];
@@ -184,12 +184,12 @@ void MainWindow::print_files(const char *path) {
 				*ptr = ' ';
 			}
 			sargc = 5;
-		}	
-				
+		}
+
 		if (sargc == 5) {
 			if (strcmp(sargv[4], "..") != 0 && strcmp(sargv[4], ".") != 0) {
 				table_->setRowCount(rows + 1);
-				
+
 				// image
 				if (*sargv[0] == 'd') {
 					table_->setItem(rows, 0, new QTableWidgetItem("D"));
@@ -212,7 +212,7 @@ void MainWindow::print_files(const char *path) {
 					timage->setData(Qt::DecorationRole, QPixmap::fromImage(*img));
 					table_->setItem(rows, 1, new QTableWidgetItem(*timage));
 				}
-				
+
 				// fs flags
 				QString s = fs_->checkFile(QString(sargv[4]));
 
@@ -238,26 +238,26 @@ void MainWindow::print_files(const char *path) {
 					s = "Read-only";
 
 				QTableWidgetItem *item =  new QTableWidgetItem(s);
-				item->setTextAlignment(Qt::AlignCenter);					
+				item->setTextAlignment(Qt::AlignCenter);
 				table_->setItem(rows, 2, item);
-				
+
 				item =  new QTableWidgetItem(sargv[1]);
-				item->setTextAlignment(Qt::AlignCenter);					
+				item->setTextAlignment(Qt::AlignCenter);
 				table_->setItem(rows, 3, item);
 
 				item =  new QTableWidgetItem(sargv[3]);
 				item->setTextAlignment(Qt::AlignCenter);
 				table_->setItem(rows, 4, item);
-				
+
 				item =  new QTableWidgetItem(QString("  ") + QString(sargv[4]));
 //				item->setTextAlignment(Qt::AlignHorizontal_Mask);
 				table_->setItem(rows, 5, item);
-				rows++;				
+				rows++;
 			}
 		}
-		
+
 		ptr = strtok(NULL, "\n");
-	}	
+	}
 }
 
 void MainWindow::handleUp() {
@@ -265,14 +265,14 @@ void MainWindow::handleUp() {
 		return handleRefresh();
 
 	path_.takeLast();
-	QString full_path = build_path();		
+	QString full_path = build_path();
 	print_files(full_path.toStdString().c_str());
 	QString txt = build_line();
 	line_->setText(txt);
 }
 
 void MainWindow::handleRefresh() {
-	QString full_path = build_path();		
+	QString full_path = build_path();
 	print_files(full_path.toStdString().c_str());
 	QString txt = build_line();
 	line_->setText(txt);
@@ -284,7 +284,7 @@ void MainWindow::handleHome() {
 	path_.append(QString("home"));
 	if (username)
 		path_.append(QString(username));
-	QString full_path = build_path();		
+	QString full_path = build_path();
 	print_files(full_path.toStdString().c_str());
 	QString txt = build_line();
 	line_->setText(txt);
@@ -299,7 +299,7 @@ void MainWindow::handleRoot() {
 
 QString  MainWindow::build_path() {
 	QString retval = QString("/");
-	
+
 	for (int i = 0; i < path_.size(); ++i) {
 		retval += path_.at(i);
 		retval += QString("/");
@@ -311,12 +311,12 @@ QString  MainWindow::build_path() {
 QString  MainWindow::build_line() {
 	QString retval = "/";
 //	retval.sprintf("%d:///", pid_);
-	
+
 	for (int i = 0; i < path_.size(); ++i) {
 		retval += path_.at(i);
 		retval += QString("/");
 	}
-	
+
 	return retval;
 }
 
@@ -330,7 +330,7 @@ void MainWindow::cellClicked(int row, int column) {
 	dir = dir.mid(2);
 	path_.append(dir);
 
-	QString full_path = build_path();		
+	QString full_path = build_path();
 	print_files(full_path.toStdString().c_str());
 	QString txt = build_line();
 	line_->setText(txt);

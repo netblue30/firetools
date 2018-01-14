@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Firetools Authors
+ * Copyright (C) 2015-2018 Firetools Authors
  *
  * This file is part of firetools project
  *
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
 
 	if (arg_debug)
 		printf("Linux kernel version %d.%d\n", kernel_major, kernel_minor);
-	
+
 	// initialize resources
 	//Q_INIT_RESOURCE(firejail-ui);
 
