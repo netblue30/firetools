@@ -23,3 +23,5 @@ src/firejail-ui/.qmake.stash
 src/firetools/.qmake.stash
 src/fmgr/.qmake.stash
 src/fstats/.qmake.stash
+firetools-*.tar.xz
+firetools*.deb

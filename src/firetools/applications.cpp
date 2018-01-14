@@ -40,7 +40,7 @@ Application::Application(QString name, QString description, QString exec, QStrin
 	app_icon_ = loadIcon(icon_);
 };
 
-// load an application from a desktop file
+// Load an application from a desktop file
 Application::Application(const char *name):
 	name_(name), description_("unknown"), exec_("unknown"), icon_("unknown") {
 
@@ -89,12 +89,13 @@ Application::Application(const char *name):
 	app_icon_ = loadIcon(icon_);
 }
 
+// Save the app's configuration
 int Application::saveConfig() {
 	char *fname = get_config_file_name(name_.toLocal8Bit().constData());
 	if (!fname)
 		return 1;
 	
-	// open file
+	// Open a file
 	FILE *fp = fopen(fname, "w");
 	if (!fp) {
 		free(fname);
@@ -204,7 +205,7 @@ QIcon Application::loadIcon(QString name) {
 
 
 
-	// look for the file in firejail config directory under /home/user
+	// Look for the file in Firejail config directory under /home/user
 	QString conf = QDir::homePath() + "/.config/firetools/" + name + ".png";
 	QFileInfo checkFile1(conf);
 	if (checkFile1.exists() && checkFile1.isFile()) {
@@ -289,21 +290,40 @@ QIcon Application::loadIcon(QString name) {
 			return resize48x48(QIcon(qstr));
 	}
 
-	// create a new icon
+
+	// Create a new icon
 	if (arg_debug)
 		printf("\t- created\n");
+	
+	// Create a new QPixmap instance for icons
 	QPixmap pix(64, 64);
-	pix.fill(Qt::red);
+
+	// Set the background color for generated icons
+	QColor iconBackgroundColor(68, 68, 68);
+
+	// Fill the icon with a color
+	pix.fill(iconBackgroundColor);
+
+
+	// Create a QPainter instance
 	QPainter painter( &pix );
+
+	// Set color and font for the painter
 	painter.setPen(Qt::white);
 	painter.setFont(QFont("Sans"));
+
+	// Draw application's name to the icon
 	painter.drawText(3, 20, name);
 	painter.end();
+
+	// Use generated pixmap as an icon
 	QIcon icon(pix);
+
 	return icon;
 }
 
 
+// Default application configurations for the app launcher
 struct DefaultApp {
 	const char *name;
 	const char *alias;
@@ -313,31 +333,32 @@ struct DefaultApp {
 };
 
 DefaultApp dapps[] = {
-	// firetools
+	// Firetools
 	{ "firetools", "", "Firetools", PACKAGE_LIBDIR "/fstats", ":resources/fstats" },
 	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", ":resources/firejail-ui" },
 	
-	// browser
+	// Web browsers
 	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox" },
 	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", ":resources/firefox"},
 	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", ":resources/firefox"},
 	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
 	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
+	{ "google-chrome", "", "Google Chrome", "firejail google-chrome", "google-chrome"},
 	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
 	{ "opera", "", "Opera Web Browser", "firejail opera", "opera" },
 	{ "netsurf", "", "Netsurf Web Browser", "firejail netsurf", "netsurf" },
 
-	// mail
+	// Email clients
 	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove" },
 	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", "thunderbird" },
 
-	// bittorrent
+	// Bittorrent
 	{ "transmission-gtk", "", "Transmission BitTorrent Client", "firejail transmission-gtk", "transmission" },
 	{ "transmission-qt", "transmission-gtk", "Transmission BitTorrent Client", "firejail transmission-qt", "transmission" },
 	{ "deluge", "", "Deluge BitTorrent Client", "firejail deluge", "deluge" },
 	{ "qbittorrent", "", "qBittorrent Client", "firejail qbittorrent", "qbittorrent" },
 
-	// viewers
+	// Viewers
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
 	{ "qpdfview", "", "qPDFView", "firejail qpdfview", "qpdfview" },
 	{ "xpdf", "", "Xpdf", "firejail xpdf", "xpdf" },
@@ -354,7 +375,7 @@ DefaultApp dapps[] = {
 	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "/usr/share/calibre/images/lt.png" },
 	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
 
-	// media players, audio/video tools
+	// Media players, audio/video tools
 	{ "xplayer", "", "xplayer", "firejail xplayer", "xplayer" },
 	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
 	{ "amarok", "", "Amarok", "firejail amarok", "amarok" },
@@ -371,7 +392,7 @@ DefaultApp dapps[] = {
 	{ "ghb", "", "HandBrake", "firejail ghb", "hb-icon" },
 	{ "audacity", "", "Audacity", "firejail audacity", "audacity" },
 
-	// editor
+	// Editors
 	{ "gimp", "", "Gimp", "firejail gimp", "gimp" },
 	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
 	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
@@ -379,19 +400,27 @@ DefaultApp dapps[] = {
 	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer.png" },
 
 
-	// chat
+	// Chat
+	{ "signal-desktop", "", "Signal", "firejail signal-desktop", ":resources/signal-desktop.png" },
 	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },
 	{ "xchat", "", "XChat", "firejail xchat", "xchat" },
 	{ "hexchat", "", "HexChat", "firejail hexchat", "hexchat" },
 	{ "quassel", "", "Quassel IRC", "firejail quassel", "quassel" },
 	{ "empathy", "", "Empathy", "firejail empathy", "empathy" },
 	
-	// etc
+	// Etc
 	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
 	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal.png" },
 	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
+
+	// Pw managers
+	{ "keepass", "", "keepass", "firejail keepass", "keepass" },
+	{ "keepass2", "", "keepass2", "firejail keepass2", "keepass2" },
+	{ "keepassx", "", "keepassx", "firejail keepassx", "keepassx" },
+	{ "keepassx2", "", "keepassx2", "firejail keepassx2", "keepassx2" },
+	{ "keepassxc", "", "keepassxc", "firejail keepassxc", "keepassxc" },
 	
-	// games
+	// Games
 	{ "0ad", "", "0AD", "firejail 0ad", "0ad" },
 	{ "warzone2100", "", "Warzone 2100", "firejail warzone2100", "warzone2100" },
 	{ "etr", "", "Extreme Tux Racer", "firejail etr", "etr" },

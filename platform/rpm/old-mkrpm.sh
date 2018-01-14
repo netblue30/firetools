@@ -28,6 +28,7 @@ install -m 644 /usr/share/applications/firejail-ui.desktop firetools-$VER/usr/sh
 
 mkdir -p  firetools-$VER/usr/share/pixmaps
 install -m 644 /usr/share/pixmaps/firetools.png firetools-$VER/usr/share/pixmaps/.
+install -m 644 /usr/share/pixmaps/firetools-minimal.png firetools-$VER/usr/share/pixmaps/.
 install -m 644 /usr/share/pixmaps/firejail-ui.png firetools-$VER/usr/share/pixmaps/.
 
 mkdir -p firetools-$VER/usr/share/doc/firetools

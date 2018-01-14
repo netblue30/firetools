@@ -42,6 +42,7 @@ static const char *deskfile_minimize =
 "Categories=Qt;System;Security;\n";
 
 
+// Usage instructions for the command line output
 static void usage() {
 	printf("firetools - Firejail tools and stats utility\n\n");
 	printf("Usage: firetools [options]\n\n");
@@ -57,7 +58,7 @@ static void usage() {
 int main(int argc, char *argv[]) {
 	int arg_minimize = 0;
 
-	// parse arguments
+	// Parse arguments
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--debug") == 0)
 			arg_debug = 1;
@@ -70,21 +71,21 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 		else if (strcmp(argv[i], "--autostart") == 0) {
-			// find jome directory
+			// Find home directory
 			char *home = get_home_directory();
 			if (!home) {
 				fprintf(stderr, "Error: cannot find user home directory");
 				return 1;
 			}
 			
-			// create a .config/autostart directory if it doesn't exist
+			// Create a .config/autostart directory if it doesn't exist
 			char *autodir;
 			if (asprintf(&autodir, "%s/.config/autostart", home) == -1)
 				errExit("asprintf");
 			int rv = mkdir(autodir, 0755);
 			(void) rv;
 			
-			// create desktop file
+			// Create desktop file
 			char *autofile;
 			if (asprintf(&autofile, "%s/.config/autostart/firetools.desktop", home) == -1)
 				errExit("asprintf");
@@ -109,7 +110,7 @@ int main(int argc, char *argv[]) {
 
 #if QT_VERSION >= 0x050000
 	struct stat s;	
-	// test run time dependencies - print warning and continue program
+	// Test run time dependencies - print warning and continue program
 	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
 	ppath += "/imageformats/libqsvg.so";
 	if (stat(ppath.toUtf8().constData(), &s) == -1) {
@@ -118,16 +119,16 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 	
-	// test run time dependencies - exit
+	// Test run time dependencies - exit
 	if (!which("firejail")) {
 		fprintf(stderr, "Error: firejail package not found, please install it!\n");
 		exit(1);
 	}
 	
-	// create firetools directory if it doesn't exist
+	// Create firetools directory if it doesn't exist
 	create_config_directory();
 	
-	// initialize resources
+	// Initialize resources
 	Q_INIT_RESOURCE(firetools);
 
 	QApplication app(argc, argv);
@@ -135,8 +136,8 @@ int main(int argc, char *argv[]) {
 	if (!arg_minimize)
 		fc.show();
 
-	// configure system tray
-	QSystemTrayIcon icon(QIcon(":resources/firetools.png"));
+	// Configure system tray
+	QSystemTrayIcon icon(QIcon(":resources/firetools-minimal.png"));
 	icon.show();	
 	icon.setToolTip("Firetools (click to open)");
 	QMenu *trayIconMenu = new QMenu(&fc);
@@ -147,7 +148,7 @@ int main(int argc, char *argv[]) {
 	icon.setContextMenu(trayIconMenu);
 	icon.connect(&icon, SIGNAL(activated(QSystemTrayIcon: :ActivationReason)), &fc, SLOT(trayActivated(QSystemTrayIcon: :ActivationReason)));
 	
-	// direct all errror to /dev/null to work around this qt bug:
+	// Direct all errror to /dev/null to work around this qt bug:
 	//      https://bugreports.qt.io/browse/QTBUG-43270
 	FILE *rv = NULL;
 	if (!arg_debug) {
@@ -155,7 +156,7 @@ int main(int argc, char *argv[]) {
 		(void) rv;
 	}
 	
-	// start application
+	// Start application
 	int tmp = app.exec();
 	(void) tmp;
 	

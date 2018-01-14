@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
    <file>resources/firetools.png</file>
+   <file>resources/firetools-minimal.png</file>
    <file>resources/go-top.png</file>
    <file>resources/go-up.png</file>
    <file>resources/user-home.png</file>

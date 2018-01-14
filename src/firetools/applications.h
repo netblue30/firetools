@@ -24,7 +24,7 @@
 #include <QIcon>
 
 #define TOP 10
-#define MARGIN 5
+#define MARGIN 2
 #define AFRAMES 6	// animation frames
 #define ADELAY 20		// animation delay
 #define ROWS 6

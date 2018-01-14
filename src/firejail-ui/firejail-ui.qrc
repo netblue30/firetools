@@ -2,6 +2,7 @@
 <qresource prefix="/">
    <file>resources/background.png</file>
    <file>resources/firetools.png</file>
+   <file>resources/firetools-minimal.png</file>
    <file>resources/firejail-ui.png</file>
    <file>resources/gnome-fs-directory.png</file>
 </qresource>
