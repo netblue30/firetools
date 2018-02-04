@@ -74,13 +74,13 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 		"Drag the launcher with the left mouse button.\n"
 		"Use the right mouse button to open a context menu."));
 	setWindowTitle(tr("Firelauncher"));
-	
+
 }
 
 void MainWindow::edit() {
 	if (edit_index_ != -1) {
 		EditDialog *edit;
-		
+
 		// new entry
 		if (active_index_ == -1) {
 			edit = new EditDialog("", "", "");
@@ -101,7 +101,7 @@ void MainWindow::edit() {
 						tr("<br/>Sandbox already defined.<br/><br/><br/>"));
 			}
 		}
-		
+
 		// existing entry
 		else {
 //printf("%s\n", applist[active_index_].exec_.toLocal8Bit().constData());
@@ -114,7 +114,7 @@ void MainWindow::edit() {
 			}
 		}
 		delete edit;
-		
+
 		// update
 		hide();
 		show();
@@ -124,7 +124,7 @@ void MainWindow::edit() {
 
 // Remove application from the list
 void MainWindow::remove() {
-//printf("line %d, active index %d, name %s\n", __LINE__, active_index_, 
+//printf("line %d, active index %d, name %s\n", __LINE__, active_index_,
 //	applist[active_index_].name_.toLocal8Bit().constData());
 
 	char *fname = get_config_file_name(applist[active_index_].name_.toLocal8Bit().constData());
@@ -135,7 +135,7 @@ void MainWindow::remove() {
 			printf("Application removed:\n");
 			applist_print();
 		}
-		
+
 		// update
 		hide();
 		show();
@@ -153,7 +153,7 @@ void MainWindow::run() {
 		int rv = system(exec.toStdString().c_str());
 		(void) rv;
 	}
-		
+
 	animation_id_ = AFRAMES;
 	QTimer::singleShot(0, this, SLOT(update()));
 }
@@ -176,7 +176,7 @@ void MainWindow::newSandbox() {
 void MainWindow::runAbout() {
 	QString msg = "<table cellpadding=\"10\"><tr><td><img src=\":/resources/firetools.png\"></td>";
 	msg += "<td>" + tr(
-	
+
 		"Firetools is a GUI application for Firejail. "
 		"It offers a system tray launcher for sandboxed apps, "
 		"sandbox editing, management, and statistics. "
@@ -184,7 +184,7 @@ void MainWindow::runAbout() {
 
 		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 		"breaches by restricting the running environment of  untrusted  applications "
-		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 
+		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") +
 		tr("Firetools version:") + " " + PACKAGE_VERSION + "<br/>" +
 		tr("QT version: ") + " " + QT_VERSION_STR + "<br/>" +
 		tr("License:") + " GPL v2<br/>" +
@@ -202,7 +202,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
 		int x = event->pos().x();
 		int y = event->pos().y();
 
-		if (x >= MARGIN * 2 + cols * 64 - 8 && x <= MARGIN * 2 + cols * 64 + 4 &&
+		if (x >= MARGIN * 2 + cols * 64 - 16 && x <= MARGIN * 2 + cols * 64 + 4 &&
 			   y >= 4 && y <= 15) {
 
 			showMinimized();
@@ -301,14 +301,14 @@ void MainWindow::paintEvent(QPaintEvent *) {
 	for (; i < nelem; i++, j++) {
 		if (j >= ROWS)
 			j = 0;
-		
+
 		// Select icon from the looped items
 		QIcon icon = applist[i].app_icon_;
 
 		int sz = 64 ;
 		if (active_index_ == i)
 			sz -= animation_id_ * 3;
-		
+
 
 		// More details and examples:
 		// - https://doc.qt.io/qt-5.10/qpainter.html#drawPixmap
@@ -330,7 +330,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
 		// "Returns a pixmap with the requested size, mode, and state,"
 		// - https://doc.qt.io/qt-5.10/qicon.html#pixmap
 		QPixmap pixmap = icon.pixmap(pixmapSize, QIcon::Normal, QIcon::On);
-		
+
 
 		// Paint pixmap items
 		painter.drawPixmap(pixmapTarget, pixmap);
@@ -339,7 +339,8 @@ void MainWindow::paintEvent(QPaintEvent *) {
 
 	// Close button
 	// Rectangle size & coordinates for the close button
-	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 8, 8, 12, 3);
+//	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 8, 8, 12, 3);
+	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 14,6, 12, 3);
 
 	// Color for the close button
 	QBrush closeButtonRectColor(Qt::white);
@@ -363,15 +364,15 @@ void MainWindow::paintEvent(QPaintEvent *) {
 void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
-	
+
 	// margins
 	QRegion m1(0, 0, cols * 64 + MARGIN * 4, TOP + ROWS * 64 + MARGIN * 4);
 	QRegion m2(MARGIN, MARGIN + TOP, cols * 64 + MARGIN * 2, ROWS * 64 + MARGIN * 2);
 	QRegion m3(MARGIN * 2, MARGIN * 2 + TOP, cols * 64, ROWS * 64);
-	
+
 	QRegion all = m1.subtracted(m2);
 	all = all.united(m3);
-	
+
 	setMask(all);
 }
 
@@ -380,7 +381,7 @@ void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 QSize MainWindow::sizeHint() const {
 	int nelem = applist.count();
 	int cols = nelem / ROWS + 1;
-	
+
 	return QSize(64 * cols + MARGIN * 4, ROWS * 64 + MARGIN * 4 + TOP);
 }
 
@@ -388,14 +389,14 @@ QSize MainWindow::sizeHint() const {
 bool MainWindow::event(QEvent *event) {
 	if (event->type() == QEvent::ToolTip) {
 		QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-		
+
 		int index = applications_get_index(helpEvent->pos());
 		if (index == -1) {
 			int x = helpEvent->pos().x();
 			int y = helpEvent->pos().y();
 			int nelem = applist.count();
 			int cols = nelem / ROWS + 1;
-			
+
 			if (x >= MARGIN * 2 + cols * 64 - 8 && x <= MARGIN * 2 + cols * 64 + 4 &&
 			   y >= 4 && y <= 15) {
 			   	QToolTip::showText(helpEvent->globalPos(), QString("Minimize"));
@@ -406,7 +407,7 @@ bool MainWindow::event(QEvent *event) {
 			   	QToolTip::showText(helpEvent->globalPos(), QString("Run tools"));
 			   	return true;
 			}
-			
+
 			else
 				QToolTip::hideText();
 		}
@@ -499,7 +500,7 @@ void MainWindow::createLocalActions() {
 // Help dialog
 void MainWindow::help() {
 	QMessageBox msgBox;
-	
+
 	QString txt;
 	txt += "<br/>";
 	txt += "Click on \"Firetools\" in the left top corner to open the tools window.<br/>\n";
