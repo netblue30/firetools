@@ -1,4 +1,5 @@
 *.o
+*.pyc
 *.so
 *~
 autom4te.cache/
