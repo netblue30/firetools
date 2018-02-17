@@ -1,7 +1,7 @@
 # Firetools
 
-Firetools is the graphical user interface of Firejail security sandbox. It provides a sandbox launcher 
-integrated with the system tray, sandbox editing, management and statistics. The application is built 
+Firetools is the graphical user interface of Firejail security sandbox. It provides a sandbox launcher
+integrated with the system tray, sandbox editing, management and statistics. The application is built
 using Qt4 or Qt5 libraries.
 
 Home page: https://l3net.wordpress.com/projects/firejail/#firetools
@@ -10,7 +10,9 @@ Download: http://sourceforge.net/projects/firejail/files/firetools/
 
 Travis-CI status: https://travis-ci.org/netblue30/firetools
 
-[![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=aAnW3Ii0y-4)
+## Firejail Configurator Demo
+
+[![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=R8Cs0L_FXOA)
 
 ## Setting up a compilation environment on Debian/Ubuntu:
 `````
