@@ -1,13 +1,16 @@
 firetools (0.9.51) baseline; urgency=low
   * development version
+  * modif: moving to a grayscale color scheme
   * feature: firewall support in stats window
-  * bugfixes
+  * feature: AppArmor support in stats window
+  * feature: adding Signal to the default list of applications
+  * bugfixes and various user interface improvements
  -- netblue30 <netblue30@yahoo.com>  Sat, 30 Sep 2017 13:00:00 -0500
 
 firetools (0.9.50) baseline; urgency=low
   * modif: removed the periodic window update for seccomp, caps,
      and dns
-  * feature: memory deny exec stats support 
+  * feature: memory deny exec stats support
   * feature: print security profile name in stats window
   * feature: protocol support in firejail-ui
   * feature: nodvd support in firejail-ui

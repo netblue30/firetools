@@ -76,6 +76,7 @@ private:
 	QString pid_protocol_;
 	QString pid_name_;
 	QString pid_mem_deny_exec_;
+	QString pid_apparmor_;
 	QString profile_;
 	int pid_x11_;
 	

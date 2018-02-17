@@ -45,7 +45,7 @@ static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
 
-StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), 
+StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0),
@@ -58,20 +58,20 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	procView_->setOpenLinks(false);
 	procView_->setOpenExternalLinks(false);
 	procView_->setText("accumulating data...");
-	
+
 	connect(procView_,  SIGNAL(anchorClicked(const QUrl &)), this, SLOT(anchorClicked(const QUrl &)));
 
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(procView_, 0, 0);
 	setLayout(layout);
-	
+
 	// set screen size and title
 	int x;
 	int y;
 	config_read_screen_size(&x, &y);
  	resize(x, y);
 	setWindowTitle(tr("Firetools"));
-	
+
 	// detect if joining a sandbox is possible on this system
 	struct utsname u;
 	int rv = uname(&u);
@@ -85,7 +85,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 				have_join_ = false;
 		}
 	}
-	
+
 	// detect the number of capabilities supported by the current kernel
 	char *str = run_program("firejail --debug-caps");
 	if (!str)
@@ -96,14 +96,14 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 			printf("%d capabilities supported by the kernel\n", val);
 		caps_cnt_ = val;
 	}
-	
+
 	struct stat s;
-	if (getuid() != 0 && stat("/proc/sys/kernel/grsecurity", &s) == 0) 
+	if (getuid() != 0 && stat("/proc/sys/kernel/grsecurity", &s) == 0)
 		no_network_ = true;
 
 	thread_ = new PidThread();
 	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
-	
+
 }
 
 StatsDialog::~StatsDialog() {
@@ -126,11 +126,11 @@ QString StatsDialog::header() {
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configuration Wizard</a>";
 		msg += "</td></tr></table>";
 	}
-	
+
 	else if (mode_ == MODE_PID) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"top\">Home</a>";
-		if (uid_ == getuid())	
+		if (uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
@@ -139,12 +139,12 @@ QString StatsDialog::header() {
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
 		msg += "</td></tr></table>";
 	}
-	
+
 	else {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"top\">Home</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"back\">" + QString::number(pid_) + "</a>";
-		if (uid_ == getuid())	
+		if (uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
@@ -162,12 +162,12 @@ void StatsDialog::updateTop() {
 	QString msg = header() + "<hr>";
 	msg += "<table><tr><td width=\"5\"></td><td><b>Sandbox List</b></td></tr></table><br/>\n";
 	msg += "<table><tr><td width=\"5\"></td><td width=\"60\">PID</td/><td width=\"60\">CPU<br/>(%)</td><td>Memory<br/>(KiB)&nbsp;&nbsp;</td><td>RX<br/>(KB/s)&nbsp;&nbsp;</td><td>TX<br/>(KB/s)&nbsp;&nbsp;</td><td>Command</td>\n";
-	
+
 	int cycle = Db::instance().getCycle();
 	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *ptr = Db::instance().firstPid();
-	
-	
+
+
 	while (ptr) {
 		pid_t pid = ptr->getPid();
 		const char *cmd = ptr->getCmd();
@@ -177,16 +177,16 @@ void StatsDialog::updateTop() {
 			if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>%.02f</td><td>%.02f</td><td>%s</td></tr>",
 				pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
 				st->rx_, st->tx_, cmd) != -1) {
-				
+
 				msg += str;
 				free(str);
 			}
 		}
-		
+
 		ptr = ptr->getNext();
 	}
-	
-	msg += "</table>";		
+
+	msg += "</table>";
 	procView_->setHtml(msg);
 }
 
@@ -198,7 +198,7 @@ void StatsDialog::updateFirewall() {
 	}
 
 	if (arg_debug)
-		printf("reading firewallconfiguration\n");
+		printf("reading firewall configuration\n");
 	QString msg = header() + "<hr>";
 
 	char *cmd;
@@ -212,6 +212,7 @@ void StatsDialog::updateFirewall() {
 
 }
 
+
 void StatsDialog::updateTree() {
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
@@ -223,7 +224,7 @@ void StatsDialog::updateTree() {
 		printf("reading process tree configuration\n");
 	QString msg = header();
 	msg += "<hr><table><tr><td width=\"5\"></td><td>";
-		
+
 	char *str = 0;
 	char *cmd;
 	if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
@@ -235,22 +236,23 @@ void StatsDialog::updateTree() {
 				*ptr = '\0';
 				msg += QString(str) + "<br/>\n";
 				ptr++;
-				
+
 				while (*ptr == ' ') {
 					msg += "&nbsp;&nbsp;";
 					ptr++;
-				}	
+				}
 				str = ptr;
 				continue;
 			}
 			ptr++;
 		}
 		free(cmd);
-	}		
+	}
 
 	msg += "</td></tr></table>";
 	procView_->setHtml(msg);
 }
+
 
 void StatsDialog::updateSeccomp() {
 	DbPid *dbptr = Db::instance().findPid(pid_);
@@ -265,7 +267,7 @@ void StatsDialog::updateSeccomp() {
 			printf("reading seccomp configuration\n");
 		QString msg = header();
 		msg += "<hr><table><tr><td width=\"5\"></td><td>";
-			
+
 		char *str = 0;
 		char *cmd;
 		if (asprintf(&cmd, "firejail --seccomp.print=%d", pid_) != -1) {
@@ -277,19 +279,19 @@ void StatsDialog::updateSeccomp() {
 					*ptr = '\0';
 					msg += QString(str) + "<br/>\n";
 					ptr++;
-					
+
 					while (*ptr == ' ') {
 						msg += "&nbsp;&nbsp;";
 						ptr++;
-					}	
+					}
 					str = ptr;
 					continue;
 				}
 				ptr++;
 			}
 			free(cmd);
-		}		
-	
+		}
+
 		msg += "</td></tr></table>";
 		procView_->setHtml(msg);
 		storage_seccomp_ = msg;
@@ -310,7 +312,7 @@ void StatsDialog::updateCaps() {
 			printf("reading caps configuration\n");
 		msg = header();
 		msg += "<hr><table><tr><td width=\"5\"></td><td>";
-			
+
 		char *str = 0;
 		char *cmd;
 		if (asprintf(&cmd, "firejail --caps.print=%d", pid_) != -1) {
@@ -324,7 +326,7 @@ void StatsDialog::updateCaps() {
 					if (cnt >= caps_cnt_)
 						break;
 					cnt++;
-					
+
 					*ptr = '\0';
 					msg += QString(str) + "<br/>\n";
 					ptr++;
@@ -334,8 +336,8 @@ void StatsDialog::updateCaps() {
 				ptr++;
 			}
 			free(cmd);
-		}		
-	
+		}
+
 		msg += "</pre></td></tr></table>";
 		procView_->setHtml(msg);
 		storage_caps_ = msg;
@@ -353,35 +355,35 @@ void StatsDialog::updateDns() {
 	if (msg.isEmpty()) {
 		if (arg_debug)
 			printf("reading dns configuration\n");
-			
+
 		msg = header();
 		msg += "<hr><table><tr><td width=\"5\"></td><td>";
-			
+
 		char *str = 0;
 		char *cmd;
 		if (asprintf(&cmd, "firejail --dns.print=%d", pid_) != -1) {
 			str = run_program(cmd);
 			char *ptr = str;
-	
+
 			// htmlize!
 			while (*ptr != 0) {
 				if (*ptr == '\n') {
 					*ptr = '\0';
 					msg += QString(str) + "<br/>\n";
 					ptr++;
-					
+
 					while (*ptr == ' ') {
 						msg += "&nbsp;&nbsp;";
 						ptr++;
-					}	
+					}
 					str = ptr;
 					continue;
 				}
 				ptr++;
 			}
-		}		
+		}
 		free(cmd);
-	
+
 		msg += "</td></tr></table>";
 		procView_->setHtml(msg);
 		storage_dns_ = msg;
@@ -391,13 +393,14 @@ void StatsDialog::updateDns() {
 void StatsDialog::kernelSecuritySettings() {
 	if (arg_debug)
 		printf("Checking security settings for pid %d\n", pid_);
-	
+
 	// reset all
 	pid_seccomp_ = false;
 	pid_caps_ = QString("");
 	pid_cpu_cores_ = QString("");
 	pid_protocol_ = QString("");
 	pid_mem_deny_exec_ = QString("disabled");
+	pid_apparmor_ = QString("");
 
 	// caps
 	char *cmd;
@@ -425,7 +428,7 @@ void StatsDialog::kernelSecuritySettings() {
 		}
 	}
 	free(cmd);
-	
+
 	// cpu cores
 	if (asprintf(&cmd, "firemon --cpu %d", pid_) == -1)
 		return;
@@ -452,12 +455,25 @@ void StatsDialog::kernelSecuritySettings() {
 	}
 	free(cmd);
 
+	// mem deny exec
 	if (asprintf(&cmd, "firejail --ls=%d /run/firejail/mnt", pid_) == -1)
 		return;
 	str = run_program(cmd);
 	if (str) {
 		if (strstr(str, "seccomp.mdwx"))
 			pid_mem_deny_exec_ = "enabled";
+	}
+	free(cmd);
+
+	// apparmor
+	if (asprintf(&cmd, "firejail --apparmor.print=%d", pid_) == -1)
+		return;
+	str = run_program(cmd);
+	if (str) {
+		const char *tofind = "AppArmor: ";
+		char *ptr = strstr(str, tofind);
+		if (ptr)
+			pid_apparmor_ = QString(ptr + strlen(tofind));
 	}
 	free(cmd);
 }
@@ -471,13 +487,13 @@ static int find_child(int id) {
 		if (pids[i].level == 2 && pids[i].parent == id)
 			return i;
 	}
-	
+
 	return -1;
 }
 
 
 
-	
+
 void StatsDialog::updatePid() {
 	QString msg = "";
 
@@ -519,7 +535,7 @@ void StatsDialog::updatePid() {
 	msg += "<tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr>";
 	if (!profile_.isEmpty())
 		msg += "<tr><td width=\"5\"></td><td><b>Profile:</b> " + profile_ + "</td></tr>";
-	// add 
+	// add
 	msg += "</table><br/>";
 
 	msg += "<table>";
@@ -528,7 +544,7 @@ void StatsDialog::updatePid() {
 		msg += "<td><b>RX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>RX:</b> ") + QString::number(st->rx_) + " KB/s</td></tr>";
-	
+
 	msg += QString("<tr><td></td><td><b>User:</b> ") + pw->pw_name  + "</td>";
 	if (ptr->networkDisabled() || no_network_)
 		msg += "<td><b>TX:</b> unknown</td></tr>";
@@ -544,13 +560,13 @@ void StatsDialog::updatePid() {
 	msg += "</td></tr>";
 
 	msg += QString("<tr><td></td><td><b>Memory:</b> ") + QString::number((int) (st->rss_ + st->shared_)) + " KiB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
-	msg += QString("<td><b>Capabilities:</b> <a href=\"caps\">") + pid_caps_ + "</a></td></tr>";	
-	
-	msg += QString("<tr><td></td><td><b>RSS</b> " + QString::number((int) st->rss_) + ", <b>shared</b> " + QString::number((int) st->shared_)) + "</td>";	
-	
+	msg += QString("<td><b>Capabilities:</b> <a href=\"caps\">") + pid_caps_ + "</a></td></tr>";
+
+	msg += QString("<tr><td></td><td><b>RSS</b> " + QString::number((int) st->rss_) + ", <b>shared</b> " + QString::number((int) st->shared_)) + "</td>";
+
 	// user namespace
 	msg += "<td><b>User Namespace:</b> ";
-	
+
 	if (pid_noroot_)
 		msg += "enabled";
 	else
@@ -575,6 +591,12 @@ void StatsDialog::updatePid() {
 
 	// memory deny exec
 	msg += "<td><b>Memory deny exec:</b> " + pid_mem_deny_exec_ + "</td></tr>";
+
+
+	// apparmor
+	if (!pid_apparmor_.isEmpty())
+		msg += "<tr><td></td><td></td><td><b>AppArmor: </b>" + pid_apparmor_ + "</td></tr>";
+
 
 	// graph type
 	msg += "<tr></tr>";
@@ -604,7 +626,7 @@ void StatsDialog::updatePid() {
 		msg += "<tr><td></td><td>"+ graph(2, ptr, cycle, graph_type_) + "</td><td>" + graph(3, ptr, cycle, graph_type_) + "</td></tr>";
 
 	msg += QString("</table><br/>");
-	
+
 	// bandwidth limits
 	if (ptr->networkDisabled() == false && no_network_ == false) {
 		char *fname;
@@ -648,7 +670,7 @@ void StatsDialog::cycleReady() {
 void StatsDialog::anchorClicked(const QUrl & link) {
 	cleanStorage(); // full storage cleanup on any click
 	QString linkstr = link.toString();
-	
+
 	if (linkstr == "top") {
 		mode_ = MODE_TOP;
 	}
@@ -709,7 +731,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 				(void) rv;
 				free(cmd);
 			}
-			QApplication::restoreOverrideCursor();	
+			QApplication::restoreOverrideCursor();
 			mode_ = MODE_TOP;
 		}
 	}
@@ -739,14 +761,14 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 			"<br/>"
 			"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 			"breaches by restricting the running environment of  untrusted  applications "
-			"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") + 
+			"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") +
 			tr("Firetools version:") + " " + PACKAGE_VERSION + "<br/>" +
 			tr("QT version: ") + " " + QT_VERSION_STR + "<br/>" +
 			tr("License:") + " GPL v2<br/>" +
 			tr("Homepage:") + " " + QString(PACKAGE_URL) + "</td></tr></table><br/><br/>";
 
 		QMessageBox::about(this, tr("About"), msg);
-		
+
 	}
 	else if (linkstr == "newsandbox") {
 		// start firejail-ui as a separate process
@@ -769,16 +791,16 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		pid_x11_ = 0;
 		mode_ = MODE_PID;
 	}
-	
+
 	if (data_ready)
 		cycleReady();
 }
-	
+
 
 static bool userNamespace(pid_t pid) {
 	if (arg_debug)
 		printf("Checking user namespace for pid %d\n", pid);
-		
+
 	// test user namespaces available in the kernel
 	struct stat s1;
 	struct stat s2;
@@ -792,7 +814,7 @@ static bool userNamespace(pid_t pid) {
 	pid = find_child(pid);
 	if (pid == -1)
 		return false;
-		
+
 	// read uid map
 	char *uidmap;
 	if (asprintf(&uidmap, "/proc/%u/uid_map", pid) == -1)
@@ -813,7 +835,7 @@ static bool userNamespace(pid_t pid) {
 	}
 	fclose(fp);
 	free(uidmap);
-	return found;	
+	return found;
 }
 
 static QString getName(pid_t pid) {
@@ -830,7 +852,7 @@ static QString getName(pid_t pid) {
 		fclose(fp);
 	}
 	free(fname);
-	
+
 	return retval;
 }
 
@@ -848,7 +870,7 @@ static QString getProfile(pid_t pid) {
 		fclose(fp);
 	}
 	free(fname);
-	
+
 	return retval;
 }
 
@@ -866,6 +888,6 @@ static int getX11Display(pid_t pid) {
 		fclose(fp);
 	}
 	free(fname);
-	
+
 	return retval;
 }
