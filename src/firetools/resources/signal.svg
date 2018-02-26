@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.1 r15371"
-   sodipodi:docname="signal.svg">
+   sodipodi:docname="signal.svg"
+   inkscape:export-filename="/home/netblue/work/github/firetools/src/firetools/resources/signal.svg.png"
+   inkscape:export-xdpi="97.366898"
+   inkscape:export-ydpi="97.366898">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,10 +29,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0824912"
-     inkscape:cx="20.59365"
-     inkscape:cy="334.11406"
+     inkscape:cx="174.23932"
+     inkscape:cy="330.41888"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="976"
@@ -53,13 +56,13 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="opacity:1;fill:#118eed;fill-opacity:1;stroke:#118eed;stroke-width:0.23999999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#118eed;fill-opacity:1;stroke:#118eed;stroke-width:0.47898597;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3766"
-       width="16.455681"
-       height="16.446589"
-       x="48.645271"
-       y="194.37756"
-       ry="1.9553661"
+       width="32.837307"
+       height="32.828217"
+       x="48.764767"
+       y="194.49706"
+       ry="3.9030087"
        inkscape:export-xdpi="97.366936"
        inkscape:export-ydpi="97.366936" />
   </g>
@@ -68,17 +71,17 @@
      id="layer2"
      inkscape:label="Layer 2">
     <ellipse
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.19324006;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.38701198;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3680"
-       cx="57.094334"
-       cy="202.49602"
-       rx="5.2425718"
-       ry="5.4258938"
+       cx="66.001335"
+       cy="210.4606"
+       rx="10.694626"
+       ry="10.66853"
        inkscape:export-xdpi="97.366936"
        inkscape:export-ydpi="97.366936" />
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.15018691;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 53.128099,206.31808 -0.479279,2.05727 1.82997,-1.05255 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.30078718;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 57.910381,217.97564 -0.977709,4.04506 3.733062,-2.06955 z"
        id="path4579"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="97.366936"
