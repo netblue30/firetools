@@ -1,11 +1,10 @@
-firetools (0.9.51) baseline; urgency=low
-  * development version
+firetools (0.9.52) baseline; urgency=low
   * modif: moving to a grayscale color scheme
   * feature: firewall support in stats window
   * feature: AppArmor support in stats window
   * feature: adding Signal to the default list of applications
   * bugfixes and various user interface improvements
- -- netblue30 <netblue30@yahoo.com>  Sat, 30 Sep 2017 13:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Thu, 1 Mar 2018 13:00:00 -0500
 
 firetools (0.9.50) baseline; urgency=low
   * modif: removed the periodic window update for seccomp, caps,

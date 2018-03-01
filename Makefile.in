@@ -11,7 +11,7 @@ DOCDIR=@docdir@
 
 firetools_config_extras.h:
 	echo "#define PACKAGE_LIBDIR \"$(DESTDIR)/$(PREFIX)/lib/firetools\"" > firetools_config_extras.h
-	
+
 .PHONY: src
 src: firetools_config_extras.h
 	$(MAKE) -C $@ $(MFLAGS)
@@ -90,7 +90,7 @@ dist:
 	mv config.status.old config.status
 	rm -fr $(NAME)-$(VERSION) $(NAME)-$(VERSION).tar.xz
 	mkdir $(NAME)-$(VERSION)
-	cd $(NAME)-$(VERSION); cp -a ../src .; cp -a ../platform .;
+	cd $(NAME)-$(VERSION); cp -a ../src .; rm -fr src/profile-editor; cp -a ../platform .;
 	cd $(NAME)-$(VERSION); cp -a ../configure .; cp -a ../configure.ac .; cp -a ../Makefile.in .; cp -a ../install.sh .; cp -a ../mkdeb.sh .;cp -a ../mkask.sh .; cp -a ../mkman.sh .;cd ..
 	cd $(NAME)-$(VERSION); cp -a ../COPYING .; cp -a ../README .; cp -a ../RELNOTES .; cd ..
 	cd $(NAME)-$(VERSION); rm -fr `find . -name .svn`; rm -fr $(NAME)-$(VERSION); cd ..

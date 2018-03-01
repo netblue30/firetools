@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT(firetools, 0.9.51, netblue30@yahoo.com, , http://firejail.wordpress.com)
+AC_INIT(firetools, 0.9.52, netblue30@yahoo.com, , http://firejail.wordpress.com)
 AC_CONFIG_SRCDIR([src/firetools/main.cpp])
 #AC_CONFIG_HEADERS([config.h])
 
@@ -45,7 +45,7 @@ echo "trying $QMAKE"
 #if test -f /usr/lib64/qt4/bin/qmake; then
 #	QMAKE=/usr/lib64/qt4/bin/qmake
 #fi
-	
+
 if test -z "$QMAKE"
 then
 	AC_MSG_ERROR([qmake and/or Qt are missing, please install them.])
