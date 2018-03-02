@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.50"
+VER="0.9.52"
 
 cd ~
 rm -fr rpmbuild
@@ -27,6 +27,7 @@ install -m 644 /usr/share/applications/firetools.desktop firetools-$VER/usr/shar
 install -m 644 /usr/share/applications/firejail-ui.desktop firetools-$VER/usr/share/applications/.
 
 mkdir -p  firetools-$VER/usr/share/pixmaps
+install -m 644 /usr/share/pixmaps/firetools-minimal.png firetools-$VER/usr/share/pixmaps/.
 install -m 644 /usr/share/pixmaps/firetools.png firetools-$VER/usr/share/pixmaps/.
 install -m 644 /usr/share/pixmaps/firetools-minimal.png firetools-$VER/usr/share/pixmaps/.
 install -m 644 /usr/share/pixmaps/firejail-ui.png firetools-$VER/usr/share/pixmaps/.
@@ -83,6 +84,7 @@ rm -rf %{buildroot}
 /usr/share/applications/firetools.desktop
 /usr/share/applications/firejail-ui.desktop
 /usr/share/pixmaps/firetools.png
+/usr/share/pixmaps/firetools-minimal.png
 /usr/share/pixmaps/firejail-ui.png
 /usr/lib/firetools/fmgr
 /usr/lib/firetools/fstats
@@ -90,6 +92,8 @@ rm -rf %{buildroot}
 /usr/lib/firetools/uimenus
  
 %changelog
+
+* Fri Mar 2 2018 netblue30 <netblue30@yahoo.com> 0.9.52-1
 
 * Mon Oct 2 2017 netblue30 <netblue30@yahoo.com> 0.9.50-1
 
