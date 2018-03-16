@@ -6,14 +6,15 @@ Build and install: ./configure && make && sudo make install
 Documentation and support: http://firejail.wordpress.com
 License: GPL v2 or later
 
-Setting up a compilation environment on Debian/Ubuntu:
-$ sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 git
+Setting up a compilation environment:
+(Debian/Ubuntu)$ sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 git
+(CentOS 7)$ sudo yum install gcc-c++ qt5-qtbase-devel qt5-qtsvg.x86_64 git
 
 Compile and install:
 $ git clone https://github.com/netblue30/firetools
 $ cd firetools
-$ ./configure --prefix=/usr && make && sudo make install
-On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"
+(Debian/Ubuntu)$ ./configure --prefix=/usr && make && sudo make install
+(CentOS 7)$ ./configure --prefix=/usr --with-qmake=/usr/lib64/qt5/bin/qmake && make && sudo make install
 
 Firetools Authors:
 

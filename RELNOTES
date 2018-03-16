@@ -1,3 +1,7 @@
+firetools (0.9.53) baseline; urgency=low
+  * development version, work in progress
+ -- netblue30 <netblue30@yahoo.com>  Thu, 18 Mar 2018 08:00:00 -0500
+
 firetools (0.9.52) baseline; urgency=low
   * modif: moving to a grayscale color scheme
   * feature: firewall support in stats window

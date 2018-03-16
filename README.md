@@ -14,22 +14,28 @@ Travis-CI status: https://travis-ci.org/netblue30/firetools
 
 [![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=R8Cs0L_FXOA)
 
-## Setting up a compilation environment on Debian/Ubuntu:
+## Setting up a compilation environment:
 `````
+(Debian/Ubuntu)
 $ sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 git
 
+(CentOS 7)
+$ sudo yum install gcc-c++ qt5-qtbase-devel qt5-qtsvg.x86_64 git
 `````
+
 ## Compile & Install
 
 `````
 $ git clone  https://github.com/netblue30/firetools
 $ cd firetools
+
+(Debian/Ubuntu)
 $ ./configure
+
+(CentOS 7)
+./configure --with-qmake=/usr/lib64/qt5/bin/qmake
+
 $ make
 $ sudo make install-strip
 `````
-
-On CentOS 7 use "./configure --with-qmake=/usr/lib64/qt4/bin/qmake"
-
-
 
