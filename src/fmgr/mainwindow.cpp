@@ -140,7 +140,7 @@ void MainWindow::print_files(const char *path) {
 		printf("print_files path %s\n", path);
 
 	char *cmd;
-	if (asprintf(&cmd, "firejail --ls=%d %s 2>&1", pid_, path) == -1)
+	if (asprintf(&cmd, "firejail --quiet --ls=%d %s 2>&1", pid_, path) == -1)
 		errExit("asprintf");
 
 	// clear table
