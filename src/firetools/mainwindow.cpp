@@ -46,6 +46,14 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 		exit(1);
 	}
 
+	// check if we have permission to run firejail
+	char *testrun = run_program("firejail exit 2>&1");
+	if (!testrun || strstr(testrun, "Error")) {
+		QMessageBox::warning(this, tr("Firejail Launcher"),
+			tr("<br/>Cannot run <b>Firejail</b> sandbox, you may not have<br/>the correct permissions to access this program.<br/><br/><br/>"));
+		exit(1);
+	}
+
 	// check svg support
 #if QT_VERSION >= 0x050000
 	QList<QByteArray> flist = QImageReader::supportedImageFormats();
