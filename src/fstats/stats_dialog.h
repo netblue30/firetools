@@ -48,7 +48,7 @@ private:
 	void updatePid();
 	void updateTree();
 	void updateSeccomp();
-	void updateDns();
+	void updateNetwork();
 	void updateCaps();
 	void updateFirewall();
 	void cleanStorage();
@@ -60,7 +60,7 @@ private:
 #define MODE_PID 1
 #define MODE_TREE 2
 #define MODE_SECCOMP 3
-#define MODE_DNS 4
+#define MODE_NETWORK 4
 #define MODE_CAPS 5
 #define MODE_FIREWALL 6
 	int mode_;

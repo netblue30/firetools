@@ -142,7 +142,7 @@ QString StatsDialog::header() {
 		if (!lts_)
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
-		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
+		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"network\">Network</a>";
 		msg += "</td></tr></table>";
 	}
 
@@ -157,7 +157,7 @@ QString StatsDialog::header() {
 		if (!lts_)
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
-		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
+		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"network\">Network</a>";
 		msg += "</td></tr></table>";
 	}
 
@@ -351,13 +351,16 @@ void StatsDialog::updateCaps() {
 	}
 }
 
-void StatsDialog::updateDns() {
+void StatsDialog::updateNetwork() {
+	int cycle = Db::instance().getCycle();
+	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *dbptr = Db::instance().findPid(pid_);
 	if (!dbptr) {
 		mode_ = MODE_TOP;
 		return;
 	}
 
+	// DNS
 	QString msg = storage_dns_;
 	if (msg.isEmpty()) {
 		if (arg_debug)
@@ -391,10 +394,59 @@ void StatsDialog::updateDns() {
 		}
 		free(cmd);
 
-		msg += "</td></tr></table>";
-		procView_->setHtml(msg);
+		msg += "</td></tr>";
 		storage_dns_ = msg;
 	}
+
+	// graph type
+	msg += "<tr></tr>";
+	msg += "<tr><td></td>";
+	if (graph_type_ == GRAPH_4MIN) {
+		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
+	}
+	else if (graph_type_ == GRAPH_1H) {
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td>";
+	}
+	else if (graph_type_ == GRAPH_12H) {
+		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td>";
+	}
+	else
+		assert(0);
+
+	// netfilter
+	if (dbptr->networkDisabled() == false && no_network_ == false)
+		msg += "<td><b>Firewall</b>: <a href=\"firewall\">enabled</a></td></tr>\n";
+	else
+		msg += "<td><b>Firewall</b>: system firewall</td></tr>\n";
+
+
+	if (dbptr->networkDisabled() == false && no_network_ == false)
+		msg += "<tr><td></td><td>"+ graph(2, dbptr, cycle, graph_type_) + "</td><td>" + graph(3, dbptr, cycle, graph_type_) + "</td></tr>";
+
+	msg += QString("</table><br/>");
+
+	// bandwidth limits
+	if (dbptr->networkDisabled() == false && no_network_ == false) {
+		char *fname;
+		if (asprintf(&fname, "/run/firejail/bandwidth/%d-bandwidth", pid_) == -1)
+			errExit("asprintf");
+		FILE *fp = fopen(fname, "r");
+		if (fp) {
+			msg += "<br/><table><tr><td width=\"5\"></td><td>";
+			msg += "<b>Bandwidth limits:</b><br/><br/>\n";
+			char buf[1024];
+			while (fgets(buf, 1024, fp)) {
+				msg += buf;
+				msg += "<br/>";
+			}
+			fclose(fp);
+			msg += "</td></tr></table>";
+		}
+		free(fname);
+	}
+
+	procView_->setHtml(msg);
+
 }
 
 void StatsDialog::kernelSecuritySettings() {
@@ -620,39 +672,11 @@ void StatsDialog::updatePid() {
 	else
 		assert(0);
 
-	// netfilter
-	if (ptr->networkDisabled() == false && no_network_ == false)
-		msg += "<td><b>Firewall</b>: <a href=\"firewall\">enabled</a></td></tr>\n";
-	else
-		msg += "<td><b>Firewall</b>: system firewall</td></tr>\n";
-
 	// graphs
 	msg += "<tr></tr>";
 	msg += "<tr><td></td><td>"+ graph(0, ptr, cycle, graph_type_) + "</td><td>" + graph(1, ptr, cycle, graph_type_) + "</td></tr>";
-	if (ptr->networkDisabled() == false && no_network_ == false)
-		msg += "<tr><td></td><td>"+ graph(2, ptr, cycle, graph_type_) + "</td><td>" + graph(3, ptr, cycle, graph_type_) + "</td></tr>";
 
 	msg += QString("</table><br/>");
-
-	// bandwidth limits
-	if (ptr->networkDisabled() == false && no_network_ == false) {
-		char *fname;
-		if (asprintf(&fname, "/run/firejail/bandwidth/%d-bandwidth", pid_) == -1)
-			errExit("asprintf");
-		FILE *fp = fopen(fname, "r");
-		if (fp) {
-			msg += "<br/><table><tr><td width=\"5\"></td><td>";
-			msg += "<b>Bandwidth limits:</b><br/><br/>\n";
-			char buf[1024];
-			while (fgets(buf, 1024, fp)) {
-				msg += buf;
-				msg += "<br/>";
-			}
-			fclose(fp);
-			msg += "</td></tr></table>";
-		}
-		free(fname);
-	}
 
 	procView_->setHtml(msg);
 }
@@ -666,8 +690,8 @@ void StatsDialog::cycleReady() {
 		updateTree();
 	else if (mode_ == MODE_SECCOMP)
 		updateSeccomp();
-	else if (mode_ == MODE_DNS)
-		updateDns();
+	else if (mode_ == MODE_NETWORK)
+		updateNetwork();
 	else if (mode_ == MODE_CAPS)
 		updateCaps();
 	else if (mode_ == MODE_FIREWALL)
@@ -688,12 +712,12 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 			mode_ = MODE_PID;
 		else if (mode_ == MODE_SECCOMP)
 			mode_ = MODE_PID;
-		else if (mode_ == MODE_DNS)
+		else if (mode_ == MODE_NETWORK)
 			mode_ = MODE_PID;
 		else if (mode_ == MODE_CAPS)
 			mode_ = MODE_PID;
 		else if (mode_ == MODE_FIREWALL)
-			mode_ = MODE_PID;
+			mode_ = MODE_NETWORK;
 		else if (mode_ == MODE_TOP)
 			;
 		else
@@ -717,8 +741,8 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	else if (linkstr == "1min") {
 		graph_type_ = GRAPH_4MIN;
 	}
-	else if (linkstr == "dns") {
-		mode_ = MODE_DNS;
+	else if (linkstr == "network") {
+		mode_ = MODE_NETWORK;
 	}
 	else if (linkstr == "firewall") {
 		mode_ = MODE_FIREWALL;
