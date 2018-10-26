@@ -45,7 +45,7 @@ static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
 
-StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
+StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0),
@@ -53,6 +53,11 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 
 	// clean storage area
 	cleanStorage();
+
+	// detect LTS version
+	char *str = run_program("firejail --version");
+	if (str && strstr(str, "LTS"))
+		lts_ = true;
 
 	procView_ = new QTextBrowser;
 	procView_->setOpenLinks(false);
@@ -87,7 +92,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0),
 	}
 
 	// detect the number of capabilities supported by the current kernel
-	char *str = run_program("firejail --debug-caps");
+	str = run_program("firejail --debug-caps");
 	if (!str)
 		return;
 	int val;
@@ -134,7 +139,8 @@ QString StatsDialog::header() {
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
-		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
+		if (!lts_)
+			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
 		msg += "</td></tr></table>";
@@ -148,7 +154,8 @@ QString StatsDialog::header() {
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"shut\">Shutdown</a>";
 		if (have_join_ && uid_ == getuid())
 			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"join\">Join</a>";
-		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
+		if (!lts_)
+			msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fmgr\">File Manager</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"tree\">Process Tree</a>";
 		msg += " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dns\">DNS</a>";
 		msg += "</td></tr></table>";

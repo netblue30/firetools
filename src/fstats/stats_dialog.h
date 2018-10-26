@@ -44,12 +44,12 @@ public slots:
 private:
 	QString header();
 	void kernelSecuritySettings();
-	void updateTop();	
-	void updatePid();	
-	void updateTree();	
-	void updateSeccomp();	
-	void updateDns();	
-	void updateCaps();	
+	void updateTop();
+	void updatePid();
+	void updateTree();
+	void updateSeccomp();
+	void updateDns();
+	void updateCaps();
 	void updateFirewall();
 	void cleanStorage();
 
@@ -57,7 +57,7 @@ private:
 	QTextBrowser *procView_;
 
 #define MODE_TOP 0
-#define MODE_PID 1	
+#define MODE_PID 1
 #define MODE_TREE 2
 #define MODE_SECCOMP 3
 #define MODE_DNS 4
@@ -66,6 +66,7 @@ private:
 	int mode_;
 	int pid_;	// pid value for mode 1
 	uid_t uid_;
+	bool lts_;	// flag to detect LTS version of firejail
 
 	// security settings
 	bool pid_initialized_;
@@ -79,14 +80,14 @@ private:
 	QString pid_apparmor_;
 	QString profile_;
 	int pid_x11_;
-	
+
 	bool have_join_;
 	int caps_cnt_;
 	GraphType graph_type_;
 	bool no_network_;
 
 	PidThread *thread_;
-	
+
 	// storage for various sandbox settings
 	QString storage_dns_;
 	QString storage_caps_;
