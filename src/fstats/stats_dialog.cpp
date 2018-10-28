@@ -61,7 +61,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(f
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0),
-	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), no_network_(false) {
+	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), net_none_(false) {
 
 	// clean storage area
 	cleanStorage();
@@ -114,13 +114,8 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(f
 		caps_cnt_ = val;
 	}
 
-	struct stat s;
-	if (getuid() != 0 && stat("/proc/sys/kernel/grsecurity", &s) == 0)
-		no_network_ = true;
-
 	thread_ = new PidThread();
 	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
-
 }
 
 StatsDialog::~StatsDialog() {
@@ -411,84 +406,70 @@ void StatsDialog::updateNetwork() {
 	msg += storage_dns_;
 
 	// network interfaces
+
+
+
 	if (storage_network_.isEmpty()) {
-		storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
+//printf("network namespace disabled %d, net_none_ %d\n", dbptr->networkDisabled(), net_none_);
+		if (net_none_)
+			storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
+		else if (dbptr->networkDisabled())
+			storage_network_ = "<td>Using the system network namespace";
+		else {
+			char *fname;
+			if (asprintf(&fname, "/run/firejail/network/%d-netmap", pid_) == -1)
+				errExit("asprintf");
 
-		char *fname;
-		if (asprintf(&fname, "/run/firejail/network/%d-netmap", pid_) != -1) {
-			if (access(fname, R_OK) == 0) {
-				FILE *fp = fopen(fname, "r");
-				if (fp) {
-					char buf[4096];
-					int i = -1;
-					while (fgets(buf, 4096, fp)) {
-						i++;
-						char *ptr = strchr(buf, '\n');
-						if (ptr)
-							*ptr = '\0';
-
-						// extract parent device
-						ptr = strchr(buf, ':');
-						if (!ptr)
-							continue;
-						char *parent_dev = buf;
+			storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
+			FILE *fp = fopen(fname, "r");
+			if (fp) {
+				char buf[4096];
+				int i = -1;
+				while (fgets(buf, 4096, fp)) {
+					i++;
+					char *ptr = strchr(buf, '\n');
+					if (ptr)
 						*ptr = '\0';
-						ptr++;
-						char *child_dev = ptr;
 
-						QString str;
-						str.sprintf("%s (parent device %s", child_dev, parent_dev);
+					// extract parent device
+					ptr = strchr(buf, ':');
+					if (!ptr)
+						continue;
+					char *parent_dev = buf;
+					*ptr = '\0';
+					ptr++;
+					char *child_dev = ptr;
 
-						// detect bridge device
-						char *sysfile;
-						if (asprintf(&sysfile, "/sys/class/net/%s/bridge", parent_dev) == -1)
-							errExit("asprintf");
-						struct stat s;
-						if (stat(sysfile, &s) == 0)
-							str += ", bridge)";
-						else
-							str += ")";
-						free(sysfile);
+					QString str;
+					str.sprintf("%s (parent device %s", child_dev, parent_dev);
 
-#if 0
-						// find IP address for this interface
-						int child = find_child(pid_);
-						char *routefile;
-						if (asprintf(&routefile, "/proc/%d/net/route", child) == -1)
-							errExit("asprintf");
-printf("routefile #%s#, child_dev #%s#\n", routefile, child_dev);
-						if (stat(routefile, &s) == 0) {
-							FILE *fp = fopen(routefile, "r");
-							if (fp) {
-								int len = strlen(child_dev);
-								char buf[4096];
-								while (fgets(buf, 4096, fp)) {
-									if (strncmp(buf, child_dev, len) == 0)
-printf("buf #%s#\n", buf);
-								}
-								fclose(fp);
-							}
-						}
-						free(routefile);
-#endif
-						storage_network_ += str + "<br/>";
-					}
-					fclose(fp);
+					// detect bridge device
+					char *sysfile;
+					if (asprintf(&sysfile, "/sys/class/net/%s/bridge", parent_dev) == -1)
+						errExit("asprintf");
+					struct stat s;
+					if (stat(sysfile, &s) == 0)
+						str += ", bridge)";
+					else
+						str += ")";
+					free(sysfile);
+
+					storage_network_ += str + "<br/>";
 				}
+				fclose(fp);
+				free(fname);
 			}
-			free(fname);
 		}
 		storage_network_ += "</td></tr>";
 
 	}
 	msg += storage_network_;
 
-printf("network disabled %d, no_network_ %d\n", dbptr->networkDisabled(), no_network_);
 
 
 	// graph type
 	msg += "<tr><td></td>";
-	if (dbptr->networkDisabled() == false && no_network_ == false) {
+	if (dbptr->networkDisabled() == false && net_none_ == false) {
 		if (graph_type_ == GRAPH_4MIN) {
 			msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
 		}
@@ -503,19 +484,19 @@ printf("network disabled %d, no_network_ %d\n", dbptr->networkDisabled(), no_net
 	}
 
 	// netfilter
-	if (dbptr->networkDisabled() == false && no_network_ == false)
+	if (dbptr->networkDisabled() == false && net_none_ == false)
 		msg += "<td><b>Firewall</b>: <a href=\"firewall\">enabled</a></td></tr>\n";
 	else
 		msg += "<td><b>Firewall</b>: system firewall</td></tr>\n";
 
 
-	if (dbptr->networkDisabled() == false && no_network_ == false)
+	if (dbptr->networkDisabled() == false && net_none_ == false)
 		msg += "<tr><td></td><td>"+ graph(2, dbptr, cycle, graph_type_) + "</td><td>" + graph(3, dbptr, cycle, graph_type_) + "</td></tr>";
 
 	msg += QString("</table><br/>");
 
 	// bandwidth limits
-	if (dbptr->networkDisabled() == false && no_network_ == false) {
+	if (dbptr->networkDisabled() == false && net_none_ == false) {
 		char *fname;
 		if (asprintf(&fname, "/run/firejail/bandwidth/%d-bandwidth", pid_) == -1)
 			errExit("asprintf");
@@ -626,12 +607,6 @@ void StatsDialog::kernelSecuritySettings() {
 	free(cmd);
 }
 
-
-
-
-
-
-
 void StatsDialog::updatePid() {
 	QString msg = "";
 
@@ -657,6 +632,25 @@ void StatsDialog::updatePid() {
 		profile_ = getProfile(pid_);
 		pid_x11_ = getX11Display(pid_);
 		pid_initialized_ = true;
+
+		// detect --net=none
+		int child = find_child(pid_);
+		char *fname;
+		if (asprintf(&fname, "/proc/%d/net/dev", child) == -1)
+			errExit("asprintf");
+		FILE *fp = fopen(fname, "r");
+		if (fp) {
+			char buf[4096];
+			int cnt = 0;
+			while (fgets(buf, 4096, fp))
+				cnt++;
+			fclose(fp);
+			if (cnt <= 3)
+				net_none_ = true;
+			else
+				net_none_ = false;
+		}
+		free(fname);
 	}
 
 	// get user name
@@ -681,13 +675,13 @@ void StatsDialog::updatePid() {
 
 	msg += "<table>";
 	msg += QString("<tr><td width=\"5\"></td><td><b>PID:</b> ") +  QString::number(pid_) + "</td>";
-	if (ptr->networkDisabled() || no_network_)
+	if (ptr->networkDisabled() || net_none_)
 		msg += "<td><b>RX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>RX:</b> ") + QString::number(st->rx_) + " KB/s</td></tr>";
 
 	msg += QString("<tr><td></td><td><b>User:</b> ") + pw->pw_name  + "</td>";
-	if (ptr->networkDisabled() || no_network_)
+	if (ptr->networkDisabled() || net_none_)
 		msg += "<td><b>TX:</b> unknown</td></tr>";
 	else
 		msg += QString("<td><b>TX:</b> ") + QString::number(st->tx_) + " KB/s</td></tr>";
