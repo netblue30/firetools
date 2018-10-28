@@ -45,6 +45,18 @@ static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
 
+// find the first child process for the specified pid
+// return -1 if not found
+static int find_child(int id) {
+	int i;
+	for (i = 0; i < max_pids; i++) {
+		if (pids[i].level == 2 && pids[i].parent == id)
+			return i;
+	}
+
+	return -1;
+}
+
 StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
@@ -120,6 +132,8 @@ void StatsDialog::cleanStorage() {
 	storage_dns_ = "";
 	storage_caps_ = "";
 	storage_seccomp_ = "";
+	storage_intro_ = "";
+	storage_network_ = "";
 }
 
 QString StatsDialog::header() {
@@ -161,12 +175,12 @@ QString StatsDialog::header() {
 		msg += "</td></tr></table>";
 	}
 
-
+	msg += "<hr>";
 	return msg;
 }
 
 void StatsDialog::updateTop() {
-	QString msg = header() + "<hr>";
+	QString msg = header();
 	msg += "<table><tr><td width=\"5\"></td><td><b>Sandbox List</b></td></tr></table><br/>\n";
 	msg += "<table><tr><td width=\"5\"></td><td width=\"60\">PID</td/><td width=\"60\">CPU<br/>(%)</td><td>Memory<br/>(KiB)&nbsp;&nbsp;</td><td>RX<br/>(KB/s)&nbsp;&nbsp;</td><td>TX<br/>(KB/s)&nbsp;&nbsp;</td><td>Command</td>\n";
 
@@ -206,7 +220,7 @@ void StatsDialog::updateFirewall() {
 
 	if (arg_debug)
 		printf("reading firewall configuration\n");
-	QString msg = header() + "<hr>";
+	QString msg = header() + storage_intro_;
 
 	char *cmd;
 	if (asprintf(&cmd, "firejail --netfilter.print=%d", pid_) != -1) {
@@ -229,8 +243,8 @@ void StatsDialog::updateTree() {
 
 	if (arg_debug)
 		printf("reading process tree configuration\n");
-	QString msg = header();
-	msg += "<hr><table><tr><td width=\"5\"></td><td>";
+	QString msg = header() + storage_intro_;
+	msg += "<table><tr><td width=\"5\"></td><td>";
 
 	char *str = 0;
 	char *cmd;
@@ -272,8 +286,8 @@ void StatsDialog::updateSeccomp() {
 	if (msg.isEmpty()) {
 		if (arg_debug)
 			printf("reading seccomp configuration\n");
-		QString msg = header();
-		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+		QString msg = header() + storage_intro_;
+		msg += "<table><tr><td width=\"5\"></td><td>";
 
 		char *str = 0;
 		char *cmd;
@@ -317,8 +331,8 @@ void StatsDialog::updateCaps() {
 	if (msg.isEmpty()) {
 		if (arg_debug)
 			printf("reading caps configuration\n");
-		msg = header();
-		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+		msg = header() + storage_intro_;
+		msg += "<table><tr><td width=\"5\"></td><td>";
 
 		char *str = 0;
 		char *cmd;
@@ -361,13 +375,12 @@ void StatsDialog::updateNetwork() {
 	}
 
 	// DNS
-	QString msg = storage_dns_;
-	if (msg.isEmpty()) {
+	QString msg = header() + storage_intro_;
+	if (storage_dns_.isEmpty()) {
 		if (arg_debug)
 			printf("reading dns configuration\n");
 
-		msg = header();
-		msg += "<hr><table><tr><td width=\"5\"></td><td>";
+		storage_dns_ += "<table><tr><td width=\"5\"></td><td><b>DNS</b><br/>";
 
 		char *str = 0;
 		char *cmd;
@@ -379,11 +392,11 @@ void StatsDialog::updateNetwork() {
 			while (*ptr != 0) {
 				if (*ptr == '\n') {
 					*ptr = '\0';
-					msg += QString(str) + "<br/>\n";
+					storage_dns_ += QString(str) + "<br/>\n";
 					ptr++;
 
 					while (*ptr == ' ') {
-						msg += "&nbsp;&nbsp;";
+						storage_dns_ += "&nbsp;&nbsp;";
 						ptr++;
 					}
 					str = ptr;
@@ -393,25 +406,101 @@ void StatsDialog::updateNetwork() {
 			}
 		}
 		free(cmd);
-
-		msg += "</td></tr>";
-		storage_dns_ = msg;
+		storage_dns_ += "</td>";
 	}
+	msg += storage_dns_;
+
+	// network interfaces
+	if (storage_network_.isEmpty()) {
+		storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
+
+		char *fname;
+		if (asprintf(&fname, "/run/firejail/network/%d-netmap", pid_) != -1) {
+			if (access(fname, R_OK) == 0) {
+				FILE *fp = fopen(fname, "r");
+				if (fp) {
+					char buf[4096];
+					int i = -1;
+					while (fgets(buf, 4096, fp)) {
+						i++;
+						char *ptr = strchr(buf, '\n');
+						if (ptr)
+							*ptr = '\0';
+
+						// extract parent device
+						ptr = strchr(buf, ':');
+						if (!ptr)
+							continue;
+						char *parent_dev = buf;
+						*ptr = '\0';
+						ptr++;
+						char *child_dev = ptr;
+
+						QString str;
+						str.sprintf("%s (parent device %s", child_dev, parent_dev);
+
+						// detect bridge device
+						char *sysfile;
+						if (asprintf(&sysfile, "/sys/class/net/%s/bridge", parent_dev) == -1)
+							errExit("asprintf");
+						struct stat s;
+						if (stat(sysfile, &s) == 0)
+							str += ", bridge)";
+						else
+							str += ")";
+						free(sysfile);
+
+#if 0
+						// find IP address for this interface
+						int child = find_child(pid_);
+						char *routefile;
+						if (asprintf(&routefile, "/proc/%d/net/route", child) == -1)
+							errExit("asprintf");
+printf("routefile #%s#, child_dev #%s#\n", routefile, child_dev);
+						if (stat(routefile, &s) == 0) {
+							FILE *fp = fopen(routefile, "r");
+							if (fp) {
+								int len = strlen(child_dev);
+								char buf[4096];
+								while (fgets(buf, 4096, fp)) {
+									if (strncmp(buf, child_dev, len) == 0)
+printf("buf #%s#\n", buf);
+								}
+								fclose(fp);
+							}
+						}
+						free(routefile);
+#endif
+						storage_network_ += str + "<br/>";
+					}
+					fclose(fp);
+				}
+			}
+			free(fname);
+		}
+		storage_network_ += "</td></tr>";
+
+	}
+	msg += storage_network_;
+
+printf("network disabled %d, no_network_ %d\n", dbptr->networkDisabled(), no_network_);
+
 
 	// graph type
-	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
-	if (graph_type_ == GRAPH_4MIN) {
-		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
+	if (dbptr->networkDisabled() == false && no_network_ == false) {
+		if (graph_type_ == GRAPH_4MIN) {
+			msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
+		}
+		else if (graph_type_ == GRAPH_1H) {
+			msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td>";
+		}
+		else if (graph_type_ == GRAPH_12H) {
+			msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td>";
+		}
+		else
+			assert(0);
 	}
-	else if (graph_type_ == GRAPH_1H) {
-		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> 1h <a href=\"12h\">12h</a></td>";
-	}
-	else if (graph_type_ == GRAPH_12H) {
-		msg += "<td><b>Stats: </b><a href=\"1min\">1min</a> <a href=\"1h\">1h</a> 12h</td>";
-	}
-	else
-		assert(0);
 
 	// netfilter
 	if (dbptr->networkDisabled() == false && no_network_ == false)
@@ -538,17 +627,7 @@ void StatsDialog::kernelSecuritySettings() {
 }
 
 
-// find the first child process for the specified pid
-// return -1 if not found
-static int find_child(int id) {
-	int i;
-	for (i = 0; i < max_pids; i++) {
-		if (pids[i].level == 2 && pids[i].parent == id)
-			return i;
-	}
 
-	return -1;
-}
 
 
 
@@ -587,15 +666,18 @@ void StatsDialog::updatePid() {
 		errExit("getpwuid");
 	uid_ = pw->pw_uid;
 
-	msg += header() + "<hr>";
-	msg += "<table>";
+	// add header
+	msg += header();
+
+	// add intro
+	storage_intro_ = "<table>";
 	if (!pid_name_.isEmpty())
-		msg += "<tr><td width=\"5\"></td><td><b>Sandbox name:</b> " + pid_name_ + "</td></tr>";
-	msg += "<tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr>";
+		storage_intro_ += "<tr><td width=\"5\"></td><td><b>Sandbox name:</b> " + pid_name_ + "</td></tr>";
+	storage_intro_ += "<tr><td width=\"5\"></td><td><b>Command:</b> " + QString(cmd) + "</td></tr>";
 	if (!profile_.isEmpty())
-		msg += "<tr><td width=\"5\"></td><td><b>Profile:</b> " + profile_ + "</td></tr>";
-	// add
-	msg += "</table><br/>";
+		storage_intro_ += "<tr><td width=\"5\"></td><td><b>Profile:</b> " + profile_ + "</td></tr>";
+	storage_intro_ += "</table><br/>";
+	msg += storage_intro_;
 
 	msg += "<table>";
 	msg += QString("<tr><td width=\"5\"></td><td><b>PID:</b> ") +  QString::number(pid_) + "</td>";
@@ -717,7 +799,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		else if (mode_ == MODE_CAPS)
 			mode_ = MODE_PID;
 		else if (mode_ == MODE_FIREWALL)
-			mode_ = MODE_NETWORK;
+			mode_ = MODE_PID;
 		else if (mode_ == MODE_TOP)
 			;
 		else

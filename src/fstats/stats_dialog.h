@@ -92,6 +92,8 @@ private:
 	QString storage_dns_;
 	QString storage_caps_;
 	QString storage_seccomp_;
+	QString storage_intro_;
+	QString storage_network_;
 };
 
 
