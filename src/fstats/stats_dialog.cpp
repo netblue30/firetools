@@ -360,6 +360,163 @@ void StatsDialog::updateCaps() {
 	}
 }
 
+static QString get_dns(int pid) {
+	QString rv;
+
+	char *str = 0;
+	char *cmd;
+	if (asprintf(&cmd, "firejail --dns.print=%d", pid) != -1) {
+		str = run_program(cmd);
+		char *ptr = str;
+
+		// htmlize!
+		while (*ptr != 0) {
+			if (*ptr == '\n') {
+				*ptr = '\0';
+				rv += QString(str) + "<br/>\n";
+				ptr++;
+
+				while (*ptr == ' ') {
+					rv += "&nbsp;&nbsp;";
+					ptr++;
+				}
+				str = ptr;
+				continue;
+			}
+			ptr++;
+		}
+	}
+	free(cmd);
+	return rv;
+}
+
+// build the network interface list for firejail versions 0.9.56 or older, including 0.9.56-LTS
+static QString get_interfaces_old(int pid) {
+	QString rv;
+
+	char *fname;
+	if (asprintf(&fname, "/run/firejail/network/%d-netmap", pid) == -1)
+		errExit("asprintf");
+
+	FILE *fp = fopen(fname, "r");
+	if (fp) {
+		char buf[4096];
+		int i = -1;
+		while (fgets(buf, 4096, fp)) {
+			i++;
+			char *ptr = strchr(buf, '\n');
+			if (ptr)
+				*ptr = '\0';
+
+			// extract parent device
+			ptr = strchr(buf, ':');
+			if (!ptr)
+				continue;
+			char *parent_dev = buf;
+			*ptr = '\0';
+			ptr++;
+			char *child_dev = ptr;
+
+			QString str;
+			str.sprintf("%s (parent device %s", child_dev, parent_dev);
+
+			// detect bridge device
+			char *sysfile;
+			if (asprintf(&sysfile, "/sys/class/net/%s/bridge", parent_dev) == -1)
+				errExit("asprintf");
+			struct stat s;
+			if (stat(sysfile, &s) == 0)
+				str += ", bridge)";
+			else
+				str += ")";
+			free(sysfile);
+
+			rv += str + "<br/>";
+		}
+		fclose(fp);
+	}
+	free(fname);
+
+	return rv;
+}
+
+// build the network interface list for firejail versions 0.9.57 and up
+// returns an empty string if --net.print is not available in the currently installed firejail version
+static QString get_interfaces_new(int pid) {
+	QString rv;
+	char *str = 0;
+	char *cmd;
+	if (asprintf(&cmd, "firejail --net.print=%d 2>&1", pid) != -1) {
+		str = run_program(cmd);
+		free(cmd);
+
+		// htmlize!
+		char *ptr = strtok(str, "\n");
+		if (!ptr || strncmp(ptr, "Error", 5) == 0)
+			goto errexit;
+		while ((ptr = strtok(NULL, "\n")) != NULL) {
+			if (strncmp(ptr, "Error", 5) == 0)
+				goto errexit;
+			if (strncmp(ptr, "Interface ", 10) == 0)
+				continue;
+			if (strncmp(ptr, "lo ", 3) == 0)
+				continue;
+
+			// parse the interface line, example
+			//eth0-12202       c6:7f:d1:a9:3d:bc  192.168.1.82     255.255.255.0    UP
+			// ifname
+			char *ifname = ptr;
+			while (*ptr != ' ' && *ptr != '\0')
+				ptr++;
+			if (ptr == '\0')
+				goto errexit;
+			*ptr = '\0';
+			ptr++;
+
+			// skip mac address
+			while (*ptr == ' ')
+				ptr++;
+			while (*ptr != ' ' && *ptr != '\0')
+				ptr++;
+			if (*ptr == '\0')
+				goto errexit;
+			while (*ptr == ' ')
+				ptr++;
+
+			// ip address
+			char *ip = ptr;
+			while (*ptr != ' ' && *ptr != '\0')
+				ptr++;
+			if (*ptr == '\0')
+				goto errexit;
+			*ptr = '\0';
+			ptr++;
+			while (*ptr == ' ')
+				ptr++;
+
+			// extract mask...
+			char *mask	= ptr;
+			while (*ptr != ' ' && *ptr != '\0')
+				ptr++;
+			if (*ptr == '\0')
+				goto errexit;
+			*ptr = '\0';
+			// ... and build a CIDR addrss
+			uint32_t mask_uint32;
+			if (atoip(mask, &mask_uint32))
+				goto errexit;
+			int bits = mask2bits(mask_uint32);
+			rv += QString(ifname) + "&nbsp;&nbsp;&nbsp;" + QString(ip) + "/" +
+				QString::number(bits) + "<br/>";
+		}
+	}
+
+	return rv;
+
+errexit:
+	return QString(); // empty string
+}
+
 void StatsDialog::updateNetwork() {
 	int cycle = Db::instance().getCycle();
 	assert(cycle < DbPid::MAXCYCLE);
@@ -376,39 +533,12 @@ void StatsDialog::updateNetwork() {
 			printf("reading dns configuration\n");
 
 		storage_dns_ += "<table><tr><td width=\"5\"></td><td><b>DNS</b><br/>";
-
-		char *str = 0;
-		char *cmd;
-		if (asprintf(&cmd, "firejail --dns.print=%d", pid_) != -1) {
-			str = run_program(cmd);
-			char *ptr = str;
-
-			// htmlize!
-			while (*ptr != 0) {
-				if (*ptr == '\n') {
-					*ptr = '\0';
-					storage_dns_ += QString(str) + "<br/>\n";
-					ptr++;
-
-					while (*ptr == ' ') {
-						storage_dns_ += "&nbsp;&nbsp;";
-						ptr++;
-					}
-					str = ptr;
-					continue;
-				}
-				ptr++;
-			}
-		}
-		free(cmd);
+		storage_dns_ += get_dns(pid_);
 		storage_dns_ += "</td>";
 	}
 	msg += storage_dns_;
 
 	// network interfaces
-
-
-
 	if (storage_network_.isEmpty()) {
 //printf("network namespace disabled %d, net_none_ %d\n", dbptr->networkDisabled(), net_none_);
 		if (net_none_)
@@ -416,49 +546,12 @@ void StatsDialog::updateNetwork() {
 		else if (dbptr->networkDisabled())
 			storage_network_ = "<td>Using the system network namespace";
 		else {
-			char *fname;
-			if (asprintf(&fname, "/run/firejail/network/%d-netmap", pid_) == -1)
-				errExit("asprintf");
 
 			storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
-			FILE *fp = fopen(fname, "r");
-			if (fp) {
-				char buf[4096];
-				int i = -1;
-				while (fgets(buf, 4096, fp)) {
-					i++;
-					char *ptr = strchr(buf, '\n');
-					if (ptr)
-						*ptr = '\0';
-
-					// extract parent device
-					ptr = strchr(buf, ':');
-					if (!ptr)
-						continue;
-					char *parent_dev = buf;
-					*ptr = '\0';
-					ptr++;
-					char *child_dev = ptr;
-
-					QString str;
-					str.sprintf("%s (parent device %s", child_dev, parent_dev);
-
-					// detect bridge device
-					char *sysfile;
-					if (asprintf(&sysfile, "/sys/class/net/%s/bridge", parent_dev) == -1)
-						errExit("asprintf");
-					struct stat s;
-					if (stat(sysfile, &s) == 0)
-						str += ", bridge)";
-					else
-						str += ")";
-					free(sysfile);
-
-					storage_network_ += str + "<br/>";
-				}
-				fclose(fp);
-				free(fname);
-			}
+			QString tmp = get_interfaces_new(pid_);
+			if (tmp.isEmpty())
+				tmp = get_interfaces_old(pid_);
+			storage_network_ += tmp;
 		}
 		storage_network_ += "</td></tr>";
 
