@@ -36,7 +36,7 @@ AC_ARG_WITH(
 	QMAKE="$qmake"
     ],
     [
-	QMAKE=`which qmake`
+	AC_PATH_TOOL([QMAKE],[qmake])
     ]
 )
 echo "trying $QMAKE"
