@@ -373,11 +373,16 @@ static QString get_dns(int pid) {
 		while (*ptr != 0) {
 			if (*ptr == '\n') {
 				*ptr = '\0';
-				rv += QString(str) + "<br/>\n";
+				bool skip = false;
+				if (*str == '#')
+					skip = true;
+				if (!skip)
+					rv += QString(str) + "<br/>\n";
 				ptr++;
 
 				while (*ptr == ' ') {
-					rv += "&nbsp;&nbsp;";
+					if (!skip)
+						rv += "&nbsp;&nbsp;";
 					ptr++;
 				}
 				str = ptr;
@@ -468,7 +473,7 @@ static QString get_interfaces_new(int pid) {
 			char *ifname = ptr;
 			while (*ptr != ' ' && *ptr != '\0')
 				ptr++;
-			if (ptr == '\0')
+			if (*ptr == '\0')
 				goto errexit;
 			*ptr = '\0';
 			ptr++;
