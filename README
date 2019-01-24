@@ -16,6 +16,17 @@ $ cd firetools
 (Debian/Ubuntu)$ ./configure --prefix=/usr && make && sudo make install
 (CentOS 7)$ ./configure --prefix=/usr --with-qmake=/usr/lib64/qt5/bin/qmake && make && sudo make install
 
+
+Maintainer:
+- netblue30 (netblue30@yahoo.com)
+
+Committers:
+- Fred-Barclay (https://github.com/Fred-Barclay)
+- Reiner Herrmann (https://github.com/reinerh - Debian/Ubuntu maintainer)
+- smithsohu (https://github.com/smitsohu)
+- startx2017 (https://github.com/startx2017) - LTS and *bugfixes branches maintainer)
+- netblue30 (netblue30@yahoo.com)
+
 Firetools Authors:
 
 netblue30 (netblue30@yahoo.com)
@@ -27,17 +38,19 @@ Daniel Schildt (https://github.com/d2s)
 	- improve visual style
 	- reduce margins, improve usability
 	- add signal-desktop icon
+dmio (https://github.com/dmio)
+	- detect and switch qt versions with autotools
+helmutg (https://github.com/helmutg)
+	- Use correct host-prefixed qmake to allow cross-building
+Piraty (https://github.com/Piraty)
+	- use system's icons when available
 Reiner Herrmann
 	- Debian and Ubuntu integration
 	- various fixes
-Warren Togami (https://github.com/wtogami)
-	- rewrite of mkrpm.sh, Fedora packaging cleanup
-Piraty (https://github.com/Piraty)
-	- use system's icons when available
 Topi Miettinen (https://github.com/topimiettinen)
 	- change labels to black to be visible with dark themes and various other fixes
-dmio (https://github.com/dmio)
-	- detect and switch qt versions with autotools
+Warren Togami (https://github.com/wtogami)
+	- rewrite of mkrpm.sh, Fedora packaging cleanup
 
 Terminal icon (gnome-terminal.png) taken from Gnome project, license LGPL v3 or CC BY-SA 3.0.
 
