@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.52"
+VER="0.9.58"
 
 cd ~
 rm -fr rpmbuild
@@ -90,8 +90,10 @@ rm -rf %{buildroot}
 /usr/lib/firetools/fstats
 /usr/lib/firetools/uihelp
 /usr/lib/firetools/uimenus
- 
+
 %changelog
+
+* Thu Jan 24 2018 netblue30 <netblue30@yahoo.com> 0.9.58-1
 
 * Fri Mar 2 2018 netblue30 <netblue30@yahoo.com> 0.9.52-1
 
@@ -108,7 +110,7 @@ rm -rf %{buildroot}
 * Mon Oct 24 2016 netblue30 <netblue30@yahoo.com> 0.9.44-1
  - support for firejail --x11 detection
  - bugfixes
- 
+
 * Sun May 29 2016 netblue30 <netblue30@yahoo.com> 0.9.40-1
  - Grsecurity support
  - updated the default application list
