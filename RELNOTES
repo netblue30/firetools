@@ -1,4 +1,4 @@
-firetools (0.9.53) baseline; urgency=low
+firetools (0.9.58) baseline; urgency=low
   * split network interface stats in a separate window
   * detect --net=none in network interface stats
   * support for Firejail LTS versions
