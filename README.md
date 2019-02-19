@@ -12,7 +12,7 @@ Travis-CI status: https://travis-ci.org/netblue30/firetools
 
 ## Firejail Configurator Demo
 
-[![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=R8Cs0L_FXOA)
+[![firejail-ui](firejail-ui.png)](https://www.youtube.com/watch?v=OlrUDiuhnqs)
 
 ## Setting up a compilation environment:
 `````
