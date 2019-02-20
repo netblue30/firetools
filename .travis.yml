@@ -5,3 +5,10 @@ sudo: true
 script:
   - sudo apt-get -y install libqt4-dev qt4-qmake lintian
   - ( cd firetools ; ./configure --enable-fatal-warnings --prefix=/usr && make && sudo make install && sudo make deb)
+  - sudo apt-get install build-essential qt5-default qt5-qmake qtbase5-dev-tools libqt5svg5 git -y
+  - sudo apt-get install checkinstall -y
+  - ./configure
+  - make
+  - sudo checkinstall --install=no -y
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - bash upload.sh *.deb
