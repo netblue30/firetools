@@ -7,3 +7,8 @@
 4. Detecting sandbox features from command line params:
 --net detected in pid_thread.cpp (strstr(pids[pid].cmd, "--net")), it might pick it up from the
 params of the sandboxed program
+
+5. Merge from firejail main
+Mar 10:  fix --list reporting for sandboxes using --x11=none;
+
+6. Update copyright years
