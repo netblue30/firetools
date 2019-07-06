@@ -61,13 +61,13 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Config2, new ConfigPage2);
 	setPage(Page_StartSandbox, new StartSandboxPage);
 	setStartId(Page_Application);
-	
+
 	setOption(HaveHelpButton, true);
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
 	setWindowTitle(tr("Firejail Configuration Wizard"));
-	
+
 	setWizardStyle(QWizard::MacStyle);
 	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));
 	//resize( QSize(600, 400).expandedTo(minimumSizeHint()) );
@@ -89,7 +89,7 @@ void Wizard::accept() {
 	if (field("use_custom").toBool()) {
 		if (arg_debug)
 			printf("building a custom profile\n");
-	
+
 		// build the profile in a termporary file
 		char profname[] = "/tmp/firejail-ui-XXXXXX";
 		int fd = mkstemp(profname);
@@ -97,17 +97,17 @@ void Wizard::accept() {
 			errExit("mkstemp");
 		QString profarg = QString("--profile=") + QString(profname);
 		arguments << profarg;
-	
+
 		// always print the profile on stdout
 		printf("\n");
 		printf("############## start of profile file\n");
 
-		// include	
+		// include
 		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
 		dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
 		printf("include /etc/firejail/disable-common.inc\n");
 		printf("include /etc/firejail/disable-passwdmgr.inc\n");
-			
+
 		// home directory
 		if (field("restricted_home").toBool()) {
 			QString whitelist = global_home_widget->getContent();
@@ -118,7 +118,7 @@ void Wizard::accept() {
 			dprintf(fd, "%s", whitelist.toUtf8().data());
 			printf("%s", whitelist.toUtf8().data());
 		}
-		
+
 		// filesystem
 		if (field("private_tmp").toBool()) {
 			dprintf(fd, "private-tmp\n");
@@ -133,7 +133,7 @@ void Wizard::accept() {
 			dprintf(fd, "blacklist /media\n");
 			printf("blacklist /mnt\nblacklist /media\n");
 		}
-	
+
 		// network
 		if (field("sysnetwork").toBool()) {
 			;
@@ -141,12 +141,12 @@ void Wizard::accept() {
 		else if (field("nonetwork").toBool()) {
 			dprintf(fd, "net none\n");
 			printf("net none\n");
-		}	
+		}
 		else if (field("netnamespace").toBool()) {
 			dprintf(fd, "net %s\nnetfilter\n", global_ifname.toUtf8().data());
 			printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
 		}
-		
+
 		// dns
 		if (global_dns_enabled) {
 			QString dns1 = field("dns1").toString();
@@ -162,7 +162,7 @@ void Wizard::accept() {
 				printf("dns %s\n", d2);
 			}
 		}
-		
+
 		// network protocol
 		if (global_protocol_enabled) {
 			if (field("protocol_unix").toBool() ||
@@ -174,20 +174,20 @@ void Wizard::accept() {
 				if (field("protocol_unix").toBool())
 					protocol += QString("unix,");
 				if (field("protocol_inet").toBool())
-					protocol += QString("inet,");				
+					protocol += QString("inet,");
 				if (field("protocol_inet6").toBool())
-					protocol += QString("inet6,");				
+					protocol += QString("inet6,");
 				if (field("protocol_netlink").toBool())
-					protocol += QString("netlink,");				
+					protocol += QString("netlink,");
 				if (field("protocol_packet").toBool())
-					protocol += QString("packet");				
-				
+					protocol += QString("packet");
+
 				char *str = protocol.toUtf8().data();
 				dprintf(fd, "%s\n", str);
 				printf("%s\n", str);
 			}
 		}
-		
+
 		// multimedia
 		if (field("nosound").toBool()) {
 			dprintf(fd, "nosound\n");
@@ -213,8 +213,8 @@ void Wizard::accept() {
 			dprintf(fd, "notv\n");
 			printf("notv\n");
 		}
-		
-			
+
+
 		// kernel
 		if (field("seccomp").toBool()) {
 			dprintf(fd, "seccomp\n");
@@ -229,11 +229,11 @@ void Wizard::accept() {
 			dprintf(fd, "noroot\n");
 			printf("noroot\n");
 		}
-		
+
 		printf("############# end of profile file\n");
 		printf("\n");
 	}
-	
+
 	// debug
 	if (field("debug").toBool())
 		arguments << QString("--debug");
@@ -257,7 +257,7 @@ void Wizard::accept() {
 	}
 
 	// force a program exit
-	exit(0);		
+	exit(0);
 }
 
 ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
@@ -272,31 +272,31 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 
 	QGroupBox *app_box = new QGroupBox(tr("Step 1: Choose an application"));
 	app_box->setFont(bold);
-	app_box->setStyleSheet("QGroupBox { color : black; }");
-	
+//	app_box->setStyleSheet("QGroupBox { color : black; }");
+
 	QLabel *label1 = new QLabel(tr("Choose an application from the menus below"));
 	label1->setFont(oldFont);
-	label1->setStyleSheet("QLabel { color : black; }");
+//	label1->setStyleSheet("QLabel { color : black; }");
 
 	QGridLayout *app_box_layout = new QGridLayout;
 	group_ = new QListWidget;
 	group_->setFont(oldFont);
-	group_->setStyleSheet("QGridLayout { color : black; }");
+//	group_->setStyleSheet("QGridLayout { color : black; }");
 	command_ = new QLineEdit;
 	command_->setFont(oldFont);
-	group_->setStyleSheet("QLineEdit { color : black; }");
-	
+//	group_->setStyleSheet("QLineEdit { color : black; }");
+
 	browse_ = new QPushButton("browse filesystem");
 	QIcon icon(":resources/gnome-fs-directory.png");
 	browse_->setIcon(icon);
 	connect(browse_, SIGNAL(clicked()), this, SLOT(browseClicked()));
-	
+
 	QLabel *label2 = new QLabel("or type in the program name:");
 	label2->setFont(oldFont);
-	label2->setStyleSheet("QLabel { color : black; }");
+//	label2->setStyleSheet("QLabel { color : black; }");
 	app_ = new QListWidget;
 	app_->setFont(oldFont);
-	app_->setStyleSheet("QListWidget { color : black; }");
+//	app_->setStyleSheet("QListWidget { color : black; }");
 	app_->setMinimumWidth(300);
 	app_box_layout->addWidget(label1, 0, 0, 1, 2);
 	app_box_layout->addWidget(group_, 1, 0);
@@ -305,27 +305,27 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	app_box_layout->addWidget(label2, 2, 1);
 	app_box_layout->addWidget(command_, 3, 0, 1, 2);
 	app_box->setLayout(app_box_layout);
-	
+
 	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Choose a security profile"));
 	profile_box->setFont(bold);
-	profile_box->setStyleSheet("QGroupBox { color : black; }");
-	use_default_ = new QRadioButton("Use a default security profile");	
+//	profile_box->setStyleSheet("QGroupBox { color : black; }");
+	use_default_ = new QRadioButton("Use a default security profile");
 	use_default_->setFont(oldFont);
-	use_default_->setStyleSheet("QRadioButton { color : black; }");
+//	use_default_->setStyleSheet("QRadioButton { color : black; }");
 	use_default_->setChecked(true);
 	use_custom_ = new QRadioButton("Build a custom security profile");
 	use_custom_->setFont(oldFont);
-	use_custom_->setStyleSheet("QRadioButton { color : black; }");
+//	use_custom_->setStyleSheet("QRadioButton { color : black; }");
 	QVBoxLayout *profile_box_layout = new QVBoxLayout;
 	profile_box_layout->addWidget(use_default_);
 	profile_box_layout->addWidget(use_custom_);
 	profile_box->setLayout(profile_box_layout);
-	
+
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(app_box, 0, 0);
 	layout->addWidget(profile_box, 1, 0);
 	setLayout(layout);
-	
+
 	// load database
 	appdb_ = appdb_load_file();
 	if (arg_debug)
@@ -333,16 +333,16 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	appdb_load_group(appdb_, group_);
 
 	// connect widgets
-	connect(group_, SIGNAL(itemClicked(QListWidgetItem*)), 
+	connect(group_, SIGNAL(itemClicked(QListWidgetItem*)),
 	            this, SLOT(groupClicked(QListWidgetItem*)));
-	connect(group_, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), 
+	connect(group_, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
 	            this, SLOT(groupChanged(QListWidgetItem*,QListWidgetItem*)));
-	connect(app_, SIGNAL(itemClicked(QListWidgetItem*)), 
+	connect(app_, SIGNAL(itemClicked(QListWidgetItem*)),
 	            this, SLOT(appClicked(QListWidgetItem*)));
-	            
+
 	registerField("command*", command_);
-	registerField("use_custom", use_custom_); 
-	
+	registerField("use_custom", use_custom_);
+
 //	setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -375,13 +375,13 @@ void ApplicationPage::browseClicked() {
 	QString fname = QFileDialog::getOpenFileName(this, tr("Choose Application"));
 	if (fname.isNull())
 		return;
-		
+
 	// check the file is an executable
 	const char *cmd = fname.toUtf8().data();
 	if (arg_debug)
 		printf("Command: %s\n", cmd);
 	if (access(cmd, X_OK))
-		QMessageBox::warning(this, "Error", "The file is not an executable program" ); 
+		QMessageBox::warning(this, "Error", "The file is not an executable program" );
 	else
 		command_->setText(fname);
 }
@@ -419,28 +419,28 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox</b>"));
-	label1->setStyleSheet("QLabel { color : black; }");
+//	label1->setStyleSheet("QLabel { color : black; }");
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
-	whitelisted_home_->setStyleSheet("QCheckBox { color : black; }");
+//	whitelisted_home_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("restricted_home", whitelisted_home_);
 	private_dev_ = new QCheckBox("Restrict /dev directory");
 	private_dev_->setChecked(true);
-	private_dev_->setStyleSheet("QCheckBox { color : black; }");
+//	private_dev_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("private_dev", private_dev_);
-	
+
 	private_tmp_ = new QCheckBox("Restrict /tmp directory");
 	private_tmp_->setChecked(true);
-	private_tmp_->setStyleSheet("QCheckBox { color : black; }");
+//	private_tmp_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("private_tmp", private_tmp_);
-	
+
 	mnt_media_ = new QCheckBox("Restrict /mnt and /media");
 	mnt_media_->setChecked(true);
-	mnt_media_->setStyleSheet("QCheckBox { color : black; }");
+//	mnt_media_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("mnt_media", mnt_media_);
 
 	QGroupBox *fs_box = new QGroupBox(tr("File System"));
-	fs_box->setStyleSheet("QGroupBox { color : black; }");
+//	fs_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *fs_box_layout = new QVBoxLayout;
 	fs_box_layout->addWidget(whitelisted_home_);
 	fs_box_layout->addWidget(private_dev_);
@@ -449,29 +449,29 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	fs_box->setLayout(fs_box_layout);
 //	fs_box->setFlat(false);
 //	fs_box->setCheckable(true);
-	
-	
+
+
 	// networking
 	global_ifname = detect_network();
 	sysnetwork_ = new QRadioButton("System network");
 	sysnetwork_->setChecked(true);
-	sysnetwork_->setStyleSheet("QRadioButton { color : black; }");
+//	sysnetwork_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("sysnetwork", sysnetwork_);
-	
+
 	nonetwork_ = new QRadioButton("Disable networking");
-	nonetwork_->setStyleSheet("QRadioButton { color : black; }");
+//	nonetwork_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("nonetwork", nonetwork_);
-	
+
 	if (global_ifname.isEmpty()) {
 		netnamespace_ = new QRadioButton("Namespace");
 		netnamespace_->setEnabled(false);
 	}
 	else
 		netnamespace_ = new QRadioButton(QString("Namespace (") + global_ifname + ")");
-	netnamespace_->setStyleSheet("QRadioButton { color : black; }");
+//	netnamespace_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("netnamespace", netnamespace_);
 	QGroupBox *net_box = new QGroupBox(tr("Networking"));
-	net_box->setStyleSheet("QGroupBox { color : black; }");
+//	net_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *net_box_layout = new QVBoxLayout;
 	net_box_layout->addWidget(sysnetwork_);
 	net_box_layout->addWidget(netnamespace_);
@@ -480,7 +480,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 
 	home_ = new HomeWidget;
 	QGroupBox *home_box = new QGroupBox(tr("Home Directory"));
-	home_box->setStyleSheet("QGroupBox { color : black; }");
+//	home_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *home_box_layout = new QVBoxLayout;
 	home_box_layout->addWidget(home_);
 	home_box->setLayout(home_box_layout);
@@ -489,13 +489,13 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	global_home_widget = home_;
 
 
-	// DNS	
+	// DNS
 	dns1_ = new QLineEdit;
 	dns1_->setText("8.8.8.8");
 	dns1_->setMaximumWidth(150);
 	dns1_->setFixedWidth(170);
 	registerField("dns1", dns1_);
-	
+
 	dns2_ = new QLineEdit;
 	dns2_->setText("8.8.4.4");
 	dns2_->setMaximumWidth(150);
@@ -505,7 +505,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *dns_box = new QGroupBox(tr("DNS"));
 	dns_box->setCheckable(true);
 	dns_box->setChecked(false);
-	dns_box->setStyleSheet("QGroupBox { color : black; }");
+//	dns_box->setStyleSheet("QGroupBox { color : black; }");
 	connect(dns_box, SIGNAL(toggled(bool)), this, SLOT(setDns(bool)));
 	QVBoxLayout *dns_box_layout = new QVBoxLayout;
 	dns_box_layout->addWidget(dns1_);
@@ -528,7 +528,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	protocol_packet_ = new QCheckBox("packet");
 	protocol_packet_->setChecked(false);
 	registerField("protocol_packet", protocol_packet_);
-	
+
 	QGroupBox *protocol_box = new QGroupBox(tr("Network Protocol"));
 	protocol_box->setCheckable(true);
 	protocol_box->setChecked(false);
@@ -568,16 +568,16 @@ bool ConfigPage::validatePage() {
 		if (!ip.isEmpty()) {
 			const char *str = ip.toUtf8().data();
 			if (atoip(str, &addr)) {
-				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip); 
+				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip);
 				return false;
 			}
 		}
-		
+
 		ip = dns2_->text();
 		if (!ip.isEmpty()) {
 			const char *str = ip.toUtf8().data();
 			if (atoip(str, &addr)) {
-				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip); 
+				QMessageBox::warning(this, "Error", QString("Invalid IP address ") + ip);
 				return false;
 			}
 		}
@@ -610,32 +610,32 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox... continued...</b>"));
-	label1->setStyleSheet("QLabel { color : black; }");
+//	label1->setStyleSheet("QLabel { color : black; }");
 	nosound_ = new QCheckBox("Disable sound");
-	nosound_->setStyleSheet("QCheckBox { color : black; }");
+//	nosound_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nosound", nosound_);
-	
+
 	nodvd_ = new QCheckBox("Disable CD-ROM/DVD devices");
-	nodvd_->setStyleSheet("QCheckBox { color : black; }");
+//	nodvd_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nodvd", nodvd_);
-	
+
 	novideo_ = new QCheckBox("Disable video camera devices");
-	novideo_->setStyleSheet("QCheckBox { color : black; }");
+//	novideo_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("novideo", novideo_);
-	
+
 	notv_ = new QCheckBox("Disable TV/DVB devices");
-	notv_->setStyleSheet("QCheckBox { color : black; }");
+//	notv_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("notv", notv_);
 
 	no3d_ = new QCheckBox("Disable 3D acceleration");
-	no3d_->setStyleSheet("QCheckBox { color : black; }");
+//	no3d_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("no3d", no3d_);
-	
+
 	nox11_ = new QCheckBox("Disable X11 support");
 	registerField("nox11", nox11_);
-	
+
 	QGroupBox *multimed_box = new QGroupBox(tr("Multimedia"));
-	multimed_box->setStyleSheet("QGroupBox { color : black; }");
+//	multimed_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *multimed_box_layout = new QVBoxLayout;
 	multimed_box_layout->addWidget(nosound_);
 	multimed_box_layout->addWidget(novideo_);
@@ -656,12 +656,12 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	else
 		seccomp_->setChecked(true);
 	registerField("seccomp", seccomp_);
-	
+
 	caps_ = new QCheckBox("Disable all Linux capabilities");
 	caps_->setChecked(true);
-	caps_->setStyleSheet("QCheckBox { color : black; }");
+//	caps_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("caps", caps_);
-	
+
 	noroot_ = new QCheckBox("Restricted  user namespace (noroot)");
 	if (kernel_major == 3 && kernel_minor < 8) {
 	   	if (arg_debug)
@@ -670,11 +670,11 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	}
 	else
 		noroot_->setChecked(true);
-	noroot_->setStyleSheet("QCheckBox { color : black; }");
+//	noroot_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("noroot", noroot_);
 
 	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
-	kernel_box->setStyleSheet("QGroupBox { color : black; }");
+//	kernel_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
 	kernel_box_layout->addWidget(seccomp_);
 	kernel_box_layout->addWidget(caps_);
@@ -707,7 +707,7 @@ void ConfigPage2::initializePage() {
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
 	setSubTitle(global_subtitle);
-	
+
 	// fonts
 	QFont bold;
 	bold.setBold(true);
@@ -716,16 +716,16 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 
 	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Debugging"));
 	debug_box->setFont(bold);
-	debug_box->setStyleSheet("QGroupBox { color : black; }");
-	debug_ = new QCheckBox("Enable sandbox debugging");	
+//	debug_box->setStyleSheet("QGroupBox { color : black; }");
+	debug_ = new QCheckBox("Enable sandbox debugging");
 	debug_->setFont(oldFont);
-	debug_->setStyleSheet("QCheckBox { color : black; }");
+//	debug_->setStyleSheet("QCheckBox { color : black; }");
 	trace_ = new QCheckBox("Trace filesystem and network access");
 	trace_->setFont(oldFont);
-	trace_->setStyleSheet("QCheckBox { color : black; }");
+//	trace_->setStyleSheet("QCheckBox { color : black; }");
 	mon_ = new QCheckBox("Sandbox monitoring and statistics");
 	mon_->setFont(oldFont);
-	mon_->setStyleSheet("QCheckBox { color : black; }");
+//	mon_->setStyleSheet("QCheckBox { color : black; }");
 
 	if (!isatty(0)) {
 		debug_->setEnabled(false);
