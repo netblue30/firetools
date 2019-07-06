@@ -56,11 +56,11 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr, "Error: invalid option\n");
 			usage();
 			return 1;
-		}		
+		}
 	}
 
 #if QT_VERSION >= 0x050000
-	struct stat s;	
+	struct stat s;
 	// test run time dependencies - print warning and continue program
 	QString ppath = QLibraryInfo::location(QLibraryInfo::PluginsPath);
 	ppath += "/imageformats/libqsvg.so";
@@ -69,22 +69,37 @@ int main(int argc, char *argv[]) {
 		svg_not_found = 1;
 	}
 #endif
-	
+
 	// test run time dependencies - exit
 	if (!which("firejail")) {
 		fprintf(stderr, "Error: firejail package not found, please install it!\n");
 		exit(1);
 	}
-	
+
 	// create firetools config directory if it doesn't exist
 	create_config_directory();
-	
+
 	// initialize resources
 	Q_INIT_RESOURCE(fstats);
 
 	QApplication app(argc, argv);
 	StatsDialog sd;
-	
+	sd.show();
+
+	// Configure system tray
+	QSystemTrayIcon icon(QIcon(":resources/fstats-minimal.png"));
+	icon.show();
+	icon.setToolTip("Firetools (click to open)");
+	QMenu *trayIconMenu = new QMenu(&sd);
+	trayIconMenu->addAction(sd.minimizeAction);
+	trayIconMenu->addAction(sd.restoreAction);
+	trayIconMenu->addSeparator();
+	trayIconMenu->addAction(sd.quitAction);
+	icon.setContextMenu(trayIconMenu);
+	icon.connect(&icon, SIGNAL(activated(QSystemTrayIcon: :ActivationReason)), &sd, SLOT(trayActivated(QSystemTrayIcon: :ActivationReason)));
+
+
+
 	// direct all errror to /dev/null to work around this qt bug:
 	//      https://bugreports.qt.io/browse/QTBUG-43270
 	FILE *rv = NULL;
@@ -92,11 +107,11 @@ int main(int argc, char *argv[]) {
 		rv = freopen( "/dev/null", "w", stderr );
 		(void) rv;
 	}
-	
+
 	// start application
-	int tmp = sd.exec();
+	int tmp = app.exec();
 	(void) tmp;
-	
+
 	if (rv)
 		fclose(rv);
 }

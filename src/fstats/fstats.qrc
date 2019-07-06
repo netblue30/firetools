@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
    <file>resources/fstats.png</file>
+   <file>resources/fstats-minimal.png</file>
  </qresource>
 </RCC>

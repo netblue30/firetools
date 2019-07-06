@@ -116,6 +116,7 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(f
 
 	thread_ = new PidThread();
 	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
+	createTrayActions();
 }
 
 StatsDialog::~StatsDialog() {
@@ -129,6 +130,44 @@ void StatsDialog::cleanStorage() {
 	storage_seccomp_ = "";
 	storage_intro_ = "";
 	storage_network_ = "";
+}
+
+// Shutdown sequence
+void StatsDialog::main_quit() {
+	printf("exiting...\n");
+
+	qApp->quit();
+}
+
+void StatsDialog::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+	if (reason == QSystemTrayIcon::Context)
+		return;
+	if (reason == QSystemTrayIcon::DoubleClick)
+		return;
+	if (reason == QSystemTrayIcon::MiddleClick)
+		return;
+
+	if (isVisible()) {
+		hide();
+//		stats_->hide();
+	}
+	else {
+		show();
+//		stats_->hide();
+	}
+}
+
+void StatsDialog::createTrayActions() {
+	minimizeAction = new QAction(tr("Mi&nimize"), this);
+	connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+//	connect(minimizeAction, SIGNAL(triggered()), stats_, SLOT(hide()));
+
+	restoreAction = new QAction(tr("&Restore"), this);
+	connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+//	connect(restoreAction, SIGNAL(triggered()), stats_, SLOT(show()));
+
+	quitAction = new QAction(tr("&Quit"), this);
+	connect(quitAction, SIGNAL(triggered()), this, SLOT(main_quit()));
 }
 
 QString StatsDialog::header() {

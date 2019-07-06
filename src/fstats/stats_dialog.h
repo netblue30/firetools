@@ -23,6 +23,8 @@
 #include <pwd.h>
 #include <QWidget>
 #include <QDialog>
+#include <QAction>
+#include <QSystemTrayIcon>
 #include "fstats.h"
 
 class QTextBrowser;
@@ -37,9 +39,13 @@ public:
 	StatsDialog();
 	~StatsDialog();
 
+private slots:
+	void main_quit();
+
 public slots:
 	void cycleReady();
 	void anchorClicked(const QUrl & link);
+	void trayActivated(QSystemTrayIcon::ActivationReason);
 
 private:
 	QString header();
@@ -52,6 +58,7 @@ private:
 	void updateCaps();
 	void updateFirewall();
 	void cleanStorage();
+	void createTrayActions();
 
 private:
 	QTextBrowser *procView_;
@@ -94,6 +101,10 @@ private:
 	QString storage_seccomp_;
 	QString storage_intro_;
 	QString storage_network_;
+public:
+	QAction *minimizeAction;
+	QAction *restoreAction;
+	QAction *quitAction;
 };
 
 
