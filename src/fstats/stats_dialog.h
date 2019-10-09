@@ -101,6 +101,7 @@ private:
 	QString storage_seccomp_;
 	QString storage_intro_;
 	QString storage_network_;
+	QString storage_netfilter_;
 public:
 	QAction *minimizeAction;
 	QAction *restoreAction;

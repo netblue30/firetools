@@ -130,6 +130,7 @@ void StatsDialog::cleanStorage() {
 	storage_seccomp_ = "";
 	storage_intro_ = "";
 	storage_network_ = "";
+	storage_netfilter_ = "";
 }
 
 // Shutdown sequence
@@ -252,19 +253,21 @@ void StatsDialog::updateFirewall() {
 		return;
 	}
 
-	if (arg_debug)
-		printf("reading firewall configuration\n");
-	QString msg = header() + storage_intro_;
+	QString msg = storage_netfilter_;
+	if (msg.isEmpty()) {
+		if (arg_debug)
+			printf("reading firewall configuration\n");
+		msg = header() + storage_intro_;
 
-	char *cmd;
-	if (asprintf(&cmd, "firejail --netfilter.print=%d", pid_) != -1) {
-		char *str = run_program(cmd);
-		if (str)
-			msg += "<pre>" + QString(str) + "</pre>";
+		char *cmd;
+		if (asprintf(&cmd, "firejail --netfilter.print=%d", pid_) != -1) {
+			char *str = run_program(cmd);
+			if (str)
+				msg += "<pre>" + QString(str) + "</pre>";
+		}
+		storage_netfilter_ = msg;
+		procView_->setHtml(msg);
 	}
-
-	procView_->setHtml(msg);
-
 }
 
 
