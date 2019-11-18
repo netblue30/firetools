@@ -291,11 +291,11 @@ void StatsDialog::updateFdns() {
 			fdns_first_run_ = false;
 			fdns_cnt_ = 0;
 			fdns_seq_ = fdns_report_->seq;
-			
+
 			// print header
 			msg += fdns_report_->header;
 			msg += "<br/>";
-			
+
 			// print log lines
 			for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
 				msg += fdns_report_->logentry[i];
@@ -1084,10 +1084,8 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		QMessageBox::about(this, tr("About"), msg);
 
 	}
-	else if (linkstr == "fdns") {
-printf("startting  fdns\n");
+	else if (linkstr == "fdns")
 		mode_ = MODE_FDNS;
-	}
 	else if (linkstr == "newsandbox") {
 		// start firejail-ui as a separate process
 
@@ -1109,6 +1107,9 @@ printf("startting  fdns\n");
 		pid_x11_ = 0;
 		mode_ = MODE_PID;
 	}
+
+	// reset fdns
+	fdns_first_run_ = true;
 
 	if (data_ready)
 		cycleReady();
