@@ -28,6 +28,11 @@
 #include <QUrl>
 #include <QProcess>
 #include <sys/utsname.h>
+#include <sys/mman.h>
+#include <sys/stat.h>        /* For mode constants */
+#include <fcntl.h>           /* For O_* constants */
+#include <unistd.h>
+
 #include "stats_dialog.h"
 #include "db.h"
 #include "graph.h"
@@ -57,7 +62,8 @@ static int find_child(int id) {
 	return -1;
 }
 
-StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
+StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0), fdns_first_run_(true), fdns_cnt_(0),
+		mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0),
@@ -120,6 +126,8 @@ StatsDialog::StatsDialog(): QDialog(), mode_(MODE_TOP), pid_(0), uid_(0), lts_(f
 }
 
 StatsDialog::~StatsDialog() {
+	if (fdns_fd_)
+		::close(fdns_fd_);
 	if (!isMaximized())
 		config_write_screen_size(width(), height());
 }
@@ -178,6 +186,13 @@ QString StatsDialog::header() {
 		msg += "<a href=\"about\">About</a>";
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"launcher\">Sandbox Launcher</a>";
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configuration Wizard</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fdns\">Firejail DNS</a>";
+		msg += "</td></tr></table>";
+	}
+
+	else if (mode_ == MODE_FDNS) {
+		msg += "<table><tr><td width=\"5\"></td><td>";
+		msg += "<a href=\"top\">Home</a>";
 		msg += "</td></tr></table>";
 	}
 
@@ -245,6 +260,56 @@ void StatsDialog::updateTop() {
 	msg += "</table>";
 	procView_->setHtml(msg);
 }
+
+void StatsDialog::updateFdns() {
+	QString msg = header();
+
+	// open fdns shared memory if necessary
+	if (!fdns_fd_) {
+		fdns_fd_ = shm_open("/fdns-stats", O_RDONLY, S_IRWXU);
+		if (fdns_fd_ == -1) {
+			msg += "Error: cannot open /dev/shm/fdns_stats, probably fdns is not running<br/>";
+			fdns_fd_ = 0;
+			procView_->setHtml(msg);
+			return;
+		}
+	}
+
+	if (fdns_fd_ && fdns_report_ == 0) {
+		fdns_report_ = (DnsReport *) mmap(0, sizeof(DnsReport), PROT_READ, MAP_SHARED, fdns_fd_, 0 );
+		if (fdns_report_ == (void *) - 1) {
+			msg += "Error: cannot map /sdv/shm/fdns_stats file in process memory<<br/>";
+			fdns_report_ = 0;
+			::close(fdns_fd_);
+			fdns_fd_ = 0;
+			procView_->setHtml(msg);
+			return;
+		}
+	}
+	if (fdns_fd_ && fdns_report_) {
+		if (fdns_first_run_ || fdns_cnt_++ >= 10 || fdns_seq_ != fdns_report_->seq) {
+			fdns_first_run_ = false;
+			fdns_cnt_ = 0;
+			fdns_seq_ = fdns_report_->seq;
+			
+			// print header
+			msg += fdns_report_->header;
+			msg += "<br/>";
+			
+			// print log lines
+			for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
+				msg += fdns_report_->logentry[i];
+				msg += "<br/>";
+			}
+			for (int i = 0; i < fdns_report_->logindex; i++) {
+				msg += fdns_report_->logentry[i];
+				msg += "<br/>";
+			}
+			procView_->setHtml(msg);
+		}
+	}
+}
+
 
 void StatsDialog::updateFirewall() {
 	DbPid *dbptr = Db::instance().findPid(pid_);
@@ -900,6 +965,8 @@ void StatsDialog::updatePid() {
 void StatsDialog::cycleReady() {
 	if (mode_ == MODE_TOP)
 		updateTop();
+	else if (mode_ == MODE_FDNS)
+		updateFdns();
 	else if (mode_ == MODE_PID)
 		updatePid();
 	else if (mode_ == MODE_TREE)
@@ -1017,6 +1084,10 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		QMessageBox::about(this, tr("About"), msg);
 
 	}
+	else if (linkstr == "fdns") {
+printf("startting  fdns\n");
+		mode_ = MODE_FDNS;
+	}
 	else if (linkstr == "newsandbox") {
 		// start firejail-ui as a separate process
 
@@ -1030,7 +1101,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		int rv = system("firetools &");
 		(void) rv;
 	}
-	else {
+	else { // linstr == "home"
 		pid_ = linkstr.toInt();
 		pid_initialized_ = false;
 		pid_caps_ = QString("");

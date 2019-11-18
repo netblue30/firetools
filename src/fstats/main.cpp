@@ -38,8 +38,16 @@ static void usage() {
 	printf("\t--help - this help screen\n\n");
 	printf("\t--version - print software version and exit\n\n");
 }
+       #include <sys/mman.h>
+       #include <sys/stat.h>        /* For mode constants */
+       #include <fcntl.h>           /* For O_* constants */
+
 
 int main(int argc, char *argv[]) {
+
+int fdns_fd_ = shm_open("/dev/shm/fdns-stats", O_RDONLY, S_IRUSR);
+printf("fd %d\n", fdns_fd_);
+
 	// parse arguments
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--debug") == 0)

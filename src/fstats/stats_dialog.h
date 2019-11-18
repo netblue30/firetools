@@ -32,6 +32,18 @@ class QUrl;
 
 class PidThread;
 
+extern "C" {
+	typedef struct dns_report_t {
+		volatile uint32_t seq;	//sqence number used to detect data changes
+	#define MAX_HEADER 163 	// two full lines on a terminal screen, \n and \0
+		char header[MAX_HEADER];
+		int logindex;
+	#define MAX_LOG_ENTRIES 18 	// 18 lines on the screen in order to handle tab terminals
+	#define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
+		char logentry[MAX_LOG_ENTRIES][MAX_ENTRY_LEN];
+	} DnsReport;
+}
+
 class StatsDialog: public QDialog {
 Q_OBJECT
 
@@ -51,6 +63,7 @@ private:
 	QString header();
 	void kernelSecuritySettings();
 	void updateTop();
+	void updateFdns();
 	void updatePid();
 	void updateTree();
 	void updateSeccomp();
@@ -61,6 +74,12 @@ private:
 	void createTrayActions();
 
 private:
+	DnsReport *fdns_report_;
+	uint32_t fdns_seq_;
+	int fdns_fd_;
+	bool fdns_first_run_;
+	int fdns_cnt_;
+
 	QTextBrowser *procView_;
 
 #define MODE_TOP 0
@@ -70,6 +89,8 @@ private:
 #define MODE_NETWORK 4
 #define MODE_CAPS 5
 #define MODE_FIREWALL 6
+#define MODE_FDNS 7
+#define MODE_MAX 8 // always the last one
 	int mode_;
 	int pid_;	// pid value for mode 1
 	uid_t uid_;
