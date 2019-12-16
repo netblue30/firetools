@@ -1,9 +1,11 @@
-firetools (0.9.58) baseline; urgency=low
+firetools (0.9.62) baseline; urgency=low
+  * added fdns support
+  * added stats system tray icon
   * split network interface stats in a separate window
   * detect --net=none in network interface stats
   * support for Firejail LTS versions
   * bugfixes
- -- netblue30 <netblue30@yahoo.com>  Thu, 24 Jan 2019 08:00:00 -0500
+ -- netblue30 <netblue30@yahoo.com>  Mon, 16 Dec 2019 08:00:00 -0500
 
 firetools (0.9.52) baseline; urgency=low
   * modif: moving to a grayscale color scheme
