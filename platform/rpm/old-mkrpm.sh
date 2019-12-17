@@ -1,5 +1,5 @@
 #!/bin/bash
-VER="0.9.58"
+VER="0.9.62"
 
 cd ~
 rm -fr rpmbuild
@@ -93,7 +93,9 @@ rm -rf %{buildroot}
 
 %changelog
 
-* Thu Jan 24 2018 netblue30 <netblue30@yahoo.com> 0.9.58-1
+* Tue Dec 17 2019 netblue30 <netblue30@yahoo.com> 0.9.62-1
+
+* Thu Jan 24 2019 netblue30 <netblue30@yahoo.com> 0.9.58-1
 
 * Fri Mar 2 2018 netblue30 <netblue30@yahoo.com> 0.9.52-1
 
