@@ -49,7 +49,7 @@ static QString getProfile(pid_t pid);
 static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
-
+#if 0
 // find the first child process for the specified pid
 // return -1 if not found
 static int find_child(int id) {
@@ -60,6 +60,40 @@ static int find_child(int id) {
 	}
 
 	return -1;
+}
+#endif
+// dbus proxy path used by firejail and firemon
+#define XDG_DBUS_PROXY_PATH "/usr/bin/xdg-dbus-proxy"
+static int find_child(int id) {
+	int i;
+	int first_child = -1;
+	// find the first child
+	for (i = 0; i < max_pids && first_child == -1; i++) {
+		if (pids[i].level == 2 && pids[i].parent == id) {
+			// skip /usr/bin/xdg-dbus-proxy (started by firejail for dbus filtering)
+			char *cmdline = pid_proc_cmdline(i);
+			if (strncmp(cmdline, XDG_DBUS_PROXY_PATH, strlen(XDG_DBUS_PROXY_PATH)) == 0) {
+				free(cmdline);
+				continue;
+			}
+			free(cmdline);
+			first_child = i;
+			break;
+		}
+	}
+
+	if (first_child == -1)
+		return -1;
+
+	// find the second-level child
+	for (i = 0; i < max_pids; i++) {
+		if (pids[i].level == 3 && pids[i].parent == first_child)
+			return i;
+	}
+
+	// if a second child is not found, return the first child pid
+	// this happens for processes sandboxed with --join
+	return first_child;
 }
 
 StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0), fdns_first_run_(true), fdns_cnt_(0),
