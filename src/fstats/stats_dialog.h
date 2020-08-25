@@ -32,6 +32,18 @@ class QUrl;
 
 class PidThread;
 
+
+typedef struct dns_report_t {
+	volatile uint32_t seq;	//sqence number used to detect data changes
+#define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
+	char header1[MAX_ENTRY_LEN];
+	char header2[MAX_ENTRY_LEN];
+	int logindex;
+#define MAX_LOG_ENTRIES 256 	// 18 lines on the screen in order to handle tab terminals
+	char logentry[MAX_LOG_ENTRIES][MAX_ENTRY_LEN];
+} DnsReport;
+
+#if 0
 extern "C" {
 	typedef struct dns_report_t {
 		volatile uint32_t seq;	//sqence number used to detect data changes
@@ -43,6 +55,7 @@ extern "C" {
 		char logentry[MAX_LOG_ENTRIES][MAX_ENTRY_LEN];
 	} DnsReport;
 }
+#endif
 
 class StatsDialog: public QDialog {
 Q_OBJECT
@@ -78,7 +91,6 @@ private:
 	uint32_t fdns_seq_;
 	int fdns_fd_;
 	bool fdns_first_run_;
-	int fdns_cnt_;
 
 	QTextBrowser *procView_;
 

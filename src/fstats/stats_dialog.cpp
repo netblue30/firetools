@@ -96,7 +96,7 @@ static int find_child(int id) {
 	return first_child;
 }
 
-StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0), fdns_first_run_(true), fdns_cnt_(0),
+StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0), fdns_first_run_(true),
 		mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
@@ -300,7 +300,7 @@ void StatsDialog::updateFdns() {
 
 	// open fdns shared memory if necessary
 	if (!fdns_fd_) {
-		fdns_fd_ = shm_open("/fdns-stats", O_RDONLY, S_IRWXU);
+		fdns_fd_ = shm_open("/fdns-stats-127.1.1.1", O_RDONLY, S_IRWXU);
 		if (fdns_fd_ == -1) {
 			msg += "Error: cannot open /dev/shm/fdns_stats, probably fdns is not running<br/>";
 			fdns_fd_ = 0;
@@ -320,25 +320,36 @@ void StatsDialog::updateFdns() {
 			return;
 		}
 	}
+
 	if (fdns_fd_ && fdns_report_) {
-		if (fdns_first_run_ || fdns_cnt_++ >= 10 || fdns_seq_ != fdns_report_->seq) {
+		if (fdns_first_run_ || fdns_seq_ != fdns_report_->seq) {
 			fdns_first_run_ = false;
-			fdns_cnt_ = 0;
 			fdns_seq_ = fdns_report_->seq;
 
 			// print header
-			msg += fdns_report_->header;
-			msg += "<br/>";
+			msg += "<b>";
+			msg += fdns_report_->header1;
+			msg += "</b><br/><b>";
+			msg += fdns_report_->header2;
+			msg += "</b><br/>";
+
 
 			// print log lines
-			for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
-				msg += fdns_report_->logentry[i];
+			int row = 24;
+			int i;
+			int logrows = MAX_LOG_ENTRIES;
+			if ((row - 4) > 0 && (row - 4) < MAX_LOG_ENTRIES)
+				logrows = row - 4;
+
+			int index = fdns_report_->logindex - logrows;
+			for (i = 0; i < logrows; i++, index++) {
+				int position = index;
+				if (index < 0)
+					position += MAX_LOG_ENTRIES;
+				msg += fdns_report_->logentry[position];
 				msg += "<br/>";
 			}
-			for (int i = 0; i < fdns_report_->logindex; i++) {
-				msg += fdns_report_->logentry[i];
-				msg += "<br/>";
-			}
+
 			procView_->setHtml(msg);
 		}
 	}
