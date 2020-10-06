@@ -49,19 +49,6 @@ static QString getProfile(pid_t pid);
 static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
 
-#if 0
-// find the first child process for the specified pid
-// return -1 if not found
-static int find_child(int id) {
-	int i;
-	for (i = 0; i < max_pids; i++) {
-		if (pids[i].level == 2 && pids[i].parent == id)
-			return i;
-	}
-
-	return -1;
-}
-#endif
 // dbus proxy path used by firejail and firemon
 #define XDG_DBUS_PROXY_PATH "/usr/bin/xdg-dbus-proxy"
 static int find_child(int id) {
@@ -395,7 +382,7 @@ void StatsDialog::updateTree() {
 
 	char *str = 0;
 	char *cmd;
-	if (asprintf(&cmd, "firemon --tree --nowrap %d", pid_) != -1) {
+	if (asprintf(&cmd, "firemon --tree --wrap %d", pid_) != -1) {
 		str = run_program(cmd);
 		char *ptr = str;
 		// htmlize!
