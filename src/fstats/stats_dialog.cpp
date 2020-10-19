@@ -87,7 +87,7 @@ StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0
 		mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
-	profile_(QString("")), pid_x11_(0),
+	profile_(QString("")), pid_x11_(0), fdns_dump_(""),
 	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), net_none_(false) {
 
 	// clean storage area
@@ -214,6 +214,13 @@ QString StatsDialog::header() {
 	else if (mode_ == MODE_FDNS) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"top\">Home</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dump\">Report</a>";
+		msg += "</td></tr></table>";
+	}
+	else if (mode_ == MODE_FDNS_DUMP) {
+		msg += "<table><tr><td width=\"5\"></td><td>";
+		msg += "<a href=\"top\">Home</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fdns\">Live</a>";
 		msg += "</td></tr></table>";
 	}
 
@@ -282,6 +289,63 @@ void StatsDialog::updateTop() {
 	procView_->setHtml(msg);
 }
 
+QString StatsDialog::printDump(int index) {
+	QString msg = "";
+	QString str;
+	struct tm *t = localtime(&fdns_report_->tstamp[index]);
+	str.sprintf("%02d:%02d:%02d ", t->tm_hour, t->tm_min, t->tm_sec);
+	if (strstr(fdns_report_->logentry[index], "dropped")) {
+		msg += "<font color=\"red\">";
+		msg += str + fdns_report_->logentry[index];
+		msg += "</font>";
+	}
+	else
+		msg += str + fdns_report_->logentry[index];
+
+	msg += "<br/>";
+
+	return msg;
+}
+
+void StatsDialog::updateFdnsDump() {
+	if (!fdns_dump_.isEmpty())
+		return;
+	QString msg = header();
+
+	int fd = ::open("/dev/shm/fdns-stats-127.1.1.1", O_RDONLY);
+	if (fd <= 0) {
+		QString msg = "cannot access Firejail DNS data";
+		QMessageBox::about(this, tr("DNS Query Dump"), msg);
+		mode_ = MODE_FDNS;
+		return;
+
+	}
+
+	DnsReport report;
+	ssize_t len = ::read(fd, &report, sizeof(DnsReport));
+	if (len != sizeof(DnsReport)) {
+		QString msg = "cannot access Firejail DNS data";
+		QMessageBox::about(this, tr("DNS Query Dump"), msg);
+		mode_ = MODE_FDNS;
+		return;
+	}
+	::close(fd);
+
+	for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
+		if (strlen(fdns_report_->logentry[i]))
+			msg += printDump(i);
+	}
+	for (int i = 0; i < fdns_report_->logindex; i++) {
+		if (strlen(fdns_report_->logentry[i]))
+			msg += printDump(i);
+	}
+
+	procView_->setHtml(msg);
+	procView_->update();
+	fdns_dump_ = msg;
+}
+
+
 void StatsDialog::updateFdns() {
 	QString msg = header();
 
@@ -318,8 +382,7 @@ void StatsDialog::updateFdns() {
 			msg += fdns_report_->header1;
 			msg += "</b><br/><b>";
 			msg += fdns_report_->header2;
-			msg += "</b><br/>";
-
+			msg += "</b><br/><br/>";
 
 			// print log lines
 			int row = 24;
@@ -333,10 +396,20 @@ void StatsDialog::updateFdns() {
 				int position = index;
 				if (index < 0)
 					position += MAX_LOG_ENTRIES;
-				msg += fdns_report_->logentry[position];
+
+				QString str;
+				struct tm *t = localtime(&fdns_report_->tstamp[i]);
+				str.sprintf("%02d:%02d:%02d ", t->tm_hour, t->tm_min, t->tm_sec);
+				if (strstr(fdns_report_->logentry[position], "dropped")) {
+					msg += "<font color=\"red\">";
+					msg += str + fdns_report_->logentry[position];
+					msg += "</font>";
+				}
+				else
+					msg += str + fdns_report_->logentry[position];
+
 				msg += "<br/>";
 			}
-
 			procView_->setHtml(msg);
 		}
 	}
@@ -999,6 +1072,8 @@ void StatsDialog::cycleReady() {
 		updateTop();
 	else if (mode_ == MODE_FDNS)
 		updateFdns();
+	else if (mode_ == MODE_FDNS_DUMP)
+		updateFdnsDump();
 	else if (mode_ == MODE_PID)
 		updatePid();
 	else if (mode_ == MODE_TREE)
@@ -1118,6 +1193,10 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 	}
 	else if (linkstr == "fdns")
 		mode_ = MODE_FDNS;
+	else if (linkstr == "dump") {
+		fdns_dump_ = QString("");
+		mode_ = MODE_FDNS_DUMP;
+	}
 	else if (linkstr == "newsandbox") {
 		// start firejail-ui as a separate process
 

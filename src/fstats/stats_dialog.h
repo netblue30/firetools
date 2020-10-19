@@ -33,29 +33,18 @@ class QUrl;
 class PidThread;
 
 
+extern "C" {
 typedef struct dns_report_t {
 	volatile uint32_t seq;	//sqence number used to detect data changes
 #define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
 	char header1[MAX_ENTRY_LEN];
 	char header2[MAX_ENTRY_LEN];
 	int logindex;
-#define MAX_LOG_ENTRIES 256 	// 18 lines on the screen in order to handle tab terminals
+#define MAX_LOG_ENTRIES 512 	// 18 lines on the screen in order to handle tab terminals
+	time_t tstamp[MAX_LOG_ENTRIES];
 	char logentry[MAX_LOG_ENTRIES][MAX_ENTRY_LEN];
 } DnsReport;
-
-#if 0
-extern "C" {
-	typedef struct dns_report_t {
-		volatile uint32_t seq;	//sqence number used to detect data changes
-	#define MAX_HEADER 163 	// two full lines on a terminal screen, \n and \0
-		char header[MAX_HEADER];
-		int logindex;
-	#define MAX_LOG_ENTRIES 18 	// 18 lines on the screen in order to handle tab terminals
-	#define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
-		char logentry[MAX_LOG_ENTRIES][MAX_ENTRY_LEN];
-	} DnsReport;
-}
-#endif
+} // extern "C"
 
 class StatsDialog: public QDialog {
 Q_OBJECT
@@ -77,6 +66,8 @@ private:
 	void kernelSecuritySettings();
 	void updateTop();
 	void updateFdns();
+	inline QString printDump(int index);
+	void updateFdnsDump();
 	void updatePid();
 	void updateTree();
 	void updateSeccomp();
@@ -102,7 +93,8 @@ private:
 #define MODE_CAPS 5
 #define MODE_FIREWALL 6
 #define MODE_FDNS 7
-#define MODE_MAX 8 // always the last one
+#define MODE_FDNS_DUMP 8
+#define MODE_MAX 9 // always the last one
 	int mode_;
 	int pid_;	// pid value for mode 1
 	uid_t uid_;
@@ -120,6 +112,7 @@ private:
 	QString pid_apparmor_;
 	QString profile_;
 	int pid_x11_;
+	QString fdns_dump_;
 
 	bool have_join_;
 	int caps_cnt_;
