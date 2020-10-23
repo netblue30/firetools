@@ -331,12 +331,35 @@ void StatsDialog::updateFdnsDump() {
 	}
 	::close(fd);
 
+	QDateTime current = QDateTime::currentDateTime();
+	msg += "<b>Fireail DNS report for " + current.toString() + "</b><br/><br/>";
+
+	msg += "<b>Stats:</b><br/>";
+	msg += QString(fdns_report_->header1) + "<br/>";
+	msg += QString(fdns_report_->header2) + "<br/><br/>";
+
+	msg += "<b>Process:</b><br/>";
+	QString qs;
+	qs.sprintf("PID: %u<br/>", report.pid);
+	msg += qs;
+	qs.sprintf("Filtering: %s<br/>", (report.nofilter)? "no": "yes");
+	msg += qs;
+	if (report.disable_local_doh)
+		msg += "DoH disabled for applications behind the proxy<br/>";
+	else
+		msg += "DoH allowed for applications behind the proxy<br/>";
+	qs.sprintf("To shutdown the proxy run <b>\"sudo kill -9 %u\"</b> in a terminal<br/><br/>", report.pid);
+	msg += qs;
+
+	msg += "<b>Queries:</b><br/>";
+	qs.sprintf("(queries cleared after %d minutes)<br/>", report.log_timeout);
+	msg += qs;
 	for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
-		if (strlen(fdns_report_->logentry[i]))
+		if (fdns_report_->tstamp && strlen(fdns_report_->logentry[i]))
 			msg += printDump(i);
 	}
 	for (int i = 0; i < fdns_report_->logindex; i++) {
-		if (strlen(fdns_report_->logentry[i]))
+		if (fdns_report_->tstamp && strlen(fdns_report_->logentry[i]))
 			msg += printDump(i);
 	}
 
@@ -397,18 +420,8 @@ void StatsDialog::updateFdns() {
 				if (index < 0)
 					position += MAX_LOG_ENTRIES;
 
-				QString str;
-				struct tm *t = localtime(&fdns_report_->tstamp[i]);
-				str.sprintf("%02d:%02d:%02d ", t->tm_hour, t->tm_min, t->tm_sec);
-				if (strstr(fdns_report_->logentry[position], "dropped")) {
-					msg += "<font color=\"red\">";
-					msg += str + fdns_report_->logentry[position];
-					msg += "</font>";
-				}
-				else
-					msg += str + fdns_report_->logentry[position];
-
-				msg += "<br/>";
+				if (fdns_report_->tstamp && strlen(fdns_report_->logentry[position]))
+					msg += printDump(position);
 			}
 			procView_->setHtml(msg);
 		}

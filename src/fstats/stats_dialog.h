@@ -36,9 +36,20 @@ class PidThread;
 extern "C" {
 typedef struct dns_report_t {
 	volatile uint32_t seq;	//sqence number used to detect data changes
+
+	// proxy config
+	unsigned pid;
+	int log_timeout;
+	int disable_local_doh;
+	int nofilter;
+	int whitelist_active;
+
+	// header
 #define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
 	char header1[MAX_ENTRY_LEN];
 	char header2[MAX_ENTRY_LEN];
+
+	// queries
 	int logindex;
 #define MAX_LOG_ENTRIES 512 	// 18 lines on the screen in order to handle tab terminals
 	time_t tstamp[MAX_LOG_ENTRIES];
