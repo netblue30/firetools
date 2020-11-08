@@ -43,9 +43,10 @@ typedef struct dns_report_t {
 	int disable_local_doh;
 	int nofilter;
 	int whitelist_active;
+#define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
+	char fallback[MAX_ENTRY_LEN];
 
 	// header
-#define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
 	char header1[MAX_ENTRY_LEN];
 	char header2[MAX_ENTRY_LEN];
 
@@ -139,6 +140,8 @@ private:
 	QString storage_intro_;
 	QString storage_network_;
 	QString storage_netfilter_;
+
+	char *shm_file_name_;
 public:
 	QAction *minimizeAction;
 	QAction *restoreAction;

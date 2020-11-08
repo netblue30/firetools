@@ -27,11 +27,13 @@
 
 #include <QUrl>
 #include <QProcess>
+#include <sys/types.h>
 #include <sys/utsname.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
 #include <unistd.h>
+#include <dirent.h>
 
 #include "stats_dialog.h"
 #include "db.h"
@@ -48,6 +50,94 @@ static QString getName(pid_t pid);
 static QString getProfile(pid_t pid);
 static bool userNamespace(pid_t pid);
 static int getX11Display(pid_t pid);
+
+
+// from fdns:procs.c - void procs_list(void) {
+// returns malloc memory
+static char *find_fdns_shm_file_name(void) {
+	int procs_addr_default = 0;
+	int procs_addr_loopback = 0;
+	char *procs_addr_real = NULL;
+
+	DIR *dir;
+	if (!(dir = opendir("/run/fdns"))) {
+		// sleep 2 seconds and try again
+		sleep(2);
+		if (!(dir = opendir("/proc")))
+			return 0;
+	}
+
+	struct dirent *entry;
+	int procs_addr_flag = 0;
+	while ((entry = readdir(dir))) {
+		if (*entry->d_name == '.')
+			continue;
+
+		char *fname;
+		if (asprintf(&fname, "/proc/%s", entry->d_name) == -1)
+			errExit("asprintf");
+		if (access(fname, R_OK) == 0) {
+			char *runfname;
+			if (asprintf(&runfname, "/run/fdns/%s", entry->d_name) == -1)
+				errExit("asprintf");
+			if (arg_debug)
+				printf("pid %s,", entry->d_name);
+			FILE *fp = fopen(runfname, "r");
+			if (fp) {
+				static const int MAXBUF = 1024;
+				char buf[MAXBUF];
+				if (fgets(buf, MAXBUF, fp)) {
+					char *ptr = strchr(buf, '\n');
+					if (ptr)
+						*ptr = '\0';
+
+					if (!procs_addr_flag) {
+						if (strcmp(buf, "127.1.1.1") == 0) {
+							procs_addr_default = 1;
+							procs_addr_flag = 1;
+						}
+						else if (strcmp(buf, "127.0.0.1") == 0) {
+							procs_addr_loopback = 1;
+							procs_addr_flag = 1;
+						}
+						else if (!procs_addr_real) {
+							procs_addr_real = strdup(buf);
+							if (!procs_addr_real)
+								errExit("strdup");
+						}
+					}
+				}
+			}
+			printf("\n");
+			fclose(fp);
+			free(runfname);
+		}
+		free(fname);
+	}
+	closedir(dir);
+
+	char *rv = 0;
+	if (procs_addr_default) {
+		rv = strdup("/dev/shm/fdns-stats-127.1.1.1");
+		if (!rv)
+			errExit("strdup");
+	}
+	else if (procs_addr_loopback) {
+		rv = strdup("/dev/shm/fdns-stats-127.0.0.1");
+		if (!rv)
+			errExit("strdup");
+	}
+	else if (procs_addr_real) {
+		if (asprintf(&rv, "/dev/shm/fdns-stats-%s", procs_addr_real) == -1)
+			errExit("asprintf");
+	}
+
+	if (procs_addr_real)
+		free(procs_addr_real);
+
+	return rv;
+}
+
 
 // dbus proxy path used by firejail and firemon
 #define XDG_DBUS_PROXY_PATH "/usr/bin/xdg-dbus-proxy"
@@ -88,7 +178,7 @@ StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0), fdns_dump_(""),
-	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), net_none_(false) {
+	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), net_none_(false), shm_file_name_(0) {
 
 	// clean storage area
 	cleanStorage();
@@ -312,11 +402,17 @@ void StatsDialog::updateFdnsDump() {
 		return;
 	QString msg = header();
 
-	int fd = ::open("/dev/shm/fdns-stats-127.1.1.1", O_RDONLY);
+	if (access(shm_file_name_, R_OK)) {
+		msg += QString("Error: cannot open ") + QString(shm_file_name_) + QString(", probably fdns is not running<br/>");
+		fdns_fd_ = 0;
+		procView_->setHtml(msg);
+		return;
+	}
+
+	int fd = ::open(shm_file_name_, O_RDONLY);
 	if (fd <= 0) {
-		QString msg = "cannot access Firejail DNS data";
-		QMessageBox::about(this, tr("DNS Query Dump"), msg);
-		mode_ = MODE_FDNS;
+		msg +=  "Error: cannot access Firejail DNS data";
+		procView_->setHtml(msg);
 		return;
 
 	}
@@ -324,9 +420,8 @@ void StatsDialog::updateFdnsDump() {
 	DnsReport report;
 	ssize_t len = ::read(fd, &report, sizeof(DnsReport));
 	if (len != sizeof(DnsReport)) {
-		QString msg = "cannot access Firejail DNS data";
-		QMessageBox::about(this, tr("DNS Query Dump"), msg);
-		mode_ = MODE_FDNS;
+		msg += "Error: cannot access Firejail DNS data";
+		procView_->setHtml(msg);
 		return;
 	}
 	::close(fd);
@@ -338,11 +433,12 @@ void StatsDialog::updateFdnsDump() {
 	msg += QString(fdns_report_->header1) + "<br/>";
 	msg += QString(fdns_report_->header2) + "<br/><br/>";
 
+
 	msg += "<b>Process:</b><br/>";
 	QString qs;
 	qs.sprintf("PID: %u<br/>", report.pid);
 	msg += qs;
-	qs.sprintf("Filtering: %s<br/>", (report.nofilter)? "no": "yes");
+	qs.sprintf("Fallback server: %s<br/>", report.fallback);
 	msg += qs;
 	if (report.disable_local_doh)
 		msg += "DoH disabled for applications behind the proxy<br/>";
@@ -364,20 +460,36 @@ void StatsDialog::updateFdnsDump() {
 	}
 
 	procView_->setHtml(msg);
-	procView_->update();
 	fdns_dump_ = msg;
+	if (fdns_fd_)
+		::close(fdns_fd_);
+	fdns_fd_ = 0;
+	fdns_report_ = 0;
 }
 
 
 void StatsDialog::updateFdns() {
 	QString msg = header();
 
+	if (access(shm_file_name_, R_OK)) {
+		msg += QString("Error: cannot open ") + QString(shm_file_name_) + QString(", probably fdns is not running<br/>");
+		if (fdns_fd_)
+			::close(fdns_fd_);
+		fdns_fd_ = 0;
+		fdns_report_ = 0;
+		procView_->setHtml(msg);
+		return;
+	}
+
 	// open fdns shared memory if necessary
 	if (!fdns_fd_) {
-		fdns_fd_ = shm_open("/fdns-stats-127.1.1.1", O_RDONLY, S_IRWXU);
+		fdns_fd_ = shm_open(shm_file_name_ + 8, O_RDONLY, S_IRWXU);
 		if (fdns_fd_ == -1) {
-			msg += "Error: cannot open /dev/shm/fdns_stats, probably fdns is not running<br/>";
+			msg += "Error: cannot access shared memory, probably fdns is not running<br/>";
+			if (fdns_fd_)
+				::close(fdns_fd_);
 			fdns_fd_ = 0;
+			fdns_report_ = 0;
 			procView_->setHtml(msg);
 			return;
 		}
@@ -426,6 +538,7 @@ void StatsDialog::updateFdns() {
 			procView_->setHtml(msg);
 		}
 	}
+	procView_->update();
 }
 
 
@@ -1204,8 +1317,20 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		QMessageBox::about(this, tr("About"), msg);
 
 	}
-	else if (linkstr == "fdns")
+	else if (linkstr == "fdns") {
+		if (mode_ != MODE_FDNS_DUMP) {
+			if (shm_file_name_)
+				free(shm_file_name_);
+			shm_file_name_ = find_fdns_shm_file_name();
+			if (fdns_report_)
+				fdns_report_ = 0;
+			if (fdns_fd_) {
+				::close(fdns_fd_);
+				sleep(1); // give the kernel some time to close the shared mem file in order to open another one
+			}
+		}
 		mode_ = MODE_FDNS;
+	}
 	else if (linkstr == "dump") {
 		fdns_dump_ = QString("");
 		mode_ = MODE_FDNS_DUMP;
