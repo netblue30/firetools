@@ -46,6 +46,12 @@ typedef struct dns_report_t {
 #define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
 	char fallback[MAX_ENTRY_LEN];
 
+	// resolvers
+#define RESOLVERS_CNT_MAX 10
+	int resolvers;
+	int encrypted[RESOLVERS_CNT_MAX];
+	uint32_t peer_ip[RESOLVERS_CNT_MAX];
+
 	// header
 	char header1[MAX_ENTRY_LEN];
 	char header2[MAX_ENTRY_LEN];

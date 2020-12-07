@@ -38,6 +38,7 @@
 #include "stats_dialog.h"
 #include "db.h"
 #include "graph.h"
+#include "../common/common.h"
 #include "../common/utils.h"
 #include "../common/pid.h"
 #include "../../firetools_config.h"
@@ -434,6 +435,21 @@ void StatsDialog::updateFdnsDump() {
 	msg += QString(fdns_report_->header2) + "<br/><br/>";
 
 
+	msg += "<b>Resolvers:</b><br/>";
+	for (int i = 0; i < fdns_report_->resolvers; i++) {
+		QString str;
+		str.sprintf("Resolver %d: ", i);
+		msg += str;
+		if (fdns_report_->encrypted[i]) {
+			QString str2;
+			str2.sprintf("connected to %d.%d.%d.%d<br/>", PRINT_IP(fdns_report_->peer_ip[i]));
+			msg += str2;
+		}
+		else
+			msg += "fallback mode<br/>";
+	}
+	msg += "<br/>";
+
 	msg += "<b>Process:</b><br/>";
 	QString qs;
 	qs.sprintf("PID: %u<br/>", report.pid);
@@ -498,7 +514,7 @@ void StatsDialog::updateFdns() {
 	if (fdns_fd_ && fdns_report_ == 0) {
 		fdns_report_ = (DnsReport *) mmap(0, sizeof(DnsReport), PROT_READ, MAP_SHARED, fdns_fd_, 0 );
 		if (fdns_report_ == (void *) - 1) {
-			msg += "Error: cannot map /sdv/shm/fdns_stats file in process memory<<br/>";
+			msg += "Error: cannot map /dev/shm/fdns_stats file in process memory<<br/>";
 			fdns_report_ = 0;
 			::close(fdns_fd_);
 			fdns_fd_ = 0;

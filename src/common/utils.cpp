@@ -62,7 +62,7 @@ bool which(const char *prog) {
 		perror("asprintf");
 		exit(1);
 	}
-	
+
 	// run command
 	char *res = run_program(cmd);
 	if (strstr(res, prog))
@@ -73,12 +73,12 @@ bool which(const char *prog) {
 // check if a name.desktop file exists in config home directory
 bool have_config_file(const char *name) {
 	assert(name);
-	
+
 	// build the full path
 	char *path = get_config_file_name(name);
 	if (!path)
 		return false;
-	
+
 	// check file
 	struct stat s;
 	bool rv = true;
@@ -88,7 +88,7 @@ bool have_config_file(const char *name) {
 		rv = false;
 
 	free(path);
-	return rv;		
+	return rv;
 }
 
 // get a coniguration file path based on the name; returns allocated memory
@@ -102,7 +102,7 @@ char *get_config_file_name(const char *name) {
 		errExit("asprintf");
 	free(homedir);
 	return path;
-}	
+}
 
 // get the full path of the home directory; returns allocated memory
 char *get_home_directory() {
@@ -110,7 +110,7 @@ char *get_home_directory() {
 	struct passwd *pw = getpwuid(getuid());
 	if (!pw)
 		errExit("getpwuid");
-		
+
 	// extract home directory
 	if (pw->pw_dir != NULL) {
 		char *homedir = strdup(pw->pw_dir);
@@ -118,7 +118,7 @@ char *get_home_directory() {
 			errExit("strdup");
 		return homedir;
 	}
-	
+
 	return 0;
 }
 
@@ -127,7 +127,7 @@ char *get_config_directory() {
 	char *homedir = get_home_directory();
 	if (!homedir)
 		return 0;
-	
+
 	char *rv;
 	if (asprintf(&rv, "%s/.config/firetools", homedir) == -1)
 		errExit("asprintf");
