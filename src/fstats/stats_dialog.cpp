@@ -305,7 +305,7 @@ QString StatsDialog::header() {
 	else if (mode_ == MODE_FDNS) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"top\">Home</a>";
-		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dump\">Report</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"dump\">Proxy</a>";
 		msg += "</td></tr></table>";
 	}
 	else if (mode_ == MODE_FDNS_DUMP) {
