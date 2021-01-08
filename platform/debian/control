@@ -2,10 +2,10 @@ Package: firetools
 Version: FIRETOOLSVER-1
 Architecture: amd64
 Maintainer: netblue30 <netblue30@yahoo.com>
-Installed-Size: 340
+Installed-Size: 684
 Depends: libqt5gui5, libqt5svg5, libc6
 Section: admin
-Priority: extra
+Priority: optional
 Homepage: http://firejail.sourceforge.net
 Description: Firejail graphical user interface program.
  Firejail  is  a  SUID sandbox program that reduces the risk of security

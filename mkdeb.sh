@@ -32,7 +32,7 @@ echo "*****************************************"
 INSTALL_DIR+="/usr"
 
 mv $INSTALL_DIR/share/doc/firetools/RELNOTES $INSTALL_DIR/share/doc/firetools/changelog.Debian
-gzip -9 $INSTALL_DIR/share/doc/firetools/changelog.Debian
+gzip -9 -n $INSTALL_DIR/share/doc/firetools/changelog.Debian
 rm $INSTALL_DIR/share/doc/firetools/COPYING
 cp platform/debian/copyright $INSTALL_DIR/share/doc/firetools/.
 mkdir -p $DEBIAN_CTRL_DIR
