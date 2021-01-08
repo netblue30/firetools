@@ -64,7 +64,7 @@ static char *find_fdns_shm_file_name(void) {
 	if (!(dir = opendir("/run/fdns"))) {
 		// sleep 2 seconds and try again
 		sleep(2);
-		if (!(dir = opendir("/proc")))
+		if (!(dir = opendir("/run/fdns")))
 			return 0;
 	}
 
@@ -404,7 +404,7 @@ void StatsDialog::updateFdnsDump() {
 	QString msg = header();
 
 	if (access(shm_file_name_, R_OK)) {
-		msg += QString("Error: cannot open ") + QString(shm_file_name_) + QString(", probably fdns is not running<br/>");
+		msg += QString("Error: cannot open shared memory, probably fdns is not running<br/>");
 		fdns_fd_ = 0;
 		procView_->setHtml(msg);
 		return;
@@ -488,7 +488,7 @@ void StatsDialog::updateFdns() {
 	QString msg = header();
 
 	if (access(shm_file_name_, R_OK)) {
-		msg += QString("Error: cannot open ") + QString(shm_file_name_) + QString(", probably fdns is not running<br/>");
+		msg += QString("Error: cannot open shared memory, probably fdns is not running<br/>");
 		if (fdns_fd_)
 			::close(fdns_fd_);
 		fdns_fd_ = 0;

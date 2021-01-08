@@ -42,7 +42,6 @@ typedef struct dns_report_t {
 	int log_timeout;
 	int disable_local_doh;
 	int nofilter;
-	int whitelist_active;
 #define MAX_ENTRY_LEN 82 	// a full line on a terminal screen, \n and \0
 	char fallback[MAX_ENTRY_LEN];
 
