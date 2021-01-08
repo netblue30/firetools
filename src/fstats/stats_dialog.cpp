@@ -382,17 +382,19 @@ void StatsDialog::updateTop() {
 
 QString StatsDialog::printDump(int index) {
 	QString msg = "";
-	QString str;
 	struct tm *t = localtime(&fdns_report_->tstamp[index]);
-	str.sprintf("%02d:%02d:%02d ", t->tm_hour, t->tm_min, t->tm_sec);
+	char *s;
+	if (asprintf(&s, "%02d:%02d:%02d ", t->tm_hour, t->tm_min, t->tm_sec) == -1)
+		errExit("asprintf");
 	if (strstr(fdns_report_->logentry[index], "dropped")) {
 		msg += "<font color=\"red\">";
-		msg += str + fdns_report_->logentry[index];
+		msg += QString(s) + fdns_report_->logentry[index];
 		msg += "</font>";
 	}
 	else
-		msg += str + fdns_report_->logentry[index];
+		msg += QString(s) + fdns_report_->logentry[index];
 
+	free(s);
 	msg += "<br/>";
 
 	return msg;
@@ -437,12 +439,14 @@ void StatsDialog::updateFdnsDump() {
 
 	msg += "<b>Resolvers:</b><br/>";
 	for (int i = 0; i < fdns_report_->resolvers; i++) {
-		QString str;
-		str.sprintf("Resolver %d: ", i);
+		QString str= QString("Resolver %1: ").arg(i);
 		msg += str;
 		if (fdns_report_->encrypted[i]) {
-			QString str2;
-			str2.sprintf("connected to %d.%d.%d.%d<br/>", PRINT_IP(fdns_report_->peer_ip[i]));
+			char *s;
+			if (asprintf(&s, "connected to %d.%d.%d.%d<br/>", PRINT_IP(fdns_report_->peer_ip[i])) == -1)
+				errExit("asprintf");
+			QString str2 = s;
+			free(s);
 			msg += str2;
 		}
 		else
@@ -451,20 +455,19 @@ void StatsDialog::updateFdnsDump() {
 	msg += "<br/>";
 
 	msg += "<b>Process:</b><br/>";
-	QString qs;
-	qs.sprintf("PID: %u<br/>", report.pid);
+	QString qs = QString("PID: %1<br/>").arg(report.pid);
 	msg += qs;
-	qs.sprintf("Fallback server: %s<br/>", report.fallback);
+	qs = QString("Fallback server: %1<br/>").arg(report.fallback);
 	msg += qs;
 	if (report.disable_local_doh)
 		msg += "DoH disabled for applications behind the proxy<br/>";
 	else
 		msg += "DoH allowed for applications behind the proxy<br/>";
-	qs.sprintf("To shutdown the proxy run <b>\"sudo kill -9 %u\"</b> in a terminal<br/><br/>", report.pid);
+	qs = QString("To shutdown the proxy run <b>\"sudo kill -9 %1\"</b> in a terminal<br/><br/>").arg(report.pid);
 	msg += qs;
 
 	msg += "<b>Queries:</b><br/>";
-	qs.sprintf("(queries cleared after %d minutes)<br/>", report.log_timeout);
+	qs = QString("(queries cleared after %1 minutes)<br/>").arg(report.log_timeout);
 	msg += qs;
 	for (int i = fdns_report_->logindex; i < MAX_LOG_ENTRIES; i++) {
 		if (fdns_report_->tstamp && strlen(fdns_report_->logentry[i]))
@@ -776,8 +779,7 @@ static QString get_interfaces_old(int pid) {
 			ptr++;
 			char *child_dev = ptr;
 
-			QString str;
-			str.sprintf("%s (parent device %s", child_dev, parent_dev);
+			QString str = QString("%1 (parent device %2").arg(child_dev).arg(parent_dev);
 
 			// detect bridge device
 			char *sysfile;

@@ -42,19 +42,19 @@ uint32_t network_get_defaultgw() {
 	if (!fp)
 		// probably we are dealing with a GrSecurity system
 		return 0; // attempt error recovery
-	
+
 	char buf[BUFSIZE];
 	uint32_t retval = 0;
 	while (fgets(buf, BUFSIZE, fp)) {
 		if (strncmp(buf, "Iface", 5) == 0)
 			continue;
-		
+
 		char *ptr = buf;
 		while (*ptr != ' ' && *ptr != '\t')
 			ptr++;
 		while (*ptr == ' ' || *ptr == '\t')
 			ptr++;
-			
+
 		unsigned dest;
 		unsigned gw;
 		int rv = sscanf(ptr, "%x %x", &dest, &gw);
@@ -75,7 +75,10 @@ int check_wireless(const char* ifname, char* protocol) {
 	int sock = -1;
 	struct iwreq pwrq;
 	memset(&pwrq, 0, sizeof(pwrq));
-	strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+	int len = strlen(ifname);
+	if (len > IFNAMSIZ)
+		len = IFNAMSIZ;
+	memcpy(pwrq.ifr_name, ifname, len);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("sockqet");
@@ -99,7 +102,7 @@ const char *detect_network() {
 
 	if (getifaddrs(&ifaddr) == -1)
 		errExit("getifaddrs");
-		
+
 	// find the default gateway
 	uint32_t gw = network_get_defaultgw();
 	printf("default gateway detected: %d.%d.%d.%d\n", PRINT_IP(gw));
@@ -107,7 +110,7 @@ const char *detect_network() {
 		fprintf(stderr, "Warning: cannot find the default gateway. Networking namespace is disabled.\n");
 		return "";
 	}
-	
+
 	// Walk through linked list, maintaining head pointer so we can free list later
 	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
 		if (ifa->ifa_addr == NULL)
@@ -116,7 +119,7 @@ const char *detect_network() {
 		int family = ifa->ifa_addr->sa_family;
 		if (family != AF_INET)
 			continue;
-		
+
 		// no loopback
 		if (ifa->ifa_flags & IFF_LOOPBACK)
 			continue;
@@ -124,14 +127,14 @@ const char *detect_network() {
 		// interface not running
 		if ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) != (IFF_UP | IFF_RUNNING))
 			continue;
-		
+
 		// no wireless
 		if (check_wireless(ifa->ifa_name, NULL))
 			continue;
 
 		uint32_t if_addr = ntohl(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr.s_addr);
 		uint32_t if_mask = ntohl(((struct sockaddr_in *)ifa->ifa_netmask)->sin_addr.s_addr);
-		printf("network interface: %s %d.%d.%d.%d %d.%d.%d.%d\n", 
+		printf("network interface: %s %d.%d.%d.%d %d.%d.%d.%d\n",
 			ifa->ifa_name, PRINT_IP(if_addr), PRINT_IP(if_mask));
 
 		// check default gateway is resolved on this interface

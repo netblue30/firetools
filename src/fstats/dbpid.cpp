@@ -20,15 +20,12 @@
 #include "dbpid.h"
 
 DbPid::DbPid(pid_t pid): next_(0), pid_(pid), cmd_(0), network_disabled_(true), uid_(0), configured_(false) {
-	memset(data_4min_, 0, sizeof(data_4min_));
-	memset(data_1h_, 0, sizeof(data_1h_));
-	memset(data_12h_, 0, sizeof(data_12h_));
 }
 
 DbPid::~DbPid() {
 	if (cmd_)
 		delete cmd_;
-		
+
 	if (next_)
 		delete next_;
 }
@@ -45,8 +42,8 @@ void DbPid::setCmd(const char *cmd) {
 				delete cmd_;
 				cmd_ = 0;
 			}
-		}	
-		
+		}
+
 		if (!cmd_) {
 			cmd_ = new char[strlen(cmd) + 1];
 			strcpy(cmd_, cmd);
@@ -60,7 +57,7 @@ void DbPid::add(DbPid *dbpid) {
 		next_ = dbpid;
 		return;
 	}
-	
+
 	next_->add(dbpid);
 }
 
@@ -70,33 +67,33 @@ void DbPid::remove(DbPid *dbpid) {
 		next_ = dbpid->next_;
 		return;
 	}
-	
+
 	if (next_)
 		next_->remove(dbpid);
 }
-	
+
 DbPid *DbPid::find(pid_t pid) {
 	if (pid_ == pid) {
 		return this;
 	}
-	
+
 	if (next_) {
 		return next_->find(pid);
 	}
-	
-	return 0;	
-}	
+
+	return 0;
+}
 
 void DbPid::dbgprint() {
 	printf("***\n");
 	printf("*** PID %d, %s\n", pid_, cmd_);
 	printf("***\n");
-	
+
 	for (int i = 0; i < MAXCYCLE; i++)
 		data_4min_[i].dbgprint(i);
-	
+
 	if (next_)
 		next_->dbgprint();
 }
-	
+
 
