@@ -39,7 +39,7 @@ $ sudo yum install gcc-c++ qt5-qtbase-devel qt5-qtsvg.x86_64 git
 ## Compile & Install
 
 `````
-$ git clone  https://github.com/netblue30/firetools
+$ git clone https://github.com/netblue30/firetools
 $ cd firetools
 
 (Debian/Ubuntu)
@@ -51,4 +51,3 @@ $ ./configure
 $ make
 $ sudo make install-strip
 `````
-

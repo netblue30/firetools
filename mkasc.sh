@@ -8,4 +8,3 @@ gpg --clearsign --digest-algo SHA256 < "firetools-$1-unsigned" > "firetools-$1.a
 gpg --verify "firetools-$1.asc"
 gpg --detach-sign --armor "firetools-$1.tar.xz"
 rm "firetools-$1-unsigned"
-

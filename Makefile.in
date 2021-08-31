@@ -28,10 +28,10 @@ clean:;rm -f build/*; rm -f *.1 *.1.gz; make -C src clean
 distclean: clean
 	make -C src distclean
 	rm -f firetools_config.h firetools_config_extras.h Makefile config.status config.log
-	rm -f  src/firetools/config.log src/firetools/config.status #fedora fix
-	rm -f  src/fmgr/config.log src/fmgr/config.status #fedora fix
-	rm -f  src/debmenu/config.log src/debmenu/config.status #fedora fix
-	rm -f  src/firejail-ui/config.log src/firejail-ui/config.status #fedora fix
+	rm -f src/firetools/config.log src/firetools/config.status #fedora fix
+	rm -f src/fmgr/config.log src/fmgr/config.status #fedora fix
+	rm -f src/debmenu/config.log src/debmenu/config.status #fedora fix
+	rm -f src/firejail-ui/config.log src/firejail-ui/config.status #fedora fix
 	rm -fr autom4te.cache
 	rm -f sanitizer.sh
 
