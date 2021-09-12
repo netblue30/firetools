@@ -3,7 +3,7 @@ Although hundreds of user-space applications are already supported by Firejail,
 sometimes is necessary to customize the sandbox environment. This configuration 
 wizard was built in order to make this task easier.<br/><br/>
 Start with the filesystem configuration, move to the network and 
-multimedia subsytems, and finish with the kernel. In the end you can turn on debugging and 
+multimedia subsystems, and finish with the kernel. In the end you can turn on debugging and 
 get a trace with all network requests and all file accessed by your application.<br/>
 <br/><b>Filesystem</b><br/><br/>
 Personal user files are located in home directory.  

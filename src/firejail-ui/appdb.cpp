@@ -92,7 +92,7 @@ AppEntry::AppEntry(char *line) {
 				if (!str)
 					errExit("strdup");
 				
-				// skip excutables ending in *
+				// skip executables ending in *
 				
 				char *ptr = strchr(str, ' ');
 				if (ptr)
