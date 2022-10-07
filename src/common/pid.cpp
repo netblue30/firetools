@@ -19,12 +19,13 @@
 */
 #include "common.h"
 #include "pid.h"
+#include "utils.h"
 #include <string.h>
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/ioctl.h>
 #include <dirent.h>
-       
+
 #define PIDS_BUFLEN 4096
 Process *pids = 0;
 int pids_first = 0;
@@ -47,7 +48,7 @@ void pid_getmem(unsigned pid, unsigned *rss, unsigned *shared) {
 		return;
 	}
 	free(file);
-	
+
 	unsigned a, b, c;
 	if (3 != fscanf(fp, "%u %u %u", &a, &b, &c)) {
 		fclose(fp);
@@ -72,7 +73,7 @@ void pid_get_cpu_time(unsigned pid, unsigned *utime, unsigned *stime) {
 		return;
 	}
 	free(file);
-	
+
 	char line[PIDS_BUFLEN];
 	if (fgets(line, PIDS_BUFLEN - 1, fp)) {
 		char *ptr = line;
@@ -89,7 +90,7 @@ void pid_get_cpu_time(unsigned pid, unsigned *utime, unsigned *stime) {
 			goto myexit;
 	}
 
-myexit:	
+myexit:
 	fclose(fp);
 }
 
@@ -106,7 +107,7 @@ unsigned long long pid_get_start_time(unsigned pid) {
 		return 0;
 	}
 	free(file);
-	
+
 	char line[PIDS_BUFLEN];
 	unsigned long long retval = 0;
 	if (fgets(line, PIDS_BUFLEN - 1, fp)) {
@@ -123,7 +124,7 @@ unsigned long long pid_get_start_time(unsigned pid) {
 		if (1 != sscanf(ptr, "%llu", &retval))
 			goto myexit;
 	}
-	
+
 myexit:
 	fclose(fp);
 	return retval;
@@ -138,7 +139,7 @@ char *pid_get_user_name(uid_t uid) {
 
 uid_t pid_get_uid(pid_t pid) {
 	uid_t rv = 0;
-	
+
 	// open stat file
 	char *file;
 	if (asprintf(&file, "/proc/%u/status", pid) == -1) {
@@ -161,12 +162,12 @@ uid_t pid_get_uid(pid_t pid) {
 			}
 			if (*ptr == '\0')
 				goto doexit;
-				
+
 			rv = atoi(ptr);
 			break; // break regardless!
 		}
 	}
-doexit:	
+doexit:
 	fclose(fp);
 	free(file);
 	return rv;
@@ -177,9 +178,8 @@ doexit:
 
 // mon_pid: pid of sandbox to be monitored, 0 if all sandboxes are included
 void pid_read(pid_t mon_pid) {
-	pids_first = 0;
-	pids_last = 0;
-	if (pids == NULL) {	
+//timetrace_start();
+	if (pids == NULL) {
 		FILE *fp = fopen("/proc/sys/kernel/pid_max", "r");
 		if (fp) {
 			int val;
@@ -189,12 +189,15 @@ void pid_read(pid_t mon_pid) {
 			}
 			fclose(fp);
 		}
-		pids = (Process *) malloc(sizeof(Process) * max_pids);
-		if (pids == NULL) 
+		pids = (Process *) malloc(sizeof(Process) * max_pids + 1);
+		if (pids == NULL)
 			errExit("malloc");
+		memset(pids, 0, sizeof(Process) * max_pids);
 	}
 
-	memset(pids, 0, sizeof(Process) * max_pids);
+	memset(pids + pids_first, 0, sizeof(Process) * (pids_last - pids_first + 1));
+	pids_first = 0;
+	pids_last = 0;
 	pid_t mypid = getpid();
 
 	DIR *dir;
@@ -206,18 +209,19 @@ void pid_read(pid_t mon_pid) {
 			exit(1);
 		}
 	}
-	
+
 	pid_t child = -1;
 	struct dirent *entry;
 	char *end;
 	while (child < 0 && (entry = readdir(dir))) {
 		pid_t pid = strtol(entry->d_name, &end, 10);
 		pid %= max_pids;
+		pids_last = pid;
 		if (end == entry->d_name || *end)
 			continue;
 		if (pid == mypid)
 			continue;
-		
+
 		// open stat file
 		char *file;
 		if (asprintf(&file, "/proc/%u/status", pid) == -1) {
@@ -250,7 +254,6 @@ void pid_read(pid_t mon_pid) {
 						pids[pid].level = 1;
 						if (pids_first == 0)
 							pids_first = pid;
-						pids_last = pid;
 					}
 				}
 				else
@@ -295,12 +298,14 @@ void pid_read(pid_t mon_pid) {
 		free(file);
 	}
 	closedir(dir);
+//float delta = timetrace_end();
+//printf("pid_read %.02f ms\n", delta);
 }
 
 // return 1 if error
 int name2pid(const char *name, pid_t *pid) {
 	pid_t parent = getpid();
-	
+
 	DIR *dir;
 	if (!(dir = opendir("/proc"))) {
 		// sleep 2 seconds and try again
@@ -310,7 +315,7 @@ int name2pid(const char *name, pid_t *pid) {
 			exit(1);
 		}
 	}
-	
+
 	struct dirent *entry;
 	char *end;
 	while ((entry = readdir(dir))) {
@@ -333,7 +338,7 @@ int name2pid(const char *name, pid_t *pid) {
 			}
 			free(comm);
 		}
-		
+
 		char *cmd = pid_proc_cmdline(newpid);
 		if (cmd) {
 			// mark the end of the name
@@ -438,19 +443,20 @@ char *pid_proc_cmdline(const pid_t pid) {
 
 // recursivity!!!
 void pid_get_cpu_sandbox(unsigned pid, unsigned *utime, unsigned *stime) {
+//printf("call %d, last %d\n", pid, pids_last);
 	if (pids[pid].level == 1) {
 		*utime = 0;
 		*stime = 0;
 	}
-	
+
 	unsigned utmp = 0;
 	unsigned stmp = 0;
 	pid_get_cpu_time(pid, &utmp, &stmp);
 	*utime += utmp;
 	*stime += stmp;
-	
+
 	int i;
-	for (i = pid + 1; i < max_pids; i++) {
+	for (i = pid + 1; i < (pids_last + 1); i++) {
 		if (pids[i].parent == (int) pid)
 			pid_get_cpu_sandbox(i, utime, stime);
 	}
@@ -461,11 +467,11 @@ void pid_get_mem_sandbox(unsigned pid, unsigned *rss, unsigned *shared) {
 		*rss = 0;
 		*shared = 0;
 	}
-	
+
 	pid_getmem(pid, rss, shared);
-	
+
 	int i;
-	for (i = pid + 1; i < max_pids; i++) {
+	for (i = pid + 1; i < (pids_last + 1); i++) {
 		if (pids[i].parent == (int) pid)
 			pid_get_mem_sandbox(i, rss, shared);
 	}
@@ -475,10 +481,10 @@ void pid_get_mem_sandbox(unsigned pid, unsigned *rss, unsigned *shared) {
 void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long long *tx) {
 	*rx = 0;
 	*tx = 0;
-	
+
 	// find the first child
 	int child = -1;
-	for (child = parent + 1; child < max_pids; child++) {
+	for (child = parent + 1; child < (pids_last + 1); child++) {
 		if (pids[child].parent == parent)
 			break;
 	}
@@ -496,26 +502,26 @@ void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long 
 		free(fname);
 		return;
 	}
-	
+
 	char buf[MAXBUF];
 	while (fgets(buf, MAXBUF, fp)) {
 		if (strncmp(buf, "Inter", 5) == 0)
 			continue;
 		if (strncmp(buf, " face", 5) == 0)
 			continue;
-		
+
 		char *ptr = buf;
 		while (*ptr != '\0' && *ptr != ':') {
 			ptr++;
 		}
-		
+
 		if (*ptr == '\0') {
 			fclose(fp);
 			free(fname);
 			return;
 		}
 		ptr++;
-		
+
 		long long unsigned rxval;
 		long long unsigned txval;
 		unsigned a, b, c, d, e, f, g;
@@ -580,7 +586,7 @@ static int pid_proc_cmdline_x11_xpra_xephyr(const pid_t pid) {
 			break;
 		if (strncmp(arg, "--", 2) != 0)
 			break;
-			
+
 		if (strcmp(arg, "--x11=xorg") == 0)
 			return 0;
 

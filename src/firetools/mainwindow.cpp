@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	}
 
 	// check if we have permission to run firejail
-	char *testrun = run_program("firejail exit 2>&1");
+	char *testrun = run_program("firejail /bin/true 2>&1");
 	if (!testrun || strstr(testrun, "Error")) {
 		QMessageBox::warning(this, tr("Firejail Launcher"),
 			tr("<br/>Cannot run <b>Firejail</b> sandbox, you may not have<br/>the correct permissions to access this program.<br/><br/><br/>"));

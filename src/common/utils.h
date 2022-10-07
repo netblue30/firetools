@@ -47,4 +47,9 @@ extern int sargc;
 extern char *sargv[SARG_MAX];
 void split_command(char *cmd);
 
+// timetrace
+void timetrace_start(void);
+float timetrace_end(void);
+
+
 #endif

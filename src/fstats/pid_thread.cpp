@@ -23,6 +23,7 @@
 #include "pid_thread.h"
 #include "../common/pid.h"
 #include "db.h"
+#include "../common/utils.h"
 
 bool data_ready = false;
 
@@ -144,14 +145,17 @@ void PidThread::run() {
 		// start a new database cycle
 		Db::instance().newCycle();
 		
+timetrace_start();
 		// read the cpu time again, memory
 		for (int i = pids_first; i  <= pids_last; i++) {
 			if (pids[i].level == 1) {
 				if (pids[i].zombie)
 					continue;
-
+//timetrace_start();
 				// cpu time
 				pid_get_cpu_sandbox(i, &utime, &stime);
+//float delta = timetrace_end();
+//printf("get cpu sandbox %d, %.02f ms\n", i, delta);
 				if (pids[i].utime <= utime)
 					pids[i].utime = utime - pids[i].utime;
 				else
@@ -165,16 +169,21 @@ void PidThread::run() {
 				// memory
 				unsigned rss;
 				unsigned shared;
+//timetrace_start();
 				pid_get_mem_sandbox(i, &rss, &shared);
+//delta = timetrace_end();
+//printf("get mem sandbox %d, %.02f ms\n", i, delta);
 				pids[i].rss = rss * pgsz / 1024;
 				pids[i].shared = shared * pgsz / 1024;
 				
 				// network
 				// todo: speedup
-
 				DbPid *dbpid = Db::instance().findPid(i);
 				if (dbpid && dbpid->isConfigured() && dbpid->networkDisabled() == false) {
+//timetrace_start();
 					pid_get_netstats_sandbox(i, &rx, &tx);
+//delta = timetrace_end();
+//printf("get net sandbox %d, %.02f ms\n", i, delta);
 					if (rx >= pids[i].rx)
 						pids[i].rx = rx - pids[i].rx;
 					else
@@ -192,9 +201,10 @@ void PidThread::run() {
 				}
 				
 				store(i, 1, clocktick);
-				
 			}
 		}
+//float delta = timetrace_end();
+//printf("all %.02f ms\n", delta);
 		// remove closed process entries from database
 		clear();
 

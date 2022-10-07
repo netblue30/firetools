@@ -26,6 +26,7 @@
 #include <pwd.h>
 #include "common.h"
 #include "utils.h"
+#include <time.h>
 
 #define MAXBUF (1024 * 1024) // 1MB output buffer
 static char outbuf[MAXBUF + 1];
@@ -187,4 +188,47 @@ void split_command(char *cmd) {
 		*ptr++ = '\0';
 		sargv[sargc++] = start;
 	}
+}
+
+//**************************
+// time trace based on getticks function
+//**************************
+typedef struct list_entry_t {
+	struct list_entry_t *next;
+	struct timespec ts;
+} ListEntry;
+
+static ListEntry *ts_list = NULL;
+
+static inline float msdelta(struct timespec *start, struct timespec *end) {
+	unsigned sec = end->tv_sec - start->tv_sec;
+	long nsec = end->tv_nsec - start->tv_nsec;
+	return (float) sec * 1000 + (float) nsec / 1000000;
+}
+
+void timetrace_start(void) {
+	ListEntry *t = (ListEntry *) malloc(sizeof(ListEntry));
+	if (!t)
+		errExit("malloc");
+	memset(t, 0, sizeof(ListEntry));
+	clock_gettime(CLOCK_MONOTONIC, &t->ts);
+
+	// add it to the list
+	t->next = ts_list;
+	ts_list = t;
+}
+
+float timetrace_end(void) {
+	if (!ts_list)
+		return 0;
+
+	// remove start time  from the list
+	ListEntry *t = ts_list;
+	ts_list = t->next;
+
+	struct timespec end;
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	float rv = msdelta(&t->ts, &end);
+	free(t);
+	return rv;
 }
