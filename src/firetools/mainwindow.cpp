@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	setToolTip(tr("Double click on an icon to open an application.\n"
 		"Drag the launcher with the left mouse button.\n"
 		"Use the right mouse button to open a context menu."));
-	setWindowTitle(tr("Firelauncher"));
+	setWindowTitle(tr("Firetools"));
 
 }
 

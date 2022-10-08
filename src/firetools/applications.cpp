@@ -231,29 +231,17 @@ QIcon Application::loadIcon(QString name) {
 		}
 	}
 
+	if (QIcon::hasThemeIcon(name)) {
+		if (arg_debug)
+			printf("\t- fromTheme\n");
+		return resize48x48(QIcon::fromTheme(name));
+	}
+
 	{
-		QString qstr = walk("/usr/share/icons/hicolor/48x48", name);
+		QString qstr = walk("/usr/share/icons", name);
 		if (!qstr.isEmpty()) {
 			return resize48x48(QIcon(qstr));
 		}
-	}
-
-	{
-		QString qstr = walk("/usr/share/icons/hicolor/64x64", name);
-		if (!qstr.isEmpty())
-			return resize48x48(QIcon(qstr));
-	}
-
-	{
-		QString qstr = walk("/usr/share/icons/hicolor/128x128", name);
-		if (!qstr.isEmpty())
-			return resize48x48(QIcon(qstr));
-	}
-
-	{
-		QString qstr = walk("/usr/share/icons/hicolor/256x256", name);
-		if (!qstr.isEmpty())
-			return resize48x48(QIcon(qstr));
 	}
 
 	{
@@ -269,27 +257,6 @@ QIcon Application::loadIcon(QString name) {
 			}
 		}
 	}
-
-	if (QIcon::hasThemeIcon(name)) {
-		if (arg_debug)
-			printf("\t- fromTheme\n");
-		return resize48x48(QIcon::fromTheme(name));
-	}
-
-	if (!svg_not_found) {
-		QString qstr = walk("/usr/share/icons/hicolor/scalable", name);
-		if (!qstr.isEmpty())
-			return resize48x48(QIcon(qstr));
-	}
-
-
-	// we failed to get an icon so far, look all over /usr/share/icons directory
-	{
-		QString qstr = walk("/usr/share/icons", name);
-		if (!qstr.isEmpty())
-			return resize48x48(QIcon(qstr));
-	}
-
 
 	// Create a new icon
 	if (arg_debug)
@@ -358,7 +325,7 @@ DefaultApp dapps[] = {
 	{ "deluge", "", "Deluge BitTorrent Client", "firejail deluge", "deluge" },
 	{ "qbittorrent", "", "qBittorrent Client", "firejail qbittorrent", "qbittorrent" },
 
-	// Viewers
+	// Tools and viewers
 	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
 	{ "qpdfview", "", "qPDFView", "firejail qpdfview", "qpdfview" },
 	{ "xpdf", "", "Xpdf", "firejail xpdf", "xpdf" },
@@ -374,6 +341,8 @@ DefaultApp dapps[] = {
 	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
 	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "/usr/share/calibre/images/lt.png" },
 	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
+	{ "galculator", "", "galculator", "firejail galculator", "galculator" },
+	{ "gnome-calculator", "", "Calculator", "firejail gnome-calculator", "gnome-calculator" },
 
 	// Media players, audio/video tools
 	{ "xplayer", "", "xplayer", "firejail xplayer", "xplayer" },
@@ -398,6 +367,10 @@ DefaultApp dapps[] = {
 	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
 	{ "digikam", "", "digiKam", "firejail digikam", "digikam" },
 	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer.png" },
+	{ "kdenlive", "", "Kdenlive", "firejail kdenlive", "kdenlive" },
+	{ "gedit", "", "gedit", "firejail gedit", "org.gnome.gedit" },
+	{ "krita", "", "krita", "firejail krita", "krita" },
+	{ "showfoto", "", "showfoto", "firejail showfoto", "showfoto" },
 
 
 	// Chat
