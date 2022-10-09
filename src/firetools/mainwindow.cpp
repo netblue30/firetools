@@ -33,7 +33,6 @@
 
 MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint) {
 	active_index_ = -1;
-	edit_index_ = -1;
 	animation_id_ = 0;
 //	stats_ = new StatsDialog();
 //	connect(this, SIGNAL(cycleReadySignal()), stats_, SLOT(cycleReady()));
@@ -84,8 +83,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 
 }
 
-void MainWindow::edit() {
 #if 0
+void MainWindow::edit() {
 	if (edit_index_ != -1) {
 		EditDialog *edit;
 
@@ -128,8 +127,8 @@ printf("%s\n", applist[active_index_].exec_.toLocal8Bit().constData());
 		show();
 		update();
 	}
-#endif
 }
+#endif
 
 // Remove application from the list
 void MainWindow::remove() {
@@ -457,18 +456,6 @@ void MainWindow::createLocalActions() {
 	QAction *separator1 = new QAction(this);
 	separator1->setSeparator(true);
 	addAction(separator1);
-
-//	qrun_ = new QAction(tr("&Run"), this);
-//	connect(qrun_, SIGNAL(triggered()), this, SLOT(run()));
-//	addAction(qrun_);
-
-//	qedit_ = new QAction(tr("&Edit"), this);
-//	connect(qedit_, SIGNAL(triggered()), this, SLOT(edit()));
-//	addAction(qedit_);
-
-//	qdelete_ = new QAction(tr("&Delete"), this);
-//	connect(qdelete_, SIGNAL(triggered()), this, SLOT(remove()));
-//	addAction(qdelete_);
 
 	qhelp_ = new QAction(tr("&Help"), this);
 	connect(qhelp_, SIGNAL(triggered()), this, SLOT(help()));

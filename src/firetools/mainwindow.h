@@ -43,7 +43,7 @@ public slots:
 	void trayActivated(QSystemTrayIcon::ActivationReason);
 	
 private slots:
-	void edit();
+//	void edit();
 	void remove();
 	void run();
 	void runTools();
@@ -66,7 +66,6 @@ private:
 	QAction *qhelp_;
 	int active_index_;
 	int animation_id_;
-	int edit_index_;
 	
 public:	
 	// tray
