@@ -296,8 +296,8 @@ QString StatsDialog::header() {
 	if (mode_ == MODE_TOP) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"about\">About</a>";
-		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"launcher\">Sandbox Launcher</a>";
-		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configuration Wizard</a>";
+//		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"launcher\">Sandbox Launcher</a>";
+		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configure New Sandbox</a>";
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fdns\">Firejail DNS</a>";
 		msg += "</td></tr></table>";
 	}
@@ -1361,11 +1361,11 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		arguments << "--nofiretools";
 		process->startDetached(QString("firejail-ui"), arguments);
 	}
-	else if (linkstr == "launcher") {
-		// start firejail-ui as a separate process
-		int rv = system("firetools &");
-		(void) rv;
-	}
+//	else if (linkstr == "launcher") {
+//		// start firejail-ui as a separate process
+//		int rv = system("firetools &");
+//		(void) rv;
+//	}
 	else { // linstr == "home"
 		pid_ = linkstr.toInt();
 		pid_initialized_ = false;

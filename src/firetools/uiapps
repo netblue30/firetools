@@ -8,8 +8,8 @@
 #
 
 # default apps for Firetools
-firetools;Firetools;:resources/fstats;PACKAGE_LIBDIR/fstats
-firejail-ui;Firejail Configuration Wizard;:resources/firejail-ui;firejail-ui
+firejail-ui;Configuration;:resources/firejail-ui;firejail-ui
+firetools;Statistics;:resources/fstats;PACKAGE_LIBDIR/fstats
 
 # Accessories
 fbreader;eBook Reader;FBReader

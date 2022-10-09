@@ -367,6 +367,13 @@ void applications_init() {
 		if (which(name) == false)
 			continue;
 
+		if (command && strncmp(command, "PACKAGE_LIBDIR", 14) == 0) {
+			char *newcmd;
+			if (asprintf(&newcmd, PACKAGE_LIBDIR "%s", command + 14) == -1)
+				errExit("asprintf");
+			command = newcmd;
+		}
+
 		// is there a user config file?
 		if (have_config_file(name))
 			applist.append(Application(name));
