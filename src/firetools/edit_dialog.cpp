@@ -40,8 +40,8 @@ EditDialog::EditDialog(QString name, QString desc, QString cmd): QDialog() {
 	lname->setText(tr("Name"));
 	name_ = new QLineEdit;
 	name_->setText(name);
-	if (applications_check_default(name.toLocal8Bit().data()))
-		name_->setEnabled(false);
+//	if (applications_check_default(name.toLocal8Bit().data()))
+//		name_->setEnabled(false);
 
 	QLabel *ldesc = new QLabel;
 	ldesc->setText(tr("Description"));

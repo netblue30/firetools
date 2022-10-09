@@ -28,21 +28,22 @@
 #include <QPainter>
 QList<Application> applist;
 
-Application::Application(const char *name, const char *description, const char *exec, const char *icon):
-	name_(name), description_(description), exec_(exec), icon_(icon) {
+Application::Application(const char *name, const char *description, const char *icon, const char *exec):
+	name_(name), description_(description), icon_(icon), exec_(exec) {
 
 	app_icon_ = loadIcon(icon_);
+	if (exec == NULL || strlen(exec) == 0)
+		exec_ = QString("firejail ") + name;
 };
 
-Application::Application(QString name, QString description, QString exec, QString icon):
-	name_(name), description_(description), exec_(exec), icon_(icon) {
-
+Application::Application(QString name, QString description, QString icon, QString exec):
+	name_(name), description_(description), icon_(icon), exec_(exec) {
 	app_icon_ = loadIcon(icon_);
 };
 
 // Load an application from a desktop file
 Application::Application(const char *name):
-	name_(name), description_("unknown"), exec_("unknown"), icon_("unknown") {
+	name_(name), description_("unknown"),icon_("unknown"),  exec_("unknown") {
 
 	// retrieve desktop file
 	if (!have_config_file(name))
@@ -290,131 +291,6 @@ QIcon Application::loadIcon(QString name) {
 }
 
 
-// Default application configurations for the app launcher
-struct DefaultApp {
-	const char *name;
-	const char *alias;
-	const char *description;
-	const char *command;
-	const char *icon;
-};
-
-DefaultApp dapps[] = {
-	// Firetools
-	{ "firetools", "", "Firetools", PACKAGE_LIBDIR "/fstats", ":resources/fstats" },
-	{ "firejail-ui", "", "Firejail Configuration Wizard", "firejail-ui", ":resources/firejail-ui" },
-
-	// Web browsers
-	{ "iceweasel", "", "Debian Iceweasel", "firejail iceweasel", ":resources/firefox" },
-	{ "firefox", "iceweasel", "Mozilla Firefox", "firejail firefox", ":resources/firefox"},
-	{ "icecat", "firefox", "GNU IceCat", "firejail icecat", ":resources/firefox"},
-	{ "chromium", "", "Chromium Web Browser", "firejail chromium", "chromium"},
-	{ "chromium-browser", "chromium", "Chromium Web Browser", "firejail chromium-browser", "chromium-browser"},
-	{ "google-chrome", "", "Google Chrome", "firejail google-chrome", "google-chrome"},
-	{ "midori", "", "Midori Web Browser", "firejail midori", "midori" },
-	{ "opera", "", "Opera Web Browser", "firejail opera", "opera" },
-	{ "netsurf", "", "Netsurf Web Browser", "firejail netsurf", "netsurf" },
-
-	// Email clients
-	{ "icedove", "", "Debian Icedove", "firejail icedove", ":resources/icedove" },
-	{ "thunderbird", "icedove","Thunderbird", "firejail thunderbird", "thunderbird" },
-
-	// Bittorrent
-	{ "transmission-gtk", "", "Transmission BitTorrent Client", "firejail transmission-gtk", "transmission" },
-	{ "transmission-qt", "transmission-gtk", "Transmission BitTorrent Client", "firejail transmission-qt", "transmission" },
-	{ "deluge", "", "Deluge BitTorrent Client", "firejail deluge", "deluge" },
-	{ "qbittorrent", "", "qBittorrent Client", "firejail qbittorrent", "qbittorrent" },
-
-	// Tools and viewers
-	{ "evince", "", "Evince PDF viewer", "firejail evince", "evince" },
-	{ "qpdfview", "", "qPDFView", "firejail qpdfview", "qpdfview" },
-	{ "xpdf", "", "Xpdf", "firejail xpdf", "xpdf" },
-	{ "fbreader", "", "eBook reader", "firejail fbreader", "FBReader" },
-	{ "cherrytree", "", "CherryTree note taking application", "firejail cherrytree", "cherrytree"},
-	{ "gpicview", "", "GPicView", "firejail gpicview", "gpicview" },
-	{ "gthumb", "", "gThumbView", "firejail gthumb", "gthumb" },
-	{ "okular", "", "Okular", "firejail okular", "okular" },
-	{ "eom", "", "Eye of MATE", "firejail eom", "eom" },
-	{ "eog", "", "Eye of Gnome", "firejail eog", "eog" },
-	{ "pix", "", "Pix", "firejail pix", "pix" },
-	{ "xviewer", "", "xviewer", "firejail xviewer", "xviewer" },
-	{ "gwenview", "", "Gwenview", "firejail gwenview", "gwenview" },
-	{ "calibre", "", "Calibre eBook reader", "firejail calibre", "/usr/share/calibre/images/lt.png" },
-	{ "xreader", "", "xreader", "firejail xreader", "xreader" },
-	{ "galculator", "", "galculator", "firejail galculator", "galculator" },
-	{ "gnome-calculator", "", "Calculator", "firejail gnome-calculator", "gnome-calculator" },
-
-	// Media players, audio/video tools
-	{ "xplayer", "", "xplayer", "firejail xplayer", "xplayer" },
-	{ "vlc", "", "VideoLAN Client", "firejail vlc", "vlc" },
-	{ "amarok", "", "Amarok", "firejail amarok", "amarok" },
-	{ "dragon", "", "Dragon Player", "firejail dragon", "dragonplayer" },
-	{ "rhythmbox", "", "Rhythmbox", "firejail rhythmbox", "rhythmbox" },
-	{ "totem", "", "Totem", "firejail totem", "totem" },
-	{ "audacious", "", "Audacious", "firejail audacious", "audacious" },
-	{ "gnome-mplayer", "", "GNOME MPlayer", "firejail gnome-mplayer", "gnome-mplayer" },
-	{ "clementine", "", "Clementine", "firejail clementine", "application-x-clementine" },
-	{ "deadbeef", "", "DeaDBeeF", "firejail deadbeef", "deadbeef" },
-	{ "mpv", "", "MPV", "firejail mpv  --player-operation-mode=pseudo-gui", "mpv" },
-	{ "smplayer", "", "SMPlayer", "firejail smplayer", "smplayer" },
-	{ "kino", "", "Kino", "firejail kino", "kino" },
-	{ "ghb", "", "HandBrake", "firejail ghb", "hb-icon" },
-	{ "audacity", "", "Audacity", "firejail audacity", "audacity" },
-
-	// Editors
-	{ "gimp", "", "Gimp", "firejail gimp", "gimp" },
-	{ "inkscape", "", "Inkscape", "firejail inkscape", "inkscape" },
-	{ "openshot", "", "OpenShot video editor", "firejail openshot", "openshot" },
-	{ "digikam", "", "digiKam", "firejail digikam", "digikam" },
-	{ "lowriter", "", "LibreOffice Writer", "firejail lowriter", ":resources/libreoffice-writer.png" },
-	{ "kdenlive", "", "Kdenlive", "firejail kdenlive", "kdenlive" },
-	{ "gedit", "", "gedit", "firejail gedit", "org.gnome.gedit" },
-	{ "krita", "", "krita", "firejail krita", "krita" },
-	{ "showfoto", "", "showfoto", "firejail showfoto", "showfoto" },
-
-
-	// Chat
-	{ "signal-desktop", "", "Signal", "firejail signal-desktop", ":resources/signal-desktop.png" },
-	{ "pidgin", "", "Pidgin", "firejail pidgin", "pidgin" },
-	{ "xchat", "", "XChat", "firejail xchat", "xchat" },
-	{ "hexchat", "", "HexChat", "firejail hexchat", "hexchat" },
-	{ "quassel", "", "Quassel IRC", "firejail quassel", "quassel" },
-	{ "empathy", "", "Empathy", "firejail empathy", "empathy" },
-
-	// Etc
-	{ "filezilla", "", "FileZilla", "firejail filezilla", "filezilla" },
-	{ "xterm", "", "xterm", "firejail xterm", ":resources/gnome-terminal.png" },
-	{ "urxvt", "", "rxvt-unicode", "firejail urxvt", "urxvt" },
-
-	// Pw managers
-	{ "keepass", "", "keepass", "firejail keepass", "keepass" },
-	{ "keepass2", "", "keepass2", "firejail keepass2", "keepass2" },
-	{ "keepassx", "", "keepassx", "firejail keepassx", "keepassx" },
-	{ "keepassx2", "", "keepassx2", "firejail keepassx2", "keepassx2" },
-	{ "keepassxc", "", "keepassxc", "firejail keepassxc", "keepassxc" },
-
-	// Games
-	{ "0ad", "", "0AD", "firejail 0ad", "0ad" },
-	{ "warzone2100", "", "Warzone 2100", "firejail warzone2100", "warzone2100" },
-	{ "etr", "", "Extreme Tux Racer", "firejail etr", "etr" },
-	{ "supertux2", "", "Super Tux", "firejail supertux2", "supertux" },
-	{ "frozen-bubble", "", "Frozen-Bubble", "firejail frozen-bubble", "frozen-bubble" },
-	{ "2048-qt", "", "2048", "firejail 2048-qt", "2048-qt" },
-	{ "pingus", "", "Pingus", "firejail pingus", "pingus" },
-
-	{ 0, 0, 0, 0, 0 }
-};
-
-bool applications_check_default(const char *name) {
-	DefaultApp *app = &dapps[0];
-	while (app->name != NULL) {
-		if (strcmp(app->name, name) == 0)
-			return true;
-		app++;
-	}
-
-	return false;
-}
 
 bool applist_check(QString name) {
 	QList<Application>::iterator it;
@@ -426,13 +302,6 @@ bool applist_check(QString name) {
 	return false;
 }
 
-void applications_print() {
-	DefaultApp *app = &dapps[0];
-	while (app->name != NULL) {
-		printf("\t%s\n", app->name);
-		app++;
-	}
-}
 
 void applist_print() {
 	QList<Application>::iterator it;
@@ -446,31 +315,65 @@ void applications_init() {
 	if (arg_debug)
 		printf("Loading default applications\n");
 
-	DefaultApp *app = &dapps[0];
-	while (app->name != 0) {
-		if (arg_debug)
-			printf("checking %s\n", app->name);
+
+	FILE *fp = fopen( PACKAGE_LIBDIR "/uiapps", "r");
+	if (!fp) {
+		fprintf(stderr, "Error: cannot find the application list; Firetools was not properly installed\n");
+		exit(1);
+	}
+
+	char buf[1024];
+	int line = 0;
+	while (fgets(buf, sizeof(buf), fp)) {
+		line++;
+
+		// comment
+		if (*buf == '#')
+			continue;
+		char *ptr = strchr(buf, '\n');
+		if (ptr)
+			*ptr = '\0';
+		char *name = buf;
+		while (*name == ' ' || *name == '\t')
+			name++;
+		if (*name == '\0')
+			continue;
+		ptr = strchr(name, ';');
+		if (!ptr) {
+			fprintf(stderr, "Error: invalid line %d in %s\n", line, PACKAGE_LIBDIR "/uiapps");
+			exit(1);
+		}
+		*ptr++ = '\0';
+		char *description = ptr;
+		ptr = strchr(description, ';');
+		if (!ptr) {
+			fprintf(stderr, "Error: invalid line %d in %s\n", line, PACKAGE_LIBDIR "/uiapps");
+			exit(1);
+		}
+		*ptr++ = '\0';
+		char *icon = ptr;
+		char *command = NULL;
+		ptr = strchr(icon, ';');
+		if (ptr) {
+			*ptr++ = '\0';
+			command = ptr;
+		}
+		if (arg_debug) {
+			printf("checking #%s#%s#%s#%s\n",
+				name, description, icon, (command)? command: "");
+		}
 
 		// do we have the program?
-		if (which(app->name) == false) {
-			app++;
+		if (which(name) == false)
 			continue;
-		}
-
-		// is there an alias?
-		if (*app->alias != '\0' && which(app->alias)) {
-			app++;
-			continue;
-		}
 
 		// is there a user config file?
-		if (have_config_file(app->name))
-			applist.append(Application(app->name));
+		if (have_config_file(name))
+			applist.append(Application(name));
 		else
-			applist.append(Application(app->name, app->description, app->command, app->icon));
-
-		app++;
+			applist.append(Application(name, description, icon, command));
 	}
+	fclose(fp);
 
 	// load user apps from home directory
 	char *home = get_home_directory();
@@ -510,6 +413,7 @@ void applications_init() {
 		// check if the app is in default list
 		fflush(0);
 		*ending = '\0';
+#if 0
 		DefaultApp *app = &dapps[0];
 		bool found = false;
 		while (app->name != 0) {
@@ -523,7 +427,7 @@ void applications_init() {
 			free(fname);
 			continue;
 		}
-
+#endif
 		// load file
 		applist.append(Application(fname));
 		free(fname);

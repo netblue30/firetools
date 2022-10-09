@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 }
 
 void MainWindow::edit() {
+#if 0
 	if (edit_index_ != -1) {
 		EditDialog *edit;
 
@@ -112,7 +113,7 @@ void MainWindow::edit() {
 
 		// existing entry
 		else {
-//printf("%s\n", applist[active_index_].exec_.toLocal8Bit().constData());
+printf("%s\n", applist[active_index_].exec_.toLocal8Bit().constData());
 			edit = new EditDialog(applist[active_index_].name_, applist[active_index_].description_, applist[active_index_].exec_);
 			if (QDialog::Accepted == edit->exec()) {
 				applist[active_index_].name_ = edit->getName();
@@ -128,6 +129,7 @@ void MainWindow::edit() {
 		show();
 		update();
 	}
+#endif
 }
 
 // Remove application from the list
@@ -243,10 +245,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 		else {
 			qrun_->setDisabled(false);
 			qedit_->setDisabled(false);
-			if (applications_check_default(applist[active_index_].name_.toLocal8Bit().constData()))
-				qdelete_->setDisabled(true);
-			else
-				qdelete_->setDisabled(false);
+//			if (applications_check_default(applist[active_index_].name_.toLocal8Bit().constData()))
+//				qdelete_->setDisabled(true);
+//			else
+//				qdelete_->setDisabled(false);
 		}
 	}
 }
