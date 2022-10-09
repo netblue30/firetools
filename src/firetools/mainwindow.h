@@ -63,10 +63,7 @@ private:
 	
 private:
 	QPoint dragPosition_;
-	QAction *qedit_;
-	QAction *qrun_;
 	QAction *qhelp_;
-	QAction *qdelete_;
 	int active_index_;
 	int animation_id_;
 	int edit_index_;

@@ -30,7 +30,6 @@
 #include "mainwindow.h"
 #include "../common/utils.h"
 #include "applications.h"
-#include "edit_dialog.h"
 
 MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint) {
 	active_index_ = -1;
@@ -231,25 +230,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 	}
 
 	else if (event->button() == Qt::RightButton) {
-		active_index_ = applications_get_index(event->pos());
-		edit_index_ = active_index_;
-		if (active_index_ == -1) {
-			qrun_->setDisabled(true);
-			edit_index_ = applications_get_position(event->pos());
-			if (edit_index_ == -1)
-				qedit_->setDisabled(true);
-			else
-				qedit_->setDisabled(false);
-			qdelete_->setDisabled(true);
-		}
-		else {
-			qrun_->setDisabled(false);
-			qedit_->setDisabled(false);
-//			if (applications_check_default(applist[active_index_].name_.toLocal8Bit().constData()))
-//				qdelete_->setDisabled(true);
-//			else
-//				qdelete_->setDisabled(false);
-		}
 	}
 }
 
@@ -478,17 +458,17 @@ void MainWindow::createLocalActions() {
 	separator1->setSeparator(true);
 	addAction(separator1);
 
-	qrun_ = new QAction(tr("&Run"), this);
-	connect(qrun_, SIGNAL(triggered()), this, SLOT(run()));
-	addAction(qrun_);
+//	qrun_ = new QAction(tr("&Run"), this);
+//	connect(qrun_, SIGNAL(triggered()), this, SLOT(run()));
+//	addAction(qrun_);
 
-	qedit_ = new QAction(tr("&Edit"), this);
-	connect(qedit_, SIGNAL(triggered()), this, SLOT(edit()));
-	addAction(qedit_);
+//	qedit_ = new QAction(tr("&Edit"), this);
+//	connect(qedit_, SIGNAL(triggered()), this, SLOT(edit()));
+//	addAction(qedit_);
 
-	qdelete_ = new QAction(tr("&Delete"), this);
-	connect(qdelete_, SIGNAL(triggered()), this, SLOT(remove()));
-	addAction(qdelete_);
+//	qdelete_ = new QAction(tr("&Delete"), this);
+//	connect(qdelete_, SIGNAL(triggered()), this, SLOT(remove()));
+//	addAction(qdelete_);
 
 	qhelp_ = new QAction(tr("&Help"), this);
 	connect(qhelp_, SIGNAL(triggered()), this, SLOT(help()));
