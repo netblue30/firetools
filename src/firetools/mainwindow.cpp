@@ -83,52 +83,6 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 
 }
 
-#if 0
-void MainWindow::edit() {
-	if (edit_index_ != -1) {
-		EditDialog *edit;
-
-		// new entry
-		if (active_index_ == -1) {
-			edit = new EditDialog("", "", "");
-			if (QDialog::Accepted == edit->exec()) {
-				// check if the sandbox already exists
-				QString name = edit->getName();
-				if (applist_check(name) == false && applications_check_default(name.toLocal8Bit().constData()) == false) {
-					Application app(edit->getName(), edit->getDescription(), edit->getCommand(), edit->getName());
-					app.saveConfig();
-					applist.append(app);
-					if (arg_debug) {
-						printf("Application added:\n");
-						applist_print();
-					}
-				}
-				else
-					QMessageBox::critical(this, tr("Firejail Tools"),
-						tr("<br/>Sandbox already defined.<br/><br/><br/>"));
-			}
-		}
-
-		// existing entry
-		else {
-printf("%s\n", applist[active_index_].exec_.toLocal8Bit().constData());
-			edit = new EditDialog(applist[active_index_].name_, applist[active_index_].description_, applist[active_index_].exec_);
-			if (QDialog::Accepted == edit->exec()) {
-				applist[active_index_].name_ = edit->getName();
-				applist[active_index_].description_ = edit->getDescription();
-				applist[active_index_].exec_ = edit->getCommand();
-				applist[active_index_].saveConfig();
-			}
-		}
-		delete edit;
-
-		// update
-		hide();
-		show();
-		update();
-	}
-}
-#endif
 
 // Remove application from the list
 void MainWindow::remove() {

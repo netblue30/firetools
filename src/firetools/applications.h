@@ -33,8 +33,8 @@
 struct Application {
 	QString name_;
 	QString description_;
-	QString exec_;
 	QString icon_;
+	QString exec_;
 	QIcon app_icon_;
 	
 	Application(const char *name, const char *description, const char *exec, const char *icon);
