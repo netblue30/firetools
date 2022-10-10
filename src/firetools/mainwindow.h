@@ -43,29 +43,25 @@ public slots:
 	void trayActivated(QSystemTrayIcon::ActivationReason);
 	
 private slots:
-//	void edit();
-	void remove();
-	void run();
 	void runTools();
 	void help();
 	void main_quit();
 	void newSandbox();
 	void runAbout();
 
-signals:
-	void cycleReadySignal();
-
-	
-
 private:
     	void createTrayActions();
    	void createLocalActions();
+	int app_get_index(QPoint pos);
 	
 private:
 	QPoint dragPosition_;
 	QAction *qhelp_;
 	int active_index_;
 	int animation_id_;
+	
+	int app_cnt_; // number of applications
+	int cols_; // number of columns
 	
 public:	
 	// tray

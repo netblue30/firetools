@@ -41,14 +41,14 @@ PidThread::~PidThread() {
 static void store(int pid, int interval, int clocktick) {
 	assert(pid < max_pids);
 	DbPid *dbpid = Db::instance().findPid(pid);
-	
+
 	if (!dbpid) {
 		dbpid = Db::instance().newPid(pid);
 	}
 	assert(dbpid);
 
 	int cycle = Db::instance().getCycle();
-	
+
 	// store the data in database
 	DbStorage *st = &dbpid->data_4min_[cycle];
 	st->cpu_ = (float) ((pids[pid].utime + pids[pid].stime) * 100) / (interval * clocktick);
@@ -59,10 +59,10 @@ static void store(int pid, int interval, int clocktick) {
 
 	if (!dbpid->isConfigured()) {
 		if (arg_debug)
-			printf("configuring dbpid for sandbox %d\n", pid);		
+			printf("configuring dbpid for sandbox %d\n", pid);
 		// user id
 		dbpid->setUid(pids[pid].uid);
-		
+
 		// check network namespace
 		char *name;
 		if (asprintf(&name, "/run/firejail/network/%d-netmap", pid) == -1)
@@ -70,14 +70,14 @@ static void store(int pid, int interval, int clocktick) {
 		struct stat s;
 		if (stat(name, &s) == 0) {
 			dbpid->setNetworkDisabled(false);
-		}		
+		}
 		else {
 			dbpid->setNetworkDisabled(true);
-		}	
+		}
 		free(name);
-		
+
 		// command line
-		char *cmd =  pid_proc_cmdline(pid);;			
+		char *cmd =  pid_proc_cmdline(pid);;
 		dbpid->setCmd(cmd);
 		free(cmd);
 		dbpid->setConfigured();
@@ -87,7 +87,7 @@ static void store(int pid, int interval, int clocktick) {
 // remove closed processes from database
 static void clear() {
 	DbPid *dbpid = Db::instance().firstPid();
-	
+
 	while (dbpid) {
 		DbPid *next = dbpid->getNext();
 		pid_t pid = dbpid->getPid();
@@ -106,14 +106,14 @@ void PidThread::run() {
 	int pgsz = getpagesize();
 	int clocktick = sysconf(_SC_CLK_TCK);
 	bool first = true;
-	
+
 	while (1) {
 		if (ending_)
 			break;
 
 		// initialize process table - start with an empty proc table
 		pid_read(0);
-		
+
 		// start cpu and network measurements
 		unsigned utime = 0;
 		unsigned stime = 0;
@@ -131,8 +131,8 @@ void PidThread::run() {
 				pids[i].tx = tx;
 			}
 		}
-		
-		
+
+
 		if (!first) {
 			// sleep 5 seconds
 			msleep(500);
@@ -141,10 +141,10 @@ void PidThread::run() {
 		}
 		else
 			first = false;
-		
+
 		// start a new database cycle
 		Db::instance().newCycle();
-		
+
 timetrace_start();
 		// read the cpu time again, memory
 		for (int i = pids_first; i  <= pids_last; i++) {
@@ -160,12 +160,12 @@ timetrace_start();
 					pids[i].utime = utime - pids[i].utime;
 				else
 					pids[i].utime = 0;
-					
+
 				if (pids[i].stime <= stime)
 					pids[i].stime = stime - pids[i].stime;
 				else
 					pids[i].stime = 0;
-				
+
 				// memory
 				unsigned rss;
 				unsigned shared;
@@ -175,7 +175,7 @@ timetrace_start();
 //printf("get mem sandbox %d, %.02f ms\n", i, delta);
 				pids[i].rss = rss * pgsz / 1024;
 				pids[i].shared = shared * pgsz / 1024;
-				
+
 				// network
 				// todo: speedup
 				DbPid *dbpid = Db::instance().findPid(i);
@@ -188,38 +188,39 @@ timetrace_start();
 						pids[i].rx = rx - pids[i].rx;
 					else
 						pids[i].rx = 0;
-					
+
 					if (tx > pids[i].tx)
 						pids[i].tx = tx - pids[i].tx;
 					else
 						pids[i].tx = 0;
-				
+
 				}
 				else {
 					pids[i].rx = 0;
 					pids[i].tx = 0;
 				}
-				
+
 				store(i, 1, clocktick);
 			}
 		}
-//float delta = timetrace_end();
-//printf("all %.02f ms\n", delta);
+float delta = timetrace_end();
+if (arg_debug)
+	printf("all %.02f ms, pid from %d to %d\n", delta, pids_first, pids_last);
 		// remove closed process entries from database
 		clear();
 
 		// 4min to 1h transfer
 		if (Db::instance().getG1HCycleDelta() == 0) {
 //printf("transfer 75 sec data\n");
-//Db::instance().dbgprintcycle();			
-			
+//Db::instance().dbgprintcycle();
+
 			// for each pid
 			DbPid *dbpid = Db::instance().firstPid();
 			while (dbpid) {
 //printf("processing pid %d, 1h cycle\n", dbpid->getPid());
 				int cycle = Db::instance().getCycle();
 				int g1hcycle = Db::instance().getG1HCycle();
-			
+
 				DbStorage result;
 				for (int i = 0; i < DbPid::G1HCYCLE_DELTA; i++) {
 					result += dbpid->data_4min_[cycle];
@@ -234,7 +235,7 @@ timetrace_start();
 //printf("processing pid %d, 12h cycle\n", dbpid->getPid());
 					int g12hcycle = Db::instance().getG12HCycle();
 					g1hcycle = Db::instance().getG1HCycle();
-				
+
 					DbStorage result2;
 					for (int i = 0; i < DbPid::G12HCYCLE_DELTA; i++) {
 						result2 += dbpid->data_1h_[g1hcycle];
@@ -250,7 +251,7 @@ timetrace_start();
 			}
 		}
 
-		
+
 //		Db::instance().dbgprint();
 		emit cycleReady();
 		data_ready = true;

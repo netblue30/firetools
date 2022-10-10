@@ -33,23 +33,19 @@
 struct Application {
 	QString name_;
 	QString description_;
-	QString icon_;
 	QString exec_;
 	QIcon app_icon_;
 	
-	Application(const char *name, const char *description, const char *exec, const char *icon);
-	Application(QString name, QString description, QString exec, QString icon);
-	Application(const char *name);
-	
-	QIcon loadIcon(QString name);
-	int saveConfig();
+	Application(const char *name, const char *description, const char *exec, QIcon app_icon):
+		name_(name), description_(description), exec_(exec), app_icon_(app_icon) {
+		
+		if (exec == NULL || strlen(exec) == 0)
+			exec_ = QString("firejail ") + name;
+	}	
 };
 
 extern QList<Application> applist;
-void applications_init();
-int applications_get_index(QPoint pos);
-int applications_get_position(QPoint pos);
-bool applications_check_default(const char *name);
+int applications_init(const char *fname);
 bool applist_check(QString name);
 void applications_print();
 void applist_print();

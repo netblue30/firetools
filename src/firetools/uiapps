@@ -2,7 +2,7 @@
 #
 # Each line defines an application, with semicolons separated fields as follows:
 #
-#       executable; description; icon; (optional) command for starting Firejail
+#       executable; description; icon; command for starting Firejail (optional)
 #
 # Comments starting in #
 #
@@ -12,96 +12,120 @@ firejail-ui;Configuration;:resources/firejail-ui;firejail-ui
 firetools;Statistics;:resources/fstats;PACKAGE_LIBDIR/fstats
 
 # Accessories
-fbreader;eBook Reader;FBReader
-cherrytree;CherryTree Note Taking Application;cherrytree
-gpicview;GPicView Image Viewer;gpicview
-gthumb;gThumb Image Viewer;gthumb
-okular;Okular Universal Document Viewer;okular
-eom;Eye of MATE Image Viewer;eom
-eog;Eye of Gnome Image Viewer;eog
-pix;Pix Image Management Application;pix
-xviewer;xviewer Image Viewer;xviewer
-gwenview;Gwenview Image Viewer;gwenview
 calibre;Calibre eBook Reader;/usr/share/calibre/images/lt.png
-xreader;Xreader Document Viewer;xreader
+cherrytree;CherryTree Note Taking Application;cherrytree
+eog;Eye of Gnome Image Viewer;eog
+eom;Eye of MATE Image Viewer;eom
+fbreader;eBook Reader;FBReader
 galculator;Calculator;galculator
 gnome-calculator;Gnome Calculator;gnome-calculator
+gpicview;GPicView Image Viewer;gpicview
+gthumb;gThumb Image Viewer;gthumb
+gwenview;Gwenview Image Viewer;gwenview
 kcalc;KDE Calculator;kcalc
-xterm;xterm Terminal;:resources/gnome-terminal.png
-urxvt;rxvt-unicode Terminal;urxvt
 keepass;KeePass Pasword Manager;keepass
 keepass2;KeePass2 Pasword Manager;keepass2
 keepassx;KeePassX Pasword Manager;keepassx
 keepassx2;KeePassX2 Pasword Manager;keepassx2
 keepassxc;KeePassXC Pasword Manager;keepassxc
+pix;Pix Image Management Application;pix
+urxvt;rxvt-unicode Terminal;urxvt
+xviewer;xviewer Image Viewer;xviewer
+xreader;Xreader Document Viewer;xreader
+xterm;xterm Terminal;:resources/gnome-terminal.png
 
 # Games
 0ad;0AD Game;0ad
-warzone2100;Warzone 2100 Game;warzone2100
-etr;Extreme Tux Racer Game;etr
-supertux2;Super Tux Game;supertux
-frozen-bubble;Frozen-Bubble Game;frozen-bubble
 2048-qt;2048 Game;2048-qt
+3Dc;Play chess across 3 boards!;3dchess
+etr;Extreme Tux Racer Game;etr
+frozen-bubble;Frozen-Bubble Game;frozen-bubble
 pingus;Pingus Game;pingus
+supertux2;Super Tux Game;supertux
+warzone2100;Warzone 2100 Game;warzone2100
 
 # Graphics
+digikam;digiKam Photo Editor;digikam
 gimp;Gimp Graphic Editor;gimp
 inkscape;Inkscape SVG Editor;inkscape
-openshot;OpenShot Video Editor;openshot
-digikam;digiKam Photo Editor;digikam
-kdenlive;Kdenlive Video Editor;kdenlive
+kolourpaint;KolourPaint Image Editor;kolourpaint
+kamoso;KDE Camera Utility;kamoso
 krita;krita Graphic Editor;krita
+openshot;OpenShot Video Editor;openshot
 showfoto;showfoto Image Viewer and Editor;showfoto
 
 # Internet
-iceweasel;Debian Iceweasel;:resources/firefox
-firefox;Mozilla Firefox;:resources/firefox
-icecat;GNU IceCat;:resources/firefox
+akregator;RSS/Atom Feed Aggregator;akregator
 chromium;Chromium Web Browser;chromium
 chromium-browser;Chromium Web Browser;chromium-browser
+deluge;Deluge BitTorrent Client;deluge
+empathy;Empathy Messaging Client;empathy
+falcon;Falcon Web Browser;falcon
+filezilla;FileZilla File Transfer Application;filezilla
+firefox;Mozilla Firefox;:resources/firefox
+hexchat;HexChat Messaging Client;hexchat
+icecat;GNU IceCat;:resources/firefox
+icedove;Debian Icedove Email Client;:resources/icedove
+iceweasel;Debian Iceweasel;:resources/firefox
 google-chrome;Google Chrome;google-chrome
 midori;Midori Web Browser;midori
-opera;Opera Web Browser;opera
 netsurf;Netsurf Web Browser;netsurf
-icedove;Debian Icedove Email Client;:resources/icedove
+opera;Opera Web Browser;opera
+pidgin;Pidgin Messaging Client;pidgin
+qbittorrent;qBittorrent Client;qbittorrent
+quassel;Quassel IRC Client;quassel
+signal-desktop;Signal Messenger;:resources/signal-desktop.png
 thunderbird;Thunderbird Email Client;thunderbird
 transmission-gtk;Transmission BitTorrent Client;transmission
 transmission-qt;Transmission BitTorrent Client;transmission
-deluge;Deluge BitTorrent Client;deluge
-qbittorrent;qBittorrent Client;qbittorrent
-signal-desktop;Signal Messenger;:resources/signal-desktop.png
-pidgin;Pidgin Messaging Client;pidgin
 xchat;XChat Messaging Client;xchat
-hexchat;HexChat Messaging Client;hexchat
-quassel;Quassel IRC Client;quassel
-empathy;Empathy Messaging Client;empathy
-filezilla;FileZilla File Transfer Application;filezilla
 
 # Office
+abiword;Abiword Word Processor;abiword
+emacs;GNU Emacs Text Editor;emacs
 evince;Evince PDF Viewer;evince
-qpdfview;qPDFView PDF Viewer;qpdfview
-xpdf;Xpdf PDF Viewer;xpdf
-lowriter;LibreOffice Writer;:resources/libreoffice-writer.png
 gedit;GNOME Text Eeditor;org.gnome.gedit
-emacs;Emacs Text Editor;emacs
+jedit;jEdit Text Editor;jedit
+kate;Kate Text Editor;kate
+kile;Kile KDE Integrated LaTeX Environment;kile
 kwrite;KDE Text Editor;kwrite
+leafpad;leafpad Text Editor;leafpad
+lowriter;LibreOffice Writer;:resources/libreoffice-writer.png
+mousepad;Mousepad Text Editor;accessories-text-editor
+okular;Okular Universal Document Viewer;okular
+qpdfview;qPDFView PDF Viewer;qpdfview
+scribus;Scribus Page Layout Program;scribus
+xpdf;Xpdf PDF Viewer;xpdf
 
 # Sound and video
-mpv;MPV Media Player;mpv;firejail mpv  --player-operation-mode=pseudo-gui
-xplayer;Xplayer Media Player;xplayer
-vlc;VideoLAN Client;vlc
 amarok;Amarok Media Player;amarok
-dragon;Dragon Player;dragonplayer
-rhythmbox;Rhythmbox Media Player;rhythmbox
-totem;Totem Media Player;totem
 audacious;Audacious Media Player;audacious
-gnome-mplayer;GNOME Media Player;gnome-mplayer
-clementine;Clementine Media Player;application-x-clementine
-smplayer;SMPlayer Media Player;smplayer
-kino;Kino Video Player;kino
-ghb;HandBrake Media Convertor;hb-icon
 audacity;Audacity Sound Editor;audacity
+audex;Audio Ripper;audex
+clementine;Clementine Media Player;application-x-clementine
+dragon;Dragon Player;dragonplayer
+elisa;Simple KDE Music Player;elisa
+ghb;HandBrake Media Convertor;hb-icon
+gnome-mplayer;GNOME Media Player;gnome-mplayer
+haruna;Haruna Video Player;haruna
 k3b;K3b CD/DVD Burning/Riping Application;k3b
 kaffeine;Kaffeine Media Player;kaffeine
+kdenlive;Kdenlive Video Editor;kdenlive
+kget;KDE Download Manager;kget
+kid3;KDE Audio Tagger;kid3
+kino;Kino Video Player;kino
+kmail;KMail Email Client;kmail
+kmix;KDE Sound Channel Mixer;kmix
 kmplayer;KDE Multimedia Player;kmplayer
+konqueror;Konqueror Web Browser;konqueror
+konversation;Konversation IRC Client;konversation
+kopete;Kopete Instant Messaging;kopete
+ktorrent;Ktorrent BitTorrent Client;ktorrent
 kwave;KWave Sound Editor;kwave
+mpv;MPV Media Player;mpv;firejail mpv  --player-operation-mode=pseudo-gui
+rhythmbox;Rhythmbox Media Player;rhythmbox
+smplayer;SMPlayer Media Player;smplayer
+subtitlecomposer;KDE Subtitle Composer;subtitlecomposer
+totem;Totem Media Player;totem
+vlc;VideoLAN Client;vlc
+xplayer;Xplayer Media Player;xplayer

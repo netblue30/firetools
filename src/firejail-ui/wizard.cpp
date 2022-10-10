@@ -66,7 +66,7 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 
 	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setWindowTitle(tr("Firejail Configuration Wizard"));
+	setWindowTitle(tr("Firetools Config"));
 
 	setWizardStyle(QWizard::MacStyle);
 	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));

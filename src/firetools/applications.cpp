@@ -20,99 +20,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <pwd.h>
 #include "firetools.h"
 #include "applications.h"
 #include "../common/utils.h"
 #include "../../firetools_config_extras.h"
 #include <QDirIterator>
 #include <QPainter>
+
 QList<Application> applist;
-
-Application::Application(const char *name, const char *description, const char *icon, const char *exec):
-	name_(name), description_(description), icon_(icon), exec_(exec) {
-
-	app_icon_ = loadIcon(icon_);
-	if (exec == NULL || strlen(exec) == 0)
-		exec_ = QString("firejail ") + name;
-};
-
-Application::Application(QString name, QString description, QString icon, QString exec):
-	name_(name), description_(description), icon_(icon), exec_(exec) {
-	app_icon_ = loadIcon(icon_);
-};
-
-// Load an application from a desktop file
-Application::Application(const char *name):
-	name_(name), description_("unknown"),icon_("unknown"),  exec_("unknown") {
-
-	// retrieve desktop file
-	if (!have_config_file(name))
-		return;
-	char *fname = get_config_file_name(name);
-	if (!fname)
-		return;
-
-	if (arg_debug)
-		printf("loading %s\n", fname);
-
-	// open file
-	FILE *fp = fopen(fname, "r");
-	if (!fp) {
-		free(fname);
-		return;
-	}
-	free(fname);
-
-	// read file
-#define MAXBUF 10000
-	char buf[MAXBUF];
-	while (fgets(buf, MAXBUF, fp)) {
-		// remove '\n'
-		char *ptr = strchr(buf, '\n');
-		if (ptr)
-			*ptr = '\0';
-
-		// skip blancs
-		char *start = buf;
-		while (*start == ' ' || *start == '\t')
-			start++;
-
-		// parse
-		if (strncmp(buf, "Comment=", 8) == 0)
-				description_ = buf + 8;
-		else if (strncmp(buf, "Exec=", 5) == 0)
-				exec_ = buf + 5;
-		else if (strncmp(buf, "Icon=", 5) == 0)
-				icon_ = buf + 5;
-	}
-	fclose(fp);
-
-	app_icon_ = loadIcon(icon_);
-}
-
-// Save the app's configuration
-int Application::saveConfig() {
-	char *fname = get_config_file_name(name_.toLocal8Bit().constData());
-	if (!fname)
-		return 1;
-
-	// Open a file
-	FILE *fp = fopen(fname, "w");
-	if (!fp) {
-		free(fname);
-		return 1;
-	}
-	free(fname);
-
-	fprintf(fp, "[Desktop Entry]\n");
-	fprintf(fp, "Name=%s\n", name_.toLocal8Bit().constData());
-	fprintf(fp, "Comment=%s\n", description_.toLocal8Bit().constData());
-	fprintf(fp, "Icon=%s\n", icon_.toLocal8Bit().constData());
-	fprintf(fp, "Exec=%s\n", exec_.toLocal8Bit().constData());
-	fclose(fp);
-
-	return 0;
-}
 
 /*
 From: http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
@@ -182,7 +99,7 @@ static QIcon resize48x48(QIcon icon) {
 	return QIcon(pixout);
 }
 
-QIcon Application::loadIcon(QString name) {
+QIcon loadIcon(QString name) {
 	if (arg_debug)
 		printf("searching icon %s\n", name.toLocal8Bit().data());
 
@@ -259,35 +176,8 @@ QIcon Application::loadIcon(QString name) {
 		}
 	}
 
-	// Create a new icon
-	if (arg_debug)
-		printf("\t- created\n");
 
-	// Create a new QPixmap instance for icons
-	QPixmap pix(64, 64);
-
-	// Set the background color for generated icons
-	QColor iconBackgroundColor(68, 68, 68);
-
-	// Fill the icon with a color
-	pix.fill(iconBackgroundColor);
-
-
-	// Create a QPainter instance
-	QPainter painter( &pix );
-
-	// Set color and font for the painter
-	painter.setPen(Qt::white);
-	painter.setFont(QFont("Sans"));
-
-	// Draw application's name to the icon
-	painter.drawText(3, 20, name);
-	painter.end();
-
-	// Use generated pixmap as an icon
-	QIcon icon(pix);
-
-	return icon;
+	return QIcon();
 }
 
 
@@ -310,20 +200,30 @@ void applist_print() {
 }
 
 
-void applications_init() {
+int applications_init(const char *fname) {
+	assert(fname);
+
 	// load default apps
 	if (arg_debug)
-		printf("Loading default applications\n");
+		printf("Loading applications from %s\n", fname);
 
-
-	FILE *fp = fopen( PACKAGE_LIBDIR "/uiapps", "r");
-	if (!fp) {
-		fprintf(stderr, "Error: cannot find the application list; Firetools was not properly installed\n");
-		exit(1);
+	char *newfname = NULL;
+	if (strncmp(fname, "~/", 2) == 0) {
+		 struct passwd *pw = getpwuid(getuid());
+		 if (!pw)
+		 	errExit("getpwuid");
+		 if (asprintf(&newfname, "%s/%s", pw->pw_dir, fname + 2) == -1)
+		 	errExit("asprintf");
 	}
+
+printf("#%s3\n", newfname);
+	FILE *fp = fopen((newfname)? newfname: fname, "r");
+	if (!fp)
+		return 0;
 
 	char buf[1024];
 	int line = 0;
+	int cnt = 0;
 	while (fgets(buf, sizeof(buf), fp)) {
 		line++;
 
@@ -374,109 +274,15 @@ void applications_init() {
 			command = newcmd;
 		}
 
-		// is there a user config file?
-		if (have_config_file(name))
-			applist.append(Application(name));
-		else
-			applist.append(Application(name, description, icon, command));
+		QIcon qi = loadIcon(icon);
+		if (qi.isNull())
+			continue;
+		applist.append(Application(name, description, command, qi));
+		cnt++;
 	}
 	fclose(fp);
+	if (arg_debug)
+		printf("%d applications added\n", cnt);
 
-	// load user apps from home directory
-	char *home = get_home_directory();
-	if (!home)
-		return;
-	char *homecfg;
-	if (asprintf(&homecfg, "%s/.config/firetools", home) == -1)
-		errExit("asprintf");
-	free(home);
-	DIR *dir = opendir(homecfg);
-	if (!dir) {
-		free(homecfg);
-		return;
-	}
-
-	// walk home config directory
-	struct dirent *entry;
-	while ((entry = readdir(dir))) {
-		if (strcmp(entry->d_name, ".") == 0)
-			continue;
-		if (strcmp(entry->d_name, "..") == 0)
-			continue;
-
-		// look only at .desktop files
-		int len = strlen(entry->d_name);
-		if (len <= 8)
-			continue;
-		char *fname = strdup(entry->d_name);
-		if (!fname)
-			errExit("strdup");
-		char *ending = fname + len - 8;
-		if (strcmp(ending, ".desktop") != 0) {
-			free(fname);
-			continue;
-		}
-
-		// check if the app is in default list
-		fflush(0);
-		*ending = '\0';
-#if 0
-		DefaultApp *app = &dapps[0];
-		bool found = false;
-		while (app->name != 0) {
-			if (strcmp(fname, app->name) == 0) {
-				found = true;
-			}
-
-			app++;
-		}
-		if (found) {
-			free(fname);
-			continue;
-		}
-#endif
-		// load file
-		applist.append(Application(fname));
-		free(fname);
-	}
-
-	free(homecfg);
-	closedir(dir);
-}
-
-
-int applications_get_index(QPoint pos) {
-	int nelem = applist.count();
-	int cols = nelem / ROWS + 1;
-
-	if (pos.y() < (MARGIN * 2 + TOP))
-		return -1;
-
-	if (pos.x() > (MARGIN * 2) && pos.x() < (MARGIN * 2 + cols * 64)) {
-		int index_y = (pos.y() - 2 * MARGIN - TOP) / 64;
-		int index_x = (pos.x() - 2 * MARGIN) / 64;
-		int index = index_y + index_x * ROWS;
-
-		if (index < nelem)
-			return index;
-	}
-	return -1;
-}
-
-int applications_get_position(QPoint pos) {
-	int nelem = applist.count();
-	int cols = nelem / ROWS + 1;
-
-	if (pos.y() < (MARGIN * 2 + TOP))
-		return -1;
-
-	if (pos.x() > (MARGIN * 2) && pos.x() < (MARGIN * 2 + cols * 64)) {
-		int index_y = (pos.y() - 2 * MARGIN - TOP) / 64;
-		int index_x = (pos.x() - 2 * MARGIN) / 64;
-		int index = index_y + index_x * ROWS;
-
-//		if (index < nelem)
-			return index;
-	}
-	return -1;
+	return cnt;
 }

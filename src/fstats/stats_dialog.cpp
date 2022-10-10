@@ -205,7 +205,7 @@ StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0
 	int y;
 	config_read_screen_size(&x, &y);
  	resize(x, y);
-	setWindowTitle(tr("Firetools"));
+	setWindowTitle(tr("Firetools Stats"));
 
 	// detect if joining a sandbox is possible on this system
 	struct utsname u;

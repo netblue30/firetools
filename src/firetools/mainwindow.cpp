@@ -34,8 +34,8 @@
 MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint) {
 	active_index_ = -1;
 	animation_id_ = 0;
-//	stats_ = new StatsDialog();
-//	connect(this, SIGNAL(cycleReadySignal()), stats_, SLOT(cycleReady()));
+	app_cnt_ = 0;
+	cols_ = 0;
 
 	// check firejail
 	if (!which("firejail")) {
@@ -69,11 +69,14 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 	}
 #endif
 
-	applications_init();
+	app_cnt_ = applications_init(PACKAGE_LIBDIR "/uiapps");
+	app_cnt_ += applications_init("~/.config/firetools/uiapps");
+	cols_ = app_cnt_  / ROWS;
+	if (app_cnt_ % ROWS)
+		cols_++;
+
 	createTrayActions();
 	createLocalActions();
-//	thread_ = new PidThread();
-//	connect(thread_, SIGNAL(cycleReady()), this, SLOT(cycleReady()));
 
 	setContextMenuPolicy(Qt::ActionsContextMenu);
 	setToolTip(tr("Double click on an icon to open an application.\n"
@@ -81,43 +84,6 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent, Qt::FramelessWindowHint
 		"Use the right mouse button to open a context menu."));
 	setWindowTitle(tr("Firetools"));
 
-}
-
-
-// Remove application from the list
-void MainWindow::remove() {
-//printf("line %d, active index %d, name %s\n", __LINE__, active_index_,
-//	applist[active_index_].name_.toLocal8Bit().constData());
-
-	char *fname = get_config_file_name(applist[active_index_].name_.toLocal8Bit().constData());
-	if (fname) {
-		unlink(fname);
-		applist.removeAt(active_index_);
-		if (arg_debug) {
-			printf("Application removed:\n");
-			applist_print();
-		}
-
-		// update
-		hide();
-		show();
-		update();
-	}
-	free(fname);
-}
-
-
-// Run application
-void MainWindow::run() {
-	int index = active_index_;
-	if (index != -1) {
-		QString exec = applist[index].exec_ + " &";
-		int rv = system(exec.toStdString().c_str());
-		(void) rv;
-	}
-
-	animation_id_ = AFRAMES;
-	QTimer::singleShot(0, this, SLOT(update()));
 }
 
 // Run statistics tools
@@ -142,8 +108,8 @@ void MainWindow::runAbout() {
 		"Firetools is a GUI application for Firejail. "
 		"It offers a system tray launcher for sandboxed apps, "
 		"sandbox editing, management, and statistics. "
-		"The software package also includes a sandbox configuration wizard, firejail-ui.<br/><br/>"
-
+		"The software package also includes a sandbox configuration wizard, firejail-ui.<br/>"
+		"<br/>"
 		"Firejail  is  a  SUID sandbox program that reduces the risk of security "
 		"breaches by restricting the running environment of  untrusted  applications "
 		"using Linux namespaces, Linux capabilities and seccomp-bpf.<br/><br/>") +
@@ -157,14 +123,11 @@ void MainWindow::runAbout() {
 
 // Mouse events: mouse release
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-	int nelem = applist.count();
-	int cols = nelem / ROWS + 1;
-
 	if (event->button() == Qt::LeftButton) {
 		int x = event->pos().x();
 		int y = event->pos().y();
 
-		if (x >= MARGIN * 2 + cols * 64 - 16 && x <= MARGIN * 2 + cols * 64 + 4 &&
+		if (x >= MARGIN * 2 + cols_ * 64 - 16 && x <= MARGIN * 2 + cols_ * 64 + 4 &&
 			   y >= 4 && y <= 15) {
 
 			showMinimized();
@@ -181,9 +144,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 		event->accept();
 		active_index_ = -1;
 	}
-
-	else if (event->button() == Qt::RightButton) {
-	}
 }
 
 
@@ -199,7 +159,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event) {
 	if (event->button() == Qt::LeftButton) {
 		QPoint pos = event->pos();
-		int index = applications_get_index(pos);
+		int index = app_get_index(pos);
 		if (index != -1) {
 			QString exec = applist[index].exec_ + " &";
 			int rv = system(exec.toStdString().c_str());
@@ -214,12 +174,6 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event) {
 
 // Main window visual design
 void MainWindow::paintEvent(QPaintEvent *) {
-	// Count the number applications and put the value to the variable
-	int nelem = applist.count();
-
-	// Columns is the amount of applications divided by number of rows + 1
-	int cols = nelem / ROWS + 1;
-
 	// Start painting
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -241,7 +195,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
 	// Loop icons to rows
 	int i = 0;
 	int j = 0;
-	for (; i < nelem; i++, j++) {
+	for (; i < app_cnt_; i++, j++) {
 		if (j >= ROWS)
 			j = 0;
 
@@ -283,7 +237,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
 	// Close button
 	// Rectangle size & coordinates for the close button
 //	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 8, 8, 12, 3);
-	QRect closeButtonRectSize(MARGIN * 2 + cols * 64 - 14,6, 12, 3);
+	QRect closeButtonRectSize(MARGIN * 2 + cols_ * 64 - 14,6, 12, 3);
 
 	// Color for the close button
 	QBrush closeButtonRectColor(Qt::white);
@@ -305,13 +259,10 @@ void MainWindow::paintEvent(QPaintEvent *) {
 
 // Window resize
 void MainWindow::resizeEvent(QResizeEvent * /* event */) {
-	int nelem = applist.count();
-	int cols = nelem / ROWS + 1;
-
 	// margins
-	QRegion m1(0, 0, cols * 64 + MARGIN * 4, TOP + ROWS * 64 + MARGIN * 4);
-	QRegion m2(MARGIN, MARGIN + TOP, cols * 64 + MARGIN * 2, ROWS * 64 + MARGIN * 2);
-	QRegion m3(MARGIN * 2, MARGIN * 2 + TOP, cols * 64, ROWS * 64);
+	QRegion m1(0, 0, cols_ * 64 + MARGIN * 4, TOP + ROWS * 64 + MARGIN * 4);
+	QRegion m2(MARGIN, MARGIN + TOP, cols_ * 64 + MARGIN * 2, ROWS * 64 + MARGIN * 2);
+	QRegion m3(MARGIN * 2, MARGIN * 2 + TOP, cols_ * 64, ROWS * 64);
 
 	QRegion all = m1.subtracted(m2);
 	all = all.united(m3);
@@ -322,10 +273,7 @@ void MainWindow::resizeEvent(QResizeEvent * /* event */) {
 
 // Window size hint
 QSize MainWindow::sizeHint() const {
-	int nelem = applist.count();
-	int cols = nelem / ROWS + 1;
-
-	return QSize(64 * cols + MARGIN * 4, ROWS * 64 + MARGIN * 4 + TOP);
+	return QSize(64 * cols_ + MARGIN * 4, ROWS * 64 + MARGIN * 4 + TOP);
 }
 
 
@@ -333,14 +281,12 @@ bool MainWindow::event(QEvent *event) {
 	if (event->type() == QEvent::ToolTip) {
 		QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-		int index = applications_get_index(helpEvent->pos());
+		int index = app_get_index(helpEvent->pos());
 		if (index == -1) {
 			int x = helpEvent->pos().x();
 			int y = helpEvent->pos().y();
-			int nelem = applist.count();
-			int cols = nelem / ROWS + 1;
 
-			if (x >= MARGIN * 2 + cols * 64 - 8 && x <= MARGIN * 2 + cols * 64 + 4 &&
+			if (x >= MARGIN * 2 + cols_ * 64 - 8 && x <= MARGIN * 2 + cols_ * 64 + 4 &&
 			   y >= 4 && y <= 15) {
 			   	QToolTip::showText(helpEvent->globalPos(), QString("Minimize"));
 			   	return true;
@@ -434,20 +380,18 @@ void MainWindow::help() {
 
 	QString txt;
 	txt += "<br/>";
-	txt += "Click on \"-\" in the right top corner to minimize the program in the system tray.<br/>\n";
-	txt += "<br/>";
-	txt += "Double click on an icon to open an application.<br/>\n";
-	txt += "Drag the launcher with the left mouse button.<br/>\n";
-	txt += "Use the right mouse button to open a context menu.<br/>\n";
-	txt += "<br/>";
-	txt += "<b>Context Menu</b><br/><br/>\n";
-	txt += "<b>Configuration:</b> run the configuration wizard.<br/>\n";
-	txt += "<b>Statistics:</b> open the stats window.<br/>\n";
-	txt += "<b>About:</b> program version.<br/>\n";
-	txt += "<b>Help:</b> this help window.<br/>\n";
-	txt += "<b>Minimize:</b> minimize the launcher<br/>\n";
-	txt += "<b>Quit:</b> shut down the lprogram.<br/>\n";
-	txt += "<br/><br/>";
+	txt += "Double click on an icon to sandbox the application. ";
+	txt += "Click on \"-\" in the right top corner to minimize the program in the system tray. ";
+	txt += "Drag the launcher with the left mouse button.<br/><br/>\n";
+	txt += "Use the right mouse button to open the <b>context menu</b>.<br/><br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;Configuration:</b> run the configuration wizard.<br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;Statistics:</b> open the stats window.<br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;About:</b> program version.<br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;Help:</b> this help window.<br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;Minimize:</b> minimize the launcher<br/>\n";
+	txt += "<b>&nbsp;&nbsp;&nbsp;Quit:</b> shut down the lprogram.<br/><br/>\n";
+	txt += "The list of applications recognized automatically by Firetools is stored in <b>/usr/lib/firetools/applist</b>. ";
+	txt += "To add more applications to the list drop a similar file in your home directory in <b>~/.config/firetools/uiapps</b>.</br></br>";
 
 	QMessageBox::about(this, tr("Firetools"), txt);
 }
@@ -462,5 +406,20 @@ void MainWindow::main_quit() {
 		it = applist.erase(it);
 
 	qApp->quit();
+}
+
+int MainWindow::app_get_index(QPoint pos) {
+	if (pos.y() < (MARGIN * 2 + TOP))
+		return -1;
+
+	if (pos.x() > (MARGIN * 2) && pos.x() < (MARGIN * 2 + cols_ * 64)) {
+		int index_y = (pos.y() - 2 * MARGIN - TOP) / 64;
+		int index_x = (pos.x() - 2 * MARGIN) / 64;
+		int index = index_y + index_x * ROWS;
+
+		if (index < app_cnt_)
+			return index;
+	}
+	return -1;
 }
 
