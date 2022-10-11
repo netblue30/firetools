@@ -51,17 +51,17 @@ static void store(int pid, int interval, int clocktick) {
 
 	// store the data in database
 	DbStorage *st = &dbpid->data_4min_[cycle];
-	st->cpu_ = (float) ((pids[pid].utime + pids[pid].stime) * 100) / (interval * clocktick);
-	st->rss_ = pids[pid].rss;
-	st->shared_ =  pids[pid].shared;
-	st->rx_ = ((float) pids[pid].rx) /( interval * 1000);
-	st->tx_ = ((float) pids[pid].tx) /( interval * 1000);
+	st->cpu_ = (float) ((pids_data[pid].utime + pids_data[pid].stime) * 100) / (interval * clocktick);
+	st->rss_ = pids_data[pid].rss;
+	st->shared_ =  pids_data[pid].shared;
+	st->rx_ = ((float) pids_data[pid].rx) /( interval * 1000);
+	st->tx_ = ((float) pids_data[pid].tx) /( interval * 1000);
 
 	if (!dbpid->isConfigured()) {
 		if (arg_debug)
 			printf("configuring dbpid for sandbox %d\n", pid);
 		// user id
-		dbpid->setUid(pids[pid].uid);
+		dbpid->setUid(pids_data[pid].uid);
 
 		// check network namespace
 		char *name;
@@ -123,18 +123,19 @@ void PidThread::run() {
 			if (pids[i].level == 1) {
 				// cpu
 				pid_get_cpu_sandbox(i, &utime, &stime);
-				pids[i].utime = utime;
-				pids[i].stime = stime;
+				pids_data[i].utime = utime;
+				pids_data[i].stime = stime;
 
+				// network
 				pid_get_netstats_sandbox(i, &rx, &tx);
-				pids[i].rx = rx;
-				pids[i].tx = tx;
+				pids_data[i].rx = rx;
+				pids_data[i].tx = tx;
 			}
 		}
 
 
 		if (!first) {
-			// sleep 5 seconds
+			// sleep 1 second
 			msleep(500);
 			data_ready = false;
 			msleep(500);
@@ -145,79 +146,63 @@ void PidThread::run() {
 		// start a new database cycle
 		Db::instance().newCycle();
 
-timetrace_start();
+		timetrace_start();
 		// read the cpu time again, memory
 		for (int i = pids_first; i  <= pids_last; i++) {
 			if (pids[i].level == 1) {
-				if (pids[i].zombie)
-					continue;
-//timetrace_start();
 				// cpu time
 				pid_get_cpu_sandbox(i, &utime, &stime);
-//float delta = timetrace_end();
-//printf("get cpu sandbox %d, %.02f ms\n", i, delta);
-				if (pids[i].utime <= utime)
-					pids[i].utime = utime - pids[i].utime;
+				if (pids_data[i].utime <= utime)
+					pids_data[i].utime = utime - pids_data[i].utime;
 				else
-					pids[i].utime = 0;
+					pids_data[i].utime = 0;
 
-				if (pids[i].stime <= stime)
-					pids[i].stime = stime - pids[i].stime;
+				if (pids_data[i].stime <= stime)
+					pids_data[i].stime = stime - pids_data[i].stime;
 				else
-					pids[i].stime = 0;
+					pids_data[i].stime = 0;
 
 				// memory
 				unsigned rss;
 				unsigned shared;
-//timetrace_start();
 				pid_get_mem_sandbox(i, &rss, &shared);
-//delta = timetrace_end();
-//printf("get mem sandbox %d, %.02f ms\n", i, delta);
-				pids[i].rss = rss * pgsz / 1024;
-				pids[i].shared = shared * pgsz / 1024;
+				pids_data[i].rss = rss * pgsz / 1024;
+				pids_data[i].shared = shared * pgsz / 1024;
 
 				// network
-				// todo: speedup
 				DbPid *dbpid = Db::instance().findPid(i);
 				if (dbpid && dbpid->isConfigured() && dbpid->networkDisabled() == false) {
-//timetrace_start();
 					pid_get_netstats_sandbox(i, &rx, &tx);
-//delta = timetrace_end();
-//printf("get net sandbox %d, %.02f ms\n", i, delta);
-					if (rx >= pids[i].rx)
-						pids[i].rx = rx - pids[i].rx;
+					if (rx >= pids_data[i].rx)
+						pids_data[i].rx = rx - pids_data[i].rx;
 					else
-						pids[i].rx = 0;
+						pids_data[i].rx = 0;
 
-					if (tx > pids[i].tx)
-						pids[i].tx = tx - pids[i].tx;
+					if (tx > pids_data[i].tx)
+						pids_data[i].tx = tx - pids_data[i].tx;
 					else
-						pids[i].tx = 0;
+						pids_data[i].tx = 0;
 
 				}
 				else {
-					pids[i].rx = 0;
-					pids[i].tx = 0;
+					pids_data[i].rx = 0;
+					pids_data[i].tx = 0;
 				}
 
 				store(i, 1, clocktick);
 			}
 		}
-float delta = timetrace_end();
-if (arg_debug)
-	printf("all %.02f ms, pid from %d to %d\n", delta, pids_first, pids_last);
+		float delta = timetrace_end();
+		if (arg_debug)
+			printf("stats read %.02f ms, pid from %d to %d\n", delta, pids_first, pids_last);
 		// remove closed process entries from database
 		clear();
 
 		// 4min to 1h transfer
 		if (Db::instance().getG1HCycleDelta() == 0) {
-//printf("transfer 75 sec data\n");
-//Db::instance().dbgprintcycle();
-
 			// for each pid
 			DbPid *dbpid = Db::instance().firstPid();
 			while (dbpid) {
-//printf("processing pid %d, 1h cycle\n", dbpid->getPid());
 				int cycle = Db::instance().getCycle();
 				int g1hcycle = Db::instance().getG1HCycle();
 
@@ -232,7 +217,6 @@ if (arg_debug)
 
 
 				if (Db::instance().getG12HCycleDelta() == 0) {
-//printf("processing pid %d, 12h cycle\n", dbpid->getPid());
 					int g12hcycle = Db::instance().getG12HCycle();
 					g1hcycle = Db::instance().getG1HCycle();
 

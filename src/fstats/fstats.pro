@@ -6,13 +6,13 @@ QT += widgets
  HEADERS       = ../common/utils.h ../common/pid.h ../common/common.h \
  		  pid_thread.h db.h dbstorage.h dbpid.h stats_dialog.h graph.h fstats.h
  SOURCES       = main.cpp \
+                  ../common/pid.cpp \
+                  ../common/utils.cpp \
                  stats_dialog.cpp \
                 pid_thread.cpp \
                 db.cpp \
                 dbpid.cpp \
                  graph.cpp \
-                  ../common/utils.cpp \
-                  ../common/pid.cpp \
                   config.cpp
 RESOURCES = fstats.qrc
 TARGET=../../build/fstats

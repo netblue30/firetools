@@ -491,13 +491,13 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 
 	// DNS
 	dns1_ = new QLineEdit;
-	dns1_->setText("8.8.8.8");
+	dns1_->setText("9.9.9.9");
 	dns1_->setMaximumWidth(150);
 	dns1_->setFixedWidth(170);
 	registerField("dns1", dns1_);
 
 	dns2_ = new QLineEdit;
-	dns2_->setText("8.8.4.4");
+	dns2_->setText("1.1.1.1");
 	dns2_->setMaximumWidth(150);
 	dns2_->setFixedWidth(170);
 	registerField("dns2", dns2_);

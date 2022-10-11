@@ -25,9 +25,11 @@
 #include <pwd.h>
 #include <sys/ioctl.h>
 #include <dirent.h>
+#include <limits.h>
 
 #define PIDS_BUFLEN 4096
 Process *pids = 0;
+ProcessData *pids_data = 0;
 int pids_first = 0;
 int pids_last = 0;
 int max_pids = 32769;
@@ -193,6 +195,10 @@ void pid_read(pid_t mon_pid) {
 		if (pids == NULL)
 			errExit("malloc");
 		memset(pids, 0, sizeof(Process) * max_pids);
+		pids_data = (ProcessData *) malloc(sizeof(ProcessData) * max_pids + 1);
+		if (pids == NULL)
+			errExit("malloc");
+		memset(pids_data, 0, sizeof(Process) * max_pids);
 	}
 
 	memset(pids + pids_first, 0, sizeof(Process) * (pids_last - pids_first + 1));
@@ -234,6 +240,8 @@ void pid_read(pid_t mon_pid) {
 			continue;
 		}
 
+		memset(&pids_data[pid], 0, sizeof(ProcessData));
+
 		// look for firejail executable name
 		char buf[PIDS_BUFLEN];
 		while (fgets(buf, PIDS_BUFLEN - 1, fp)) {
@@ -249,7 +257,7 @@ void pid_read(pid_t mon_pid) {
 
 				if ((strncmp(ptr, "firejail", 8) == 0) && (mon_pid == 0 || mon_pid == pid)) {
 					if (pid_proc_cmdline_x11_xpra_xephyr(pid))
-						pids[pid].level = -1;
+						pids[pid].level = 0;
 					else {
 						pids[pid].level = 1;
 						if (pids_first == 0)
@@ -257,11 +265,12 @@ void pid_read(pid_t mon_pid) {
 					}
 				}
 				else
-					pids[pid].level = -1;
+					pids[pid].level = 0;
+//printf("pid %d level %u\n", pid, pids[pid].level);
 			}
 			if (strncmp(buf, "State:", 6) == 0) {
 				if (strstr(buf, "(zombie)"))
-					pids[pid].zombie = 1;
+					pids[pid].level = 0;
 			}
 			else if (strncmp(buf, "PPid:", 5) == 0) {
 				char *ptr = buf + 5;
@@ -275,8 +284,8 @@ void pid_read(pid_t mon_pid) {
 				unsigned parent = atoi(ptr);
 				parent %= max_pids;
 				if (pids[parent].level > 0) {
-					pids[pid].level = pids[parent].level + 1;
-					pids[pid].parent = parent;
+					pids[pid].level = (pids[parent].level == UCHAR_MAX)? UCHAR_MAX:  pids[parent].level + 1;
+					pids_data[pid].parent = parent;
 				}
 			}
 			else if (strncmp(buf, "Uid:", 4) == 0) {
@@ -289,7 +298,7 @@ void pid_read(pid_t mon_pid) {
 						fprintf(stderr, "Error: cannot read /proc file\n");
 						exit(1);
 					}
-					pids[pid].uid = atoi(ptr);
+					pids_data[pid].uid = atoi(ptr);
 				}
 				break;
 			}
@@ -298,8 +307,6 @@ void pid_read(pid_t mon_pid) {
 		free(file);
 	}
 	closedir(dir);
-//float delta = timetrace_end();
-//printf("pid_read %.02f ms\n", delta);
 }
 
 // return 1 if error
@@ -457,7 +464,7 @@ void pid_get_cpu_sandbox(unsigned pid, unsigned *utime, unsigned *stime) {
 
 	int i;
 	for (i = pid + 1; i < (pids_last + 1); i++) {
-		if (pids[i].parent == (int) pid)
+		if (pids_data[i].parent == (int) pid)
 			pid_get_cpu_sandbox(i, utime, stime);
 	}
 }
@@ -472,7 +479,7 @@ void pid_get_mem_sandbox(unsigned pid, unsigned *rss, unsigned *shared) {
 
 	int i;
 	for (i = pid + 1; i < (pids_last + 1); i++) {
-		if (pids[i].parent == (int) pid)
+		if (pids_data[i].parent == (int) pid)
 			pid_get_mem_sandbox(i, rss, shared);
 	}
 }
@@ -485,7 +492,7 @@ void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long 
 	// find the first child
 	int child = -1;
 	for (child = parent + 1; child < (pids_last + 1); child++) {
-		if (pids[child].parent == parent)
+		if (pids_data[child].parent == parent)
 			break;
 	}
 

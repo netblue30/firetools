@@ -19,25 +19,29 @@
 */
 #ifndef PID_H
 #define PID_H
-extern int max_pids;
 #include "common.h"
 
 typedef struct {
-	short level;  // -1 not a firejail process, 0 not investigated yet, 1 firejail process, > 1 firejail child
-	unsigned char zombie;
+	unsigned char level;
+		 // 0 not a process, not firejail, or zombie process
+		 // 1 main firejail process
+		 // > 1 firejail child
+} Process;
+
+typedef struct {
 	pid_t parent;
 	uid_t uid;
-//	char *user;
-//	char *cmd;
 	unsigned utime;
 	unsigned stime;
 	unsigned rss;
 	unsigned shared;
 	unsigned long long rx;	// network rx, bytes
 	unsigned long long tx;	// networking tx, bytes
-} Process;
-//extern Process pids[max_pids];
+} ProcessData;
+
+extern int max_pids;
 extern Process *pids;
+extern ProcessData *pids_data;
 extern int pids_first;
 extern int pids_last;
 
