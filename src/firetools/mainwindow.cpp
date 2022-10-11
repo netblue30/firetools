@@ -316,25 +316,19 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::MiddleClick)
 		return;
 
-	if (isVisible()) {
+	if (isVisible())
 		hide();
-//		stats_->hide();
-	}
-	else {
+	else
 		show();
-//		stats_->hide();
-	}
 }
 
 
 void MainWindow::createTrayActions() {
 	minimizeAction = new QAction(tr("Mi&nimize"), this);
 	connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-//	connect(minimizeAction, SIGNAL(triggered()), stats_, SLOT(hide()));
 
 	restoreAction = new QAction(tr("&Restore"), this);
 	connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-//	connect(restoreAction, SIGNAL(triggered()), stats_, SLOT(show()));
 
 	quitAction = new QAction(tr("&Quit"), this);
 	connect(quitAction, SIGNAL(triggered()), this, SLOT(main_quit()));

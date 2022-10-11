@@ -268,24 +268,18 @@ void StatsDialog::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::MiddleClick)
 		return;
 
-	if (isVisible()) {
+	if (isVisible())
 		hide();
-//		stats_->hide();
-	}
-	else {
+	else
 		show();
-//		stats_->hide();
-	}
 }
 
 void StatsDialog::createTrayActions() {
 	minimizeAction = new QAction(tr("Mi&nimize"), this);
 	connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-//	connect(minimizeAction, SIGNAL(triggered()), stats_, SLOT(hide()));
 
 	restoreAction = new QAction(tr("&Restore"), this);
 	connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-//	connect(restoreAction, SIGNAL(triggered()), stats_, SLOT(show()));
 
 	quitAction = new QAction(tr("&Quit"), this);
 	connect(quitAction, SIGNAL(triggered()), this, SLOT(main_quit()));
@@ -296,7 +290,6 @@ QString StatsDialog::header() {
 	if (mode_ == MODE_TOP) {
 		msg += "<table><tr><td width=\"5\"></td><td>";
 		msg += "<a href=\"about\">About</a>";
-//		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"launcher\">Sandbox Launcher</a>";
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"newsandbox\">Configure New Sandbox</a>";
 		msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"fdns\">Firejail DNS</a>";
 		msg += "</td></tr></table>";

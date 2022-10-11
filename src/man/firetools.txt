@@ -8,6 +8,9 @@ Firetools is a GUI application for Firejail.
 It offers a system tray launcher for sandboxed apps, sandbox editing, management, and statistics.
 The software package also includes a sandbox configuration wizard, firejail-ui.
 
+The list of applications recognized automatically by Firetools is stored in /usr/lib/firetools/applist.
+To add more applications to the list drop a similar file in your home directory in ~/.config/firetools/uiapps.
+
 .SH OPTIONS
 .TP
 \fB\-\-autostart\fR
@@ -21,7 +24,6 @@ Print options end exit.
 .TP
 \fB\-\-version\fR
 Print software version and exit.
-
 
 .SH ABOUT FIREJAIL
 Firejail is a SUID sandbox program that reduces the risk of security breaches by

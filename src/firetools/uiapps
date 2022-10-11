@@ -1,10 +1,15 @@
-# Program list for Firetools\
+# Program list for Firetools
 #
 # Each line defines an application, with semicolons separated fields as follows:
 #
-#       executable; description; icon; command for starting Firejail (optional)
+#       executable; description; icon; (optional) command for starting Firejail
 #
-# Comments starting in #
+# Examples:
+#
+#       inkscape;Inkscape SVG Editor;inkscape
+#       calibre;Calibre eBook Reader;/usr/share/calibre/images/lt.png
+#
+# Lines starting in # are comments.
 #
 
 # default apps for Firetools

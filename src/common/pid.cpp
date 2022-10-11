@@ -266,7 +266,6 @@ void pid_read(pid_t mon_pid) {
 				}
 				else
 					pids[pid].level = 0;
-//printf("pid %d level %u\n", pid, pids[pid].level);
 			}
 			if (strncmp(buf, "State:", 6) == 0) {
 				if (strstr(buf, "(zombie)"))
@@ -283,10 +282,11 @@ void pid_read(pid_t mon_pid) {
 				}
 				unsigned parent = atoi(ptr);
 				parent %= max_pids;
-				if (pids[parent].level > 0) {
+				pids_data[pid].parent = parent;
+				if (pids[parent].level > 0)
 					pids[pid].level = (pids[parent].level == UCHAR_MAX)? UCHAR_MAX:  pids[parent].level + 1;
-					pids_data[pid].parent = parent;
-				}
+//if (pids[pid].level)
+//printf("pid %d level %u  parent %d\n", pid, pids[pid].level, pids_data[pid].parent);
 			}
 			else if (strncmp(buf, "Uid:", 4) == 0) {
 				if (pids[pid].level > 0) {
