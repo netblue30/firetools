@@ -271,7 +271,7 @@ void StatsDialog::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 	if (isVisible())
 		hide();
 	else
-		show();
+		showNormal();
 }
 
 void StatsDialog::createTrayActions() {

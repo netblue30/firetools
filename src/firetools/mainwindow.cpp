@@ -319,7 +319,7 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 	if (isVisible())
 		hide();
 	else
-		show();
+		showNormal();
 }
 
 
