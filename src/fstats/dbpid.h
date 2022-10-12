@@ -53,11 +53,17 @@ public:
 	pid_t getPid() {
 		return pid_;
 	}
-	bool networkDisabled() {
-		return network_disabled_;
+	bool netNamespace() {
+		return netnamespace_;
 	}
-	void setNetworkDisabled(bool val) {
-		network_disabled_ = val;
+	void setNetNamespace(bool val) {
+		netnamespace_ = val;
+	}
+	bool netNone() {
+		return netnone_;
+	}
+	void setNetNone(bool val) {
+		netnone_ = val;
 	}
 	uid_t getUid() {
 		return uid_;
@@ -65,20 +71,21 @@ public:
 	void setUid(uid_t val) {
 		uid_ = val;
 	}
-	
+
 	bool isConfigured() {
 		return configured_;
 	}
-	
+
 	void setConfigured() {
 		configured_ = true;
 	}
 
-private:	
+private:
 	DbPid *next_;
 	pid_t pid_;
 	char *cmd_;
-	bool network_disabled_;
+	bool netnamespace_;
+	bool netnone_;
 	uid_t uid_;
 	bool configured_;
 };

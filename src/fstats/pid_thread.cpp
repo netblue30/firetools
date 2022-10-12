@@ -60,6 +60,7 @@ static void store(int pid, int interval, int clocktick) {
 	if (!dbpid->isConfigured()) {
 		if (arg_debug)
 			printf("configuring dbpid for sandbox %d\n", pid);
+
 		// user id
 		dbpid->setUid(pids_data[pid].uid);
 
@@ -68,17 +69,36 @@ static void store(int pid, int interval, int clocktick) {
 		if (asprintf(&name, "/run/firejail/network/%d-netmap", pid) == -1)
 			errExit("asprintf");
 		struct stat s;
-		if (stat(name, &s) == 0) {
-			dbpid->setNetworkDisabled(false);
-		}
-		else {
-			dbpid->setNetworkDisabled(true);
-		}
+		if (stat(name, &s) == 0)
+			dbpid->setNetNamespace(true);
+		else
+			dbpid->setNetNamespace(false);
 		free(name);
 
 		// command line
 		char *cmd =  pid_proc_cmdline(pid);;
 		dbpid->setCmd(cmd);
+		if (strstr(cmd, "--net=none"))
+			dbpid->setNetNone(true);
+		else {
+			// detect --net=none for symlinks in /usr/local/bin
+			int child = pid_find_child(pid);
+			if (child != -1) {
+				char *fname;
+				if (asprintf(&fname, "/proc/%d/net/dev", child) == -1)
+					errExit("asprintf");
+				FILE *fp = fopen(fname, "r");
+				if (fp) {
+					char buf[4096];
+					int cnt = 0;
+					while (fgets(buf, 4096, fp))
+						cnt++;
+					fclose(fp);
+					if (cnt <= 3)
+						dbpid->setNetNone(true);
+				}
+			}
+		}
 		free(cmd);
 		dbpid->setConfigured();
 	}
@@ -171,7 +191,7 @@ void PidThread::run() {
 
 				// network
 				DbPid *dbpid = Db::instance().findPid(i);
-				if (dbpid && dbpid->isConfigured() && dbpid->networkDisabled() == false) {
+				if (dbpid && dbpid->isConfigured() && dbpid->netNamespace() == true) {
 					pid_get_netstats_sandbox(i, &rx, &tx);
 					if (rx >= pids_data[i].rx)
 						pids_data[i].rx = rx - pids_data[i].rx;

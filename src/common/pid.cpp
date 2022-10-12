@@ -606,4 +606,37 @@ static int pid_proc_cmdline_x11_xpra_xephyr(const pid_t pid) {
 }
 
 
+// dbus proxy path used by firejail and firemon
+#define XDG_DBUS_PROXY_PATH "/usr/bin/xdg-dbus-proxy"
+int pid_find_child(int id) {
+	int i;
+	int first_child = -1;
+	// find the first child
+	for (i = 0; i < max_pids && first_child == -1; i++) {
+		if (pids[i].level == 2 && pids_data[i].parent == id) {
+			// skip /usr/bin/xdg-dbus-proxy (started by firejail for dbus filtering)
+			char *cmdline = pid_proc_cmdline(i);
+			if (strncmp(cmdline, XDG_DBUS_PROXY_PATH, strlen(XDG_DBUS_PROXY_PATH)) == 0) {
+				free(cmdline);
+				continue;
+			}
+			free(cmdline);
+			first_child = i;
+			break;
+		}
+	}
+
+	if (first_child == -1)
+		return -1;
+
+	// find the second-level child
+	for (i = 0; i < max_pids; i++) {
+		if (pids[i].level == 3 && pids_data[i].parent == first_child)
+			return i;
+	}
+
+	// if a second child is not found, return the first child pid
+	// this happens for processes sandboxed with --join
+	return first_child;
+}
 

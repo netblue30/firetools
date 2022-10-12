@@ -140,39 +140,6 @@ static char *find_fdns_shm_file_name(void) {
 }
 
 
-// dbus proxy path used by firejail and firemon
-#define XDG_DBUS_PROXY_PATH "/usr/bin/xdg-dbus-proxy"
-static int find_child(int id) {
-	int i;
-	int first_child = -1;
-	// find the first child
-	for (i = 0; i < max_pids && first_child == -1; i++) {
-		if (pids[i].level == 2 && pids_data[i].parent == id) {
-			// skip /usr/bin/xdg-dbus-proxy (started by firejail for dbus filtering)
-			char *cmdline = pid_proc_cmdline(i);
-			if (strncmp(cmdline, XDG_DBUS_PROXY_PATH, strlen(XDG_DBUS_PROXY_PATH)) == 0) {
-				free(cmdline);
-				continue;
-			}
-			free(cmdline);
-			first_child = i;
-			break;
-		}
-	}
-
-	if (first_child == -1)
-		return -1;
-
-	// find the second-level child
-	for (i = 0; i < max_pids; i++) {
-		if (pids[i].level == 3 && pids_data[i].parent == first_child)
-			return i;
-	}
-
-	// if a second child is not found, return the first child pid
-	// this happens for processes sandboxed with --join
-	return first_child;
-}
 
 StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0), fdns_first_run_(true),
 		mode_(MODE_TOP), pid_(0), uid_(0), lts_(false),
@@ -342,6 +309,7 @@ QString StatsDialog::header() {
 }
 
 void StatsDialog::updateTop() {
+	timetrace_start();
 	QString msg = header();
 	msg += "<table><tr><td width=\"5\"></td><td><b>Sandbox List</b></td></tr></table><br/>\n";
 	msg += "<table><tr><td width=\"5\"></td><td width=\"60\">PID</td/><td width=\"60\">CPU<br/>(%)</td><td>Memory<br/>(KiB)&nbsp;&nbsp;</td><td>RX<br/>(KB/s)&nbsp;&nbsp;</td><td>TX<br/>(KB/s)&nbsp;&nbsp;</td><td>Command</td>\n";
@@ -351,19 +319,36 @@ void StatsDialog::updateTop() {
 	DbPid *ptr = Db::instance().firstPid();
 
 
+printf("*****\n");
 	while (ptr) {
 		pid_t pid = ptr->getPid();
 		const char *cmd = ptr->getCmd();
 		if (cmd) {
+printf("pid %d, netnamespace %d, netnone %d - %s\n", pid, ptr->netNamespace(), ptr->netNone(), cmd);
 			char *str;
 			DbStorage *st = &ptr->data_4min_[cycle];
-			if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>%.02f</td><td>%.02f</td><td>%s</td></tr>",
-				pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
-				st->rx_, st->tx_, cmd) != -1) {
-
-				msg += str;
-				free(str);
+			if (ptr->netNone()) {
+				if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>no network</td><td></td><td>%s</td></tr>",
+					pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
+					cmd) != -1) {
+						msg += str;
+				}
 			}
+			else if (ptr->netNamespace()) {
+				if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>%.02f</td><td>%.02f</td><td>%s</td></tr>",
+					pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
+					st->rx_, st->tx_, cmd) != -1) {
+						msg += str;
+					}
+			}
+			else {
+				if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>system</td><td></td><td>%s</td></tr>",
+					pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
+					cmd) != -1) {
+						msg += str;
+				}
+			}
+			free(str);
 		}
 
 		ptr = ptr->getNext();
@@ -371,6 +356,9 @@ void StatsDialog::updateTop() {
 
 	msg += "</table>";
 	procView_->setHtml(msg);
+	float delta = timetrace_end();
+	if (arg_debug)
+		printf("updateTop %.02f ms\n", delta);
 }
 
 QString StatsDialog::printDump(int index) {
@@ -897,7 +885,7 @@ void StatsDialog::updateNetwork() {
 //printf("network namespace disabled %d, net_none_ %d\n", dbptr->networkDisabled(), net_none_);
 		if (net_none_)
 			storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
-		else if (dbptr->networkDisabled())
+		else if (dbptr->netNamespace() == false)
 			storage_network_ = "<td>Using the system network namespace";
 		else {
 
@@ -916,7 +904,7 @@ void StatsDialog::updateNetwork() {
 
 	// graph type
 	msg += "<tr><td></td>";
-	if (dbptr->networkDisabled() == false && net_none_ == false) {
+	if (dbptr->netNamespace() == true && net_none_ == false) {
 		if (graph_type_ == GRAPH_4MIN) {
 			msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
 		}
@@ -931,19 +919,21 @@ void StatsDialog::updateNetwork() {
 	}
 
 	// netfilter
-	if (dbptr->networkDisabled() == false && net_none_ == false)
+	if (dbptr->netNamespace() == true && net_none_ == false)
 		msg += "<td><b>Firewall</b>: <a href=\"firewall\">enabled</a></td></tr>\n";
+	else if (dbptr->netNone() == true)
+		msg += "<td><b>Firewall</b>: no firewall</td></tr>\n";
 	else
 		msg += "<td><b>Firewall</b>: system firewall</td></tr>\n";
 
 
-	if (dbptr->networkDisabled() == false && net_none_ == false)
+	if (dbptr->netNamespace() == true && net_none_ == false)
 		msg += "<tr><td></td><td>"+ graph(2, dbptr, cycle, graph_type_) + "</td><td>" + graph(3, dbptr, cycle, graph_type_) + "</td></tr>";
 
 	msg += QString("</table><br/>");
 
 	// bandwidth limits
-	if (dbptr->networkDisabled() == false && net_none_ == false) {
+	if (dbptr->netNamespace() == true && net_none_ == false) {
 		char *fname;
 		if (asprintf(&fname, "/run/firejail/bandwidth/%d-bandwidth", pid_) == -1)
 			errExit("asprintf");
@@ -1081,7 +1071,7 @@ void StatsDialog::updatePid() {
 		pid_initialized_ = true;
 
 		// detect --net=none
-		int child = find_child(pid_);
+		int child = pid_find_child(pid_);
 		char *fname;
 		if (asprintf(&fname, "/proc/%d/net/dev", child) == -1)
 			errExit("asprintf");
@@ -1122,14 +1112,18 @@ void StatsDialog::updatePid() {
 
 	msg += "<table>";
 	msg += QString("<tr><td width=\"5\"></td><td><b>PID:</b> ") +  QString::number(pid_) + "</td>";
-	if (ptr->networkDisabled() || net_none_)
-		msg += "<td><b>RX:</b> unknown</td></tr>";
+	if (ptr->netNamespace() == false) {
+		QString net = (net_none_)? " no network": " system";
+		msg += "<td><b>RX:</b> " + net + "</td></tr>";
+	}
 	else
 		msg += QString("<td><b>RX:</b> ") + QString::number(st->rx_) + " KB/s</td></tr>";
 
 	msg += QString("<tr><td></td><td><b>User:</b> ") + pw->pw_name  + "</td>";
-	if (ptr->networkDisabled() || net_none_)
-		msg += "<td><b>TX:</b> unknown</td></tr>";
+	if (ptr->netNamespace() == false) {
+		QString net = (net_none_)? " no network": " system";
+		msg += "<td><b>TX:</b> " + net + "</td></tr>";
+	}
 	else
 		msg += QString("<td><b>TX:</b> ") + QString::number(st->tx_) + " KB/s</td></tr>";
 
@@ -1390,7 +1384,7 @@ static bool userNamespace(pid_t pid) {
 	else
 		return false;
 
-	pid = find_child(pid);
+	pid = pid_find_child(pid);
 	if (pid == -1)
 		return false;
 

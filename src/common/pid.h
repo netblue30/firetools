@@ -54,6 +54,7 @@ char *pid_get_user_name(uid_t uid);
 int name2pid(const char *name, pid_t *pid);
 char *pid_proc_comm(const pid_t pid);
 char *pid_proc_cmdline(const pid_t pid);
+int pid_find_child(int id);
 
 // read all processes in pids array
 void pid_read(pid_t mon_pid);
