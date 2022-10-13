@@ -104,9 +104,7 @@ void Wizard::accept() {
 
 		// include
 		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
-		dprintf(fd, "include /etc/firejail/disable-passwdmgr.inc\n");
 		printf("include /etc/firejail/disable-common.inc\n");
-		printf("include /etc/firejail/disable-passwdmgr.inc\n");
 
 		// home directory
 		if (field("restricted_home").toBool()) {
@@ -169,6 +167,7 @@ void Wizard::accept() {
 			    field("protocol_inet").toBool() ||
 			    field("protocol_inet6").toBool() ||
 			    field("protocol_netlink").toBool() ||
+			    field("protocol_bluetooth").toBool() ||
 			    field("protocol_packet").toBool()) {
 				QString protocol = QString("protocol ");
 				if (field("protocol_unix").toBool())
@@ -181,6 +180,8 @@ void Wizard::accept() {
 					protocol += QString("netlink,");
 				if (field("protocol_packet").toBool())
 					protocol += QString("packet");
+				if (field("protocol_bluetooth").toBool())
+					protocol += QString("bluetooth");
 
 				char *str = protocol.toUtf8().data();
 				dprintf(fd, "%s\n", str);
@@ -228,6 +229,10 @@ void Wizard::accept() {
 		if (field("noroot").toBool()) {
 			dprintf(fd, "noroot\n");
 			printf("noroot\n");
+		}
+		if (field("apparmor").toBool()) {
+			dprintf(fd, "apparmor\n");
+			printf("apparmor\n");
 		}
 
 		printf("############# end of profile file\n");
@@ -528,6 +533,9 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	protocol_packet_ = new QCheckBox("packet");
 	protocol_packet_->setChecked(false);
 	registerField("protocol_packet", protocol_packet_);
+	protocol_bluetooth_ = new QCheckBox("bluetooth");
+	protocol_bluetooth_->setChecked(false);
+	registerField("protocol_bluetooth", protocol_bluetooth_);
 
 	QGroupBox *protocol_box = new QGroupBox(tr("Network Protocol"));
 	protocol_box->setCheckable(true);
@@ -540,6 +548,7 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	protocol_box_layout->addWidget(protocol_inet6_, 1, 0);
 	protocol_box_layout->addWidget(protocol_netlink_, 1, 1);
 	protocol_box_layout->addWidget(protocol_packet_, 2, 0);
+	protocol_box_layout->addWidget(protocol_bluetooth_, 2, 1);
 	protocol_box->setLayout(protocol_box_layout);
 	if (kernel_major == 3 && kernel_minor < 5) {
 	   	if (arg_debug)
@@ -673,12 +682,17 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 //	noroot_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("noroot", noroot_);
 
+	apparmor_ = new QCheckBox("Enable AppArmor");
+	apparmor_->setChecked(true);
+	registerField("apparmor", apparmor_);
+
 	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
 //	kernel_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
 	kernel_box_layout->addWidget(seccomp_);
 	kernel_box_layout->addWidget(caps_);
 	kernel_box_layout->addWidget(noroot_);
+	kernel_box_layout->addWidget(apparmor_);
 	kernel_box->setLayout(kernel_box_layout);
 
 	QWidget *w = new QWidget;

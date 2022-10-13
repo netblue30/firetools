@@ -113,6 +113,7 @@ private:
 	QCheckBox *protocol_inet6_;
 	QCheckBox *protocol_netlink_;
 	QCheckBox *protocol_packet_;
+	QCheckBox *protocol_bluetooth_;
 };
 
 class ConfigPage2 : public QWizardPage {
@@ -139,6 +140,7 @@ private:
 	QCheckBox *seccomp_;
 	QCheckBox *caps_;
 	QCheckBox *noroot_;
+	QCheckBox *apparmor_;
 };
 
 class StartSandboxPage : public QWizardPage {
