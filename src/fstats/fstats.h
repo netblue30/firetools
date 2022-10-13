@@ -26,7 +26,7 @@ typedef enum {
 	GRAPH_1H,
 	GRAPH_12H
 } GraphType;
-
+#define SYSTEM_PID 1
 
 extern int arg_debug;
 extern int svg_not_found;

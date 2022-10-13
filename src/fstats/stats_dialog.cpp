@@ -321,7 +321,8 @@ void StatsDialog::updateTop() {
 	while (ptr) {
 		pid_t pid = ptr->getPid();
 		const char *cmd = ptr->getCmd();
-		if (cmd) {
+
+		if (pid != SYSTEM_PID && cmd) {
 			if (arg_debug)
 				printf("pid %d, netnamespace %d, netnone %d - %s\n", pid, ptr->netNamespace(), ptr->netNone(), cmd);
 			char *str;
@@ -353,7 +354,11 @@ void StatsDialog::updateTop() {
 		ptr = ptr->getNext();
 	}
 
-	msg += "</table>";
+	msg += "</table><br/><br/><br/>";
+	msg += "<b>System Network</b><br/>";
+	DbPid *dbpid = Db::instance().findPid(SYSTEM_PID);
+	msg += "<table><tr><td></td><td>"+ graph(2, dbpid, cycle, GRAPH_1MIN) + "</td><td></td>&nbsp;&nbsp;<td>" + graph(3, dbpid, cycle, GRAPH_1MIN) + "</td></tr></table>";
+
 	procView_->setHtml(msg);
 	float delta = timetrace_end();
 	if (arg_debug)

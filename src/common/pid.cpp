@@ -491,11 +491,14 @@ void pid_get_netstats_sandbox(int parent, unsigned long long *rx, unsigned long 
 
 	// find the first child
 	int child = -1;
-	for (child = parent + 1; child < (pids_last + 1); child++) {
-		if (pids_data[child].parent == parent)
-			break;
+	if (parent == 1)
+		child = 1;
+	else {
+		for (child = parent + 1; child < (pids_last + 1); child++) {
+			if (pids_data[child].parent == parent)
+				break;
+		}
 	}
-
 	if (child == -1)
 		return;
 

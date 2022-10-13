@@ -111,7 +111,7 @@ static void clear() {
 	while (dbpid) {
 		DbPid *next = dbpid->getNext();
 		pid_t pid = dbpid->getPid();
-		if (pids[pid].level != 1) {
+		if (pids[pid].level != 1 && pid != 1) {
 			// remove database entry
 			DbPid *dbentry = Db::instance().removePid(pid);
 			if (dbentry)
@@ -126,6 +126,7 @@ void PidThread::run() {
 	int pgsz = getpagesize();
 	int clocktick = sysconf(_SC_CLK_TCK);
 	bool first = true;
+
 
 	while (1) {
 		if (ending_)
@@ -152,7 +153,10 @@ void PidThread::run() {
 				pids_data[i].tx = tx;
 			}
 		}
-
+		// system network
+		pid_get_netstats_sandbox(SYSTEM_PID, &rx, &tx);
+		pids_data[SYSTEM_PID].rx = rx;
+		pids_data[SYSTEM_PID].tx = tx;
 
 		if (!first) {
 			// sleep 1 second
@@ -213,6 +217,20 @@ void PidThread::run() {
 			}
 		}
 
+		// store system namespace network data
+		pid_get_netstats_sandbox(SYSTEM_PID, &rx, &tx);
+
+		if (rx >= pids_data[SYSTEM_PID].rx)
+			pids_data[SYSTEM_PID].rx = rx - pids_data[SYSTEM_PID].rx;
+		else
+			pids_data[SYSTEM_PID].rx = 0;
+
+		if (tx > pids_data[SYSTEM_PID].tx)
+			pids_data[SYSTEM_PID].tx = tx - pids_data[SYSTEM_PID].tx;
+		else
+			pids_data[SYSTEM_PID].tx = 0;
+		store(SYSTEM_PID, 1, clocktick);
+
 		float delta = timetrace_end();
 		if (arg_debug)
 			printf("stats read %.02f ms, pid from %d to %d\n", delta, pids_first, pids_last);
@@ -257,7 +275,7 @@ void PidThread::run() {
 		}
 
 
-//		Db::instance().dbgprint();
+		//Db::instance().dbgprint();
 		emit cycleReady();
 		data_ready = true;
 
