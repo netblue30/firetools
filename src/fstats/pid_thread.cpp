@@ -50,7 +50,7 @@ static void store(int pid, int interval, int clocktick) {
 	int cycle = Db::instance().getCycle();
 
 	// store the data in database
-	DbStorage *st = &dbpid->data_4min_[cycle];
+	DbStorage *st = &dbpid->data_1min_[cycle];
 	st->cpu_ = (float) ((pids_data[pid].utime + pids_data[pid].stime) * 100) / (interval * clocktick);
 	st->rss_ = pids_data[pid].rss;
 	st->shared_ =  pids_data[pid].shared;
@@ -212,6 +212,7 @@ void PidThread::run() {
 				store(i, 1, clocktick);
 			}
 		}
+
 		float delta = timetrace_end();
 		if (arg_debug)
 			printf("stats read %.02f ms, pid from %d to %d\n", delta, pids_first, pids_last);
@@ -228,7 +229,7 @@ void PidThread::run() {
 
 				DbStorage result;
 				for (int i = 0; i < DbPid::G1HCYCLE_DELTA; i++) {
-					result += dbpid->data_4min_[cycle];
+					result += dbpid->data_1min_[cycle];
 					if (--cycle < 0)
 						cycle = DbPid::MAXCYCLE - 1;
 				}

@@ -146,7 +146,7 @@ StatsDialog::StatsDialog(): QDialog(), fdns_report_(0), fdns_seq_(0), fdns_fd_(0
 	pid_initialized_(false), pid_seccomp_(false), pid_caps_(QString("")), pid_noroot_(false),
 	pid_cpu_cores_(QString("")), pid_protocol_(QString("")), pid_name_(QString("")),
 	profile_(QString("")), pid_x11_(0), fdns_dump_(""),
-	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_4MIN), net_none_(false), shm_file_name_(0) {
+	have_join_(true), caps_cnt_(64), graph_type_(GRAPH_1MIN), net_none_(false), shm_file_name_(0) {
 
 	// clean storage area
 	cleanStorage();
@@ -318,15 +318,14 @@ void StatsDialog::updateTop() {
 	assert(cycle < DbPid::MAXCYCLE);
 	DbPid *ptr = Db::instance().firstPid();
 
-
-printf("*****\n");
 	while (ptr) {
 		pid_t pid = ptr->getPid();
 		const char *cmd = ptr->getCmd();
 		if (cmd) {
-printf("pid %d, netnamespace %d, netnone %d - %s\n", pid, ptr->netNamespace(), ptr->netNone(), cmd);
+			if (arg_debug)
+				printf("pid %d, netnamespace %d, netnone %d - %s\n", pid, ptr->netNamespace(), ptr->netNone(), cmd);
 			char *str;
-			DbStorage *st = &ptr->data_4min_[cycle];
+			DbStorage *st = &ptr->data_1min_[cycle];
 			if (ptr->netNone()) {
 				if (asprintf(&str, "<tr><td></td><td><a href=\"%d\">%d</a></td><td>%.02f</td><td>%d</td><td>no network</td><td></td><td>%s</td></tr>",
 					pid, pid, st->cpu_, (int) (st->rss_ + st->shared_),
@@ -882,7 +881,6 @@ void StatsDialog::updateNetwork() {
 
 	// network interfaces
 	if (storage_network_.isEmpty()) {
-//printf("network namespace disabled %d, net_none_ %d\n", dbptr->networkDisabled(), net_none_);
 		if (net_none_)
 			storage_network_ = "<td><b>Network Interfaces</b><br/>lo<br/>";
 		else if (dbptr->netNamespace() == false)
@@ -905,7 +903,7 @@ void StatsDialog::updateNetwork() {
 	// graph type
 	msg += "<tr><td></td>";
 	if (dbptr->netNamespace() == true && net_none_ == false) {
-		if (graph_type_ == GRAPH_4MIN) {
+		if (graph_type_ == GRAPH_1MIN) {
 			msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
 		}
 		else if (graph_type_ == GRAPH_1H) {
@@ -1091,7 +1089,7 @@ void StatsDialog::updatePid() {
 	}
 
 	// get user name
-	DbStorage *st = &ptr->data_4min_[cycle];
+	DbStorage *st = &ptr->data_1min_[cycle];
 	struct passwd *pw = getpwuid(ptr->getUid());
 	if (!pw)
 		errExit("getpwuid");
@@ -1177,7 +1175,7 @@ void StatsDialog::updatePid() {
 	// graph type
 	msg += "<tr></tr>";
 	msg += "<tr><td></td>";
-	if (graph_type_ == GRAPH_4MIN) {
+	if (graph_type_ == GRAPH_1MIN) {
 		msg += "<td><b>Stats: </b>1min <a href=\"1h\">1h</a> <a href=\"12h\">12h</a></td>";
 	}
 	else if (graph_type_ == GRAPH_1H) {
@@ -1260,7 +1258,7 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 		graph_type_ = GRAPH_12H;
 	}
 	else if (linkstr == "1min") {
-		graph_type_ = GRAPH_4MIN;
+		graph_type_ = GRAPH_1MIN;
 	}
 	else if (linkstr == "network") {
 		mode_ = MODE_NETWORK;

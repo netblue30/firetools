@@ -90,7 +90,7 @@ void DbPid::dbgprint() {
 	printf("***\n");
 
 	for (int i = 0; i < MAXCYCLE; i++)
-		data_4min_[i].dbgprint(i);
+		data_1min_[i].dbgprint(i);
 
 	if (next_)
 		next_->dbgprint();

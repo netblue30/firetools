@@ -29,7 +29,7 @@ public:
 	static const int MAXCYCLE = 60;
 	static const int G1HCYCLE_DELTA = 60;	// transition from 1min to 1h
 	static const int G12HCYCLE_DELTA = 12;	// transition from 1h to 12h
-	DbStorage data_4min_[MAXCYCLE];
+	DbStorage data_1min_[MAXCYCLE];
 	DbStorage data_1h_[MAXCYCLE];
 	DbStorage data_12h_[MAXCYCLE];
 

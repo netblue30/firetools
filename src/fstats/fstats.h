@@ -22,11 +22,11 @@
 #include "../common/common.h"
 
 typedef enum {
-	GRAPH_4MIN = 0,
+	GRAPH_1MIN = 0,
 	GRAPH_1H,
 	GRAPH_12H
 } GraphType;
-	
+
 
 extern int arg_debug;
 extern int svg_not_found;
