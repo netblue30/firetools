@@ -30,7 +30,6 @@
 #include "../../firetools_config.h"
 
 int arg_debug = 0;
-int arg_nofiretools = 0;
 int kernel_major;
 int kernel_minor;
 
@@ -40,7 +39,6 @@ static void usage() {
 	printf("Options:\n");
 	printf("\t--debug - debug mode\n\n");
 	printf("\t--help - this help screen\n\n");
-	printf("\t--nofiretools - disable stats & tools checkbox\n\n");
 	printf("\t--version - print software version and exit\n\n");
 }
 
@@ -57,9 +55,6 @@ int main(int argc, char *argv[]) {
 		else if (strcmp(argv[i], "--version") == 0) {
 			printf("Firejail-ui version " PACKAGE_VERSION "\n");
 			return 0;
-		}
-		else if (strcmp(argv[i], "--nofiretools") == 0) {
-			arg_nofiretools = 1;
 		}
 		else {
 			fprintf(stderr, "Error: invalid option\n");

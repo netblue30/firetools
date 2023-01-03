@@ -31,6 +31,7 @@ class QPushButton;
 class HomeWidget;
 class QListWidget;
 class QListWidgetItem;
+class QTextEdit;
 struct AppEntry;
 
 class Wizard : public QWizard {
@@ -100,13 +101,13 @@ private:
 	QRadioButton *sysnetwork_;
 	QRadioButton *nonetwork_;
 	QRadioButton *netnamespace_;
-	
+
 	// DNS
 	QLineEdit *dns1_;
 	QLineEdit *dns2_;
 	QCheckBox *dns1check_;
 	QCheckBox *dns2check_;
-	
+
 	// protocol
 	QCheckBox *protocol_unix_;
 	QCheckBox *protocol_inet_;
@@ -135,7 +136,7 @@ private:
 	QCheckBox *novideo_;
 	QCheckBox *notv_;
 	QCheckBox *nox11_;
-	
+
 	// kernel
 	QCheckBox *seccomp_;
 	QCheckBox *caps_;
@@ -148,14 +149,12 @@ class StartSandboxPage : public QWizardPage {
 
 public:
 	StartSandboxPage(QWidget *parent = 0);
-
+	void initializePage();
 	int nextId() const;
-	
+
+
 private slots:
 
 private:
-	QCheckBox *debug_;
-	QCheckBox *trace_;
-	QCheckBox *mon_;
 };
 #endif

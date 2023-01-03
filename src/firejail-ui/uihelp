@@ -1,45 +1,45 @@
 <br/><center><b>Sandbox Configuration</b></center><br/><br/><br/>
-Although hundreds of user-space applications are already supported by Firejail, 
-sometimes is necessary to customize the sandbox environment. This configuration 
+Although hundreds of user-space applications are already supported by Firejail,
+sometimes is necessary to customize the sandbox environment. This configuration
 wizard was built in order to make this task easier.<br/><br/>
-Start with the filesystem configuration, move to the network and 
-multimedia subsystems, and finish with the kernel. In the end you can turn on debugging and 
-get a trace with all network requests and all file accessed by your application.<br/>
+Start with the filesystem configuration, move to the network and
+multimedia subsystems, and finish with the kernel. In the end you can fine tune
+your profile in the editor window.<br/>
 <br/><b>Filesystem</b><br/><br/>
-Personal user files are located in home directory.  
-By default Firejail denies access to some of the most sensitive files there, 
-such as password and encryption keys.  
+Personal user files are located in home directory.
+By default Firejail denies access to some of the most sensitive files there,
+such as password and encryption keys.
 To enhance your privacy, these are some of the options available:<br>
 <blockquote>
-<i><b>Restrict home directory:</b> Choose private user directories visible inside the sandbox. 
-By default, with the exception of some well-known password and encryption files, 
+<i><b>Restrict home directory:</b> Choose private user directories visible inside the sandbox.
+By default, with the exception of some well-known password and encryption files,
 all private user files are visible inside the sandbox.</i><br/><br/>
-<i><b>Restrict /dev directory:</b> A small number of very basic devices are visible inside the sandbox. 
+<i><b>Restrict /dev directory:</b> A small number of very basic devices are visible inside the sandbox.
 Sound and 3D acceleration should also be available if this checkbox is set.<br/><br/>
 <b>Restrict /tmp directory:</b> Start with a clean /tmp directory.<br/><br/>
 <b>Restrict /mnt and /media:</b> Blacklist /mnt and /media directories.</i><br/><br/>
 </blockquote>
 <b>Networking</b><br/><br/>
-A network namespace is a separate copy of TCP/IP networking stack. 
-Initially, all processes share the same networking stack created by the init process. 
-Firejail allows users to create a new network namespace, therefore isolating 
+A network namespace is a separate copy of TCP/IP networking stack.
+Initially, all processes share the same networking stack created by the init process.
+Firejail allows users to create a new network namespace, therefore isolating
 the sandbox traffic.
 
 <blockquote>
 <i><b>System network:</b></i> Use the default networking stack provided by the system.<br/><br/>
-<i><b>Network namespace:</b></i> Install a separate networking stack and connect it to the 
-main Ethernet interface. A new IP address is assigned, and a new network filter is installed 
+<i><b>Network namespace:</b></i> Install a separate networking stack and connect it to the
+main Ethernet interface. A new IP address is assigned, and a new network filter is installed
 using <i>iptables</i> command.<br/><br/>
-<i><b>Disable networking:</b></i> Use an unconnected network stack. There will be no traffic 
+<i><b>Disable networking:</b></i> Use an unconnected network stack. There will be no traffic
 coming in or going out of the sandbox.<br/><br/>
-<i><b>DNS:</b></i> Specify two DNS nameservers to use inside the sandbox. If none is specified, 
+<i><b>DNS:</b></i> Specify two DNS nameservers to use inside the sandbox. If none is specified,
 the sandbox will use the system DNS server.<br/><br/>
-<i><b>Protocol:</b></i> Select what networking protocols are allowed: unix (regular 
-Unix inter-process communication), inet (IPv4), inet6 (IPv6), netlink (socket communication with Linux 
-kernel), packet (Ethernet-level protocols).
+<i><b>Protocol:</b></i> Select what networking protocols are allowed: unix (regular
+Unix inter-process communication), inet (IPv4), inet6 (IPv6), netlink (socket communication with Linux
+kernel), packet (Ethernet-level protocols), and bluetooth.
 </blockquote>
-<b>Multimedia</b><br/><br/>
-If the application is not using sound or 3D acceleration, it is always a good idea to drop the support 
+<br/><b>Multimedia</b><br/><br/>
+If the application is not using sound or 3D acceleration, it is always a good idea to drop the support
 inside the sandbox. Disabling X11 graphic interface is recommended when running servers and console programs.
 <blockquote>
 <i><b>Disable sound:</b></i> No sound subsystem access inside the sandbox.<br/><br/>
@@ -47,21 +47,20 @@ inside the sandbox. Disabling X11 graphic interface is recommended when running 
 <i><b>Disable CD-ROM/DVD devices:</b></i> No access to CD-ROM device.<br/><br/>
 <i><b>Disable TV/DVB devices:</b></i> TV cards are disabled.<br/><br/>
 <i><b>Disable 3D acceleration:</b></i> Hardware acceleration drivers are disabled.<br/><br/>
-<i><b>Disable X11:</b></i> X11 graphical user interface subsystem is disabled. 
-The setting requires a new
-network namespace to be configured, see <i>Networking</i> section for more details.
+<i><b>Disable X11:</b></i> X11 graphical user interface subsystem is disabled.
 <br/><br/>
 </blockquote>
 <b>Kernel</b><br/><br/>
 These are some of the most powerful sandboxing features implemented by the Linux kernel:
 <blockquote>
-<i><b>Enable seccomp-bpf:</b></i> This security facility allows filtering out the most dangerous system calls 
-inside the kernel, therefore reducing the attack surface. 
+<i><b>Enable seccomp-bpf:</b></i> This security facility allows filtering out the most dangerous system calls
+inside the kernel, therefore reducing the attack surface.
 A Linux Kernel version 3.5 is required for this option to work.<br/><br/>
 <i><b>Disable all Linux capabilities:</b></i> Capabilities (POSIX 1003.1e) are designed to split up the root privilege
 into a set of distinct privileges which can be independently enabled or disabled. For regular user-space programs,
 all these privileges should be disabled.<br/><br/>
-<i><b>Restricted user namespace (noroot):</b></i> This option installs a user namespace with a single 
-user, the current  user. <i>root</i> user  does  not  exist  in  the new namespace. 
-A Linux Kernel version 3.8 is required for this option to work.<br/><br/
+<i><b>Restricted user namespace (noroot):</b></i> This option installs a user namespace with a single
+user, the current  user. <i>root</i> user  does  not  exist  in  the new namespace.
+A Linux Kernel version 3.8 is required for this option to work.<br/><br/>
+<i><b>AppArmor</b></i> This option enables Firejail's default AppArmor profile for your program.<br/><br/>
 </blockquote>

@@ -35,6 +35,7 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QTextEdit>
 #include "../../firetools_config_extras.h"
 #include "wizard.h"
 #include "home_widget.h"
@@ -44,11 +45,15 @@
 
 //QString global_title("Firejail Configuration Wizard");
 QString global_title("");
+QTextEdit *global_profile;
 
 QString global_subtitle(
-	"<b>Firejail</b> reduces the  risk  of  security "
+	"<b>Firejail</b> is a SUID program that reduces the  risk  of  security "
 	"breaches  by  restricting the running environment of untrusted "
-	"applications using the latest Linux kernel sandboxing technologies."
+	"applications using the latest Linux kernel sandboxing technologies. "
+	"It allows a process and all its descendants to have their own private "
+	"view of the globally shared kernel resources, such as the network stack, "
+	"process table, and mount table."
 );
 HomeWidget *global_home_widget;
 QString global_ifname = "";
@@ -78,174 +83,26 @@ void Wizard::showHelp() {
 	HelpWidget hw;
 	hw.exec();
 }
-
-
-
+using namespace std;
 void Wizard::accept() {
 	if (arg_debug)
 		printf("Wizard::accept\n");
 	QStringList arguments;
 
-	if (field("use_custom").toBool()) {
-		if (arg_debug)
-			printf("building a custom profile\n");
+	// build the profile in a termporary file
+	char profname[] = "/tmp/firejail-ui-XXXXXX";
+	int fd = mkstemp(profname);
+	if (fd == -1)
+		errExit("mkstemp");
+	QString profarg = QString("--profile=") + QString(profname);
+	arguments << profarg;
 
-		// build the profile in a termporary file
-		char profname[] = "/tmp/firejail-ui-XXXXXX";
-		int fd = mkstemp(profname);
-		if (fd == -1)
-			errExit("mkstemp");
-		QString profarg = QString("--profile=") + QString(profname);
-		arguments << profarg;
-
-		// always print the profile on stdout
-		printf("\n");
-		printf("############## start of profile file\n");
-
-		// include
-		dprintf(fd, "include /etc/firejail/disable-common.inc\n");
-		printf("include /etc/firejail/disable-common.inc\n");
-
-		// home directory
-		if (field("restricted_home").toBool()) {
-			QString whitelist = global_home_widget->getContent();
-			if (whitelist.isEmpty())
-				whitelist = QString("private\n");
-			else
-				whitelist += QString("include /etc/firejail/whitelist-common.inc\n");
-			dprintf(fd, "%s", whitelist.toUtf8().data());
-			printf("%s", whitelist.toUtf8().data());
-		}
-
-		// filesystem
-		if (field("private_tmp").toBool()) {
-			dprintf(fd, "private-tmp\n");
-			printf("private-tmp\n");
-		}
-		if (field("private_dev").toBool()) {
-			dprintf(fd, "private-dev\n");
-			printf("private-dev\n");
-		}
-		if (field("mnt_media").toBool()) {
-			dprintf(fd, "blacklist /mnt\n");
-			dprintf(fd, "blacklist /media\n");
-			printf("blacklist /mnt\nblacklist /media\n");
-		}
-
-		// network
-		if (field("sysnetwork").toBool()) {
-			;
-		}
-		else if (field("nonetwork").toBool()) {
-			dprintf(fd, "net none\n");
-			printf("net none\n");
-		}
-		else if (field("netnamespace").toBool()) {
-			dprintf(fd, "net %s\nnetfilter\n", global_ifname.toUtf8().data());
-			printf("net %s\nnetfilter\n", global_ifname.toUtf8().data());
-		}
-
-		// dns
-		if (global_dns_enabled) {
-			QString dns1 = field("dns1").toString();
-			if (!dns1.isEmpty()) {
-				char *d1 = dns1.toUtf8().data();
-				dprintf(fd, "dns %s\n", d1);
-				printf("dns %s\n", d1);
-			}
-			QString dns2 = field("dns2").toString();
-			if (!dns2.isEmpty()) {
-				char *d2 = dns2.toUtf8().data();
-				dprintf(fd, "dns %s\n", d2);
-				printf("dns %s\n", d2);
-			}
-		}
-
-		// network protocol
-		if (global_protocol_enabled) {
-			if (field("protocol_unix").toBool() ||
-			    field("protocol_inet").toBool() ||
-			    field("protocol_inet6").toBool() ||
-			    field("protocol_netlink").toBool() ||
-			    field("protocol_bluetooth").toBool() ||
-			    field("protocol_packet").toBool()) {
-				QString protocol = QString("protocol ");
-				if (field("protocol_unix").toBool())
-					protocol += QString("unix,");
-				if (field("protocol_inet").toBool())
-					protocol += QString("inet,");
-				if (field("protocol_inet6").toBool())
-					protocol += QString("inet6,");
-				if (field("protocol_netlink").toBool())
-					protocol += QString("netlink,");
-				if (field("protocol_packet").toBool())
-					protocol += QString("packet");
-				if (field("protocol_bluetooth").toBool())
-					protocol += QString("bluetooth");
-
-				char *str = protocol.toUtf8().data();
-				dprintf(fd, "%s\n", str);
-				printf("%s\n", str);
-			}
-		}
-
-		// multimedia
-		if (field("nosound").toBool()) {
-			dprintf(fd, "nosound\n");
-			printf("nosound\n");
-		}
-		if (field("no3d").toBool()) {
-			dprintf(fd, "no3d\n");
-			printf("no3d\n");
-		}
-		if (field("nox11").toBool()) {
-			dprintf(fd, "x11 none\n");
-			printf("x11 none\n");
-		}
-		if (field("nodvd").toBool()) {
-			dprintf(fd, "nodvd\n");
-			printf("nodvd\n");
-		}
-		if (field("novideo").toBool()) {
-			dprintf(fd, "novideo\n");
-			printf("novideo\n");
-		}
-		if (field("notv").toBool()) {
-			dprintf(fd, "notv\n");
-			printf("notv\n");
-		}
-
-
-		// kernel
-		if (field("seccomp").toBool()) {
-			dprintf(fd, "seccomp\n");
-			dprintf(fd, "nonewprivs\n");
-			printf("seccomp\nnonewprivs\n");
-		}
-		if (field("caps").toBool()) {
-			dprintf(fd, "caps.drop all\n");
-			printf("caps.drop all\n");
-		}
-		if (field("noroot").toBool()) {
-			dprintf(fd, "noroot\n");
-			printf("noroot\n");
-		}
-		if (field("apparmor").toBool()) {
-			dprintf(fd, "apparmor\n");
-			printf("apparmor\n");
-		}
-
-		printf("############# end of profile file\n");
-		printf("\n");
-	}
-
-	// debug
-	if (field("debug").toBool())
-		arguments << QString("--debug");
-	if (field("trace").toBool())
-		arguments << QString("--trace");
-
-	// split command into argumentsd
+	assert(global_profile);
+ 	QString profile = global_profile->toPlainText();
+	dprintf(fd, "%s\n", qPrintable(profile));
+	::close(fd);
+	
+	// split command into arguments
 	QString cmd = field("command").toString();
 	QStringList cmds = cmd.split( " " );
 	arguments += cmds;
@@ -255,11 +112,6 @@ void Wizard::accept() {
 	process->startDetached(QString("firejail"), arguments);
 	sleep(1);
 	printf("Sandbox started, exiting firejail-ui...\n");
-
-	if (field("mon").toBool()) {
-		int rv = system(PACKAGE_LIBDIR "/fstats &");
-		(void) rv;
-	}
 
 	// force a program exit
 	exit(0);
@@ -314,7 +166,7 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Choose a security profile"));
 	profile_box->setFont(bold);
 //	profile_box->setStyleSheet("QGroupBox { color : black; }");
-	use_default_ = new QRadioButton("Use a default security profile");
+	use_default_ = new QRadioButton("Build a default security profile");
 	use_default_->setFont(oldFont);
 //	use_default_->setStyleSheet("QRadioButton { color : black; }");
 	use_default_->setChecked(true);
@@ -421,7 +273,7 @@ int ApplicationPage::nextId() const {
 
 ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
-	setSubTitle(global_subtitle);
+//	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox</b>"));
 //	label1->setStyleSheet("QLabel { color : black; }");
@@ -616,7 +468,7 @@ int ConfigPage::nextId() const {
 
 ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
-	setSubTitle(global_subtitle);
+//	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox... continued...</b>"));
 //	label1->setStyleSheet("QLabel { color : black; }");
@@ -720,7 +572,7 @@ void ConfigPage2::initializePage() {
 
 StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	setTitle(global_title);
-	setSubTitle(global_subtitle);
+//	setSubTitle(global_subtitle);
 
 	// fonts
 	QFont bold;
@@ -728,49 +580,128 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	QFont oldFont;
 	oldFont.setBold(false);
 
-	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Debugging"));
-	debug_box->setFont(bold);
-//	debug_box->setStyleSheet("QGroupBox { color : black; }");
-	debug_ = new QCheckBox("Enable sandbox debugging");
-	debug_->setFont(oldFont);
-//	debug_->setStyleSheet("QCheckBox { color : black; }");
-	trace_ = new QCheckBox("Trace filesystem and network access");
-	trace_->setFont(oldFont);
-//	trace_->setStyleSheet("QCheckBox { color : black; }");
-	mon_ = new QCheckBox("Sandbox monitoring and statistics");
-	mon_->setFont(oldFont);
-//	mon_->setStyleSheet("QCheckBox { color : black; }");
+	global_profile = new QTextEdit();
 
-	if (!isatty(0)) {
-		debug_->setEnabled(false);
-		trace_->setEnabled(false);
-	}
-	if (arg_nofiretools)
-		mon_->setEnabled(false);
-
-	QVBoxLayout *debug_box_layout = new QVBoxLayout;
-	debug_box_layout->addWidget(debug_);
-	debug_box_layout->addWidget(trace_);
-	debug_box_layout->addWidget(mon_);
-	debug_box->setLayout(debug_box_layout);
-
-	QLabel *label1 = new QLabel(tr("Press <b>Done</b> to start the sandbox.<br/><br/>"
-		"For more information, visit us at <b>http://firejail.wordpress.com</b>. "
-		"Thank you for using Firejail!"));
+	QLabel *label1 = new QLabel(tr("This is the configuration we created for your sandbox. "
+		"You can modify it in the text box below.<br/><br/>"
+		"For more information, visit us at <b>http://firejail.wordpress.com</b>."));
+	QLabel *label2 = new QLabel(tr("Press <b>Done</b> to start the sandbox.<br/><br/>"));
 	QWidget *empty1 = new QWidget;
 	empty1->setMinimumHeight(12);
 	QWidget *empty2 = new QWidget;
 	empty2->setMinimumHeight(25);
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(empty1, 0, 0);
-	layout->addWidget(debug_box, 1, 0);
-	layout->addWidget(empty2, 2, 0);
-	layout->addWidget(label1, 3, 0);
+	layout->addWidget(label1, 1, 0);
+	layout->addWidget(global_profile, 2, 0);
+	layout->addWidget(label2, 3, 0);
 	setLayout(layout);
 
-	registerField("debug", debug_);
-	registerField("trace", trace_);
-	registerField("mon", mon_);
+}
+
+void StartSandboxPage::initializePage() {
+	QString txt = "# Custom profile for " + field("command").toString() + "\n";
+
+	// include
+	txt += "\n# file system\n";
+	txt += "include /etc/firejail/disable-common.inc\n";
+
+	// home directory
+	if (field("restricted_home").toBool()) {
+		QString whitelist = global_home_widget->getContent();
+		if (whitelist.isEmpty())
+			whitelist = QString("private\n");
+		else
+			whitelist += QString("include /etc/firejail/whitelist-common.inc\n");
+
+		txt += whitelist;
+	}
+
+	// filesystem
+	if (field("private_tmp").toBool())
+		txt += "private-tmp\n";
+	if (field("private_dev").toBool())
+		txt += "private-dev\n";
+	if (field("mnt_media").toBool()) {
+		txt += "blacklist /mnt\n";
+		txt += "blacklist /media\n";
+	}
+
+	// network
+	txt += "\n# network\n";
+	if (field("sysnetwork").toBool())
+		;
+	else if (field("nonetwork").toBool())
+		txt += "net none\n";
+	else if (field("netnamespace").toBool())
+		txt += "net " + global_ifname + "\n";
+
+	// dns
+	if (global_dns_enabled) {
+		QString dns1 = field("dns1").toString();
+		if (!dns1.isEmpty())
+			txt += "dns " + dns1 + "\n";
+
+		QString dns2 = field("dns2").toString();
+		if (!dns2.isEmpty())
+			txt += "dns " + dns2 + "\n";
+	}
+
+	// network protocol
+	if (global_protocol_enabled) {
+		if (field("protocol_unix").toBool() ||
+		    field("protocol_inet").toBool() ||
+		    field("protocol_inet6").toBool() ||
+		    field("protocol_netlink").toBool() ||
+		    field("protocol_bluetooth").toBool() ||
+		    field("protocol_packet").toBool()) {
+			QString protocol = QString("protocol ");
+			if (field("protocol_unix").toBool())
+				protocol += QString("unix,");
+			if (field("protocol_inet").toBool())
+				protocol += QString("inet,");
+			if (field("protocol_inet6").toBool())
+				protocol += QString("inet6,");
+			if (field("protocol_netlink").toBool())
+				protocol += QString("netlink,");
+			if (field("protocol_packet").toBool())
+				protocol += QString("packet");
+			if (field("protocol_bluetooth").toBool())
+				protocol += QString("bluetooth");
+			txt += protocol + "\n";
+		}
+	}
+
+	// multimedia
+	txt += "\n# multimedia\n";
+	if (field("nosound").toBool())
+		txt += "nosound\n";
+	if (field("no3d").toBool())
+		txt += "no3d\n";
+	if (field("nox11").toBool())
+		txt += "x11 none\n";
+	if (field("nodvd").toBool())
+		txt += "nodvd\n";
+	if (field("novideo").toBool())
+		txt += "novideo\n";
+	if (field("notv").toBool())
+		txt += "notv\n";
+
+
+	// kernel
+	txt += "\n# kernel\n";
+	if (field("seccomp").toBool()) {
+		txt += "seccomp\n";
+		txt += "nonewprivs\n";
+	}
+	if (field("caps").toBool())
+		txt += "caps.drop all\n";
+	if (field("noroot").toBool())
+		txt += "noroot\n";
+	if (field("apparmor").toBool())
+		txt += "apparmor\n";
+
+	global_profile->setText(txt);
 }
 
 int StartSandboxPage::nextId() const {
