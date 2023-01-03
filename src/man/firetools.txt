@@ -25,6 +25,25 @@ Print options end exit.
 \fB\-\-version\fR
 Print software version and exit.
 
+.SH CONFIGURATION
+/usr/lib/firetools/uiapps file contains the default list of applications recognized by default. The user can add more applications
+by creating a simillar file in ~/.config/firetools/uiapps in user home directory. Each line describes an application as follows:
+.PP
+.RS
+executable; description; icon; (optional) firejail command
+.RE
+
+Some examples:
+.PP
+.RS
+inkscape;Inkscape SVG Editor;inkscape
+.br
+calibre;eBook Reader;/usr/share/calibre/images/lt.png
+.br
+mpv;MPV;mpv;firejail mpv --player-operation-mode=pseudo-gui
+.br
+.RE
+
 .SH ABOUT FIREJAIL
 Firejail is a SUID sandbox program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using Linux
