@@ -1,3 +1,14 @@
+firetools (0.9.71) baseline; urgency=low
+  * modif: move hardcoded apps recognized by default in uiapps file
+  * modif: remove sandbox edit dialog and replace it with uiapps file
+  * feature: added uiapps file for default and user apps configuration
+  * feature: add apparmor support in firejail-ui
+  * feature: add bluetooth support in firejail-ui
+  * feature: print final sandbox configuration in firejail-ui
+  * feature: add a system monitor in sandbox stats
+  * bugfixes
+ -- netblue30 <netblue30@yahoo.com>  Tue, 3 Jan 2023 08:00:00 -0500
+
 firetools (0.9.64) baseline; urgency=low
   * more fdns support
   * support for firejail version 0.9.64
