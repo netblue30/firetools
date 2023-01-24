@@ -216,7 +216,6 @@ int applications_init(const char *fname) {
 		 	errExit("asprintf");
 	}
 
-printf("#%s3\n", newfname);
 	FILE *fp = fopen((newfname)? newfname: fname, "r");
 	if (!fp)
 		return 0;

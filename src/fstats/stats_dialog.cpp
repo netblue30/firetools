@@ -1348,14 +1348,9 @@ void StatsDialog::anchorClicked(const QUrl & link) {
 
 		QProcess *process = new QProcess();
 		QStringList arguments;
-		arguments << "--nofiretools";
+//		arguments << "--nofiretools";
 		process->startDetached(QString("firejail-ui"), arguments);
 	}
-//	else if (linkstr == "launcher") {
-//		// start firejail-ui as a separate process
-//		int rv = system("firetools &");
-//		(void) rv;
-//	}
 	else { // linstr == "home"
 		pid_ = linkstr.toInt();
 		pid_initialized_ = false;

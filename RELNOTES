@@ -1,4 +1,4 @@
-firetools (0.9.71) baseline; urgency=low
+firetools (0.9.72) baseline; urgency=low
   * modif: move hardcoded apps recognized by default in uiapps file
   * modif: remove sandbox edit dialog and replace it with uiapps file
   * feature: added uiapps file for default and user apps configuration

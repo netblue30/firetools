@@ -5,9 +5,8 @@
 TOP=$(pwd)
 CODE_ARCHIVE="$1-$2.tar.xz"
 CODE_DIR="$1-$2"
-INSTALL_DIR=$TOP
-INSTALL_DIR+="/debian"
-DEBIAN_CTRL_DIR=$TOP
+INSTALL_DIR="$TOP/debian"
+DEBIAN_CTRL_DIR="$TOP/debian/DEBIAN"
 DEBIAN_CTRL_DIR+="/debian/DEBIAN"
 
 echo "*****************************************"
@@ -30,7 +29,7 @@ SIZE=$(du -s debian/usr)
 echo "install size $SIZE"
 echo "*****************************************"
 
-INSTALL_DIR+="/usr"
+INSTALL_DIR="$TOP/debian/usr"
 
 mv "$INSTALL_DIR/share/doc/firetools/RELNOTES" "$INSTALL_DIR/share/doc/firetools/changelog.Debian"
 gzip -9 -n "$INSTALL_DIR/share/doc/firetools/changelog.Debian"
