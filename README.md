@@ -51,3 +51,67 @@ $ ./configure
 $ make
 $ sudo make install-strip
 `````
+
+## Usage:
+`````
+FIRETOOLS(1)                                firetools man page                               FIRETOOLS(1)
+
+NAME
+       Firetools - Graphical tools collection for Firejail security sandbox
+
+SYNOPSIS
+       firetools [OPTIONS]
+
+DESCRIPTION
+       Firetools is a GUI application for Firejail.  It offers a system tray launcher for sandboxed apps,
+       sandbox editing, management, and statistics.  The software package also includes a sandbox config‐
+       uration wizard, firejail-ui.
+
+       The list of applications recognized automatically by Firetools is stored in /usr/lib/firetools/ap‐
+       plist.  To add more applications to the list drop a similar file in your home directory in ~/.con‐
+       fig/firetools/uiapps.
+
+OPTIONS
+       --autostart
+              Configure firetools to run automatically in system tray when X11 session is started.
+
+       --debug
+              Print debug messages.
+
+       -?, --help
+              Print options end exit.
+
+       --version
+              Print software version and exit.
+
+CONFIGURATION
+       /usr/lib/firetools/uiapps  file  contains  the default list of applications recognized by default.
+       The user can add more applications by creating a simillar file  in  ~/.config/firetools/uiapps  in
+       user home directory. Each line describes an application as follows:
+
+              executable; description; icon; (optional) firejail command
+
+       Some examples:
+
+              inkscape;Inkscape SVG Editor;inkscape
+              calibre;eBook Reader;/usr/share/calibre/images/lt.png
+              mpv;MPV;mpv;firejail mpv --player-operation-mode=pseudo-gui
+
+ABOUT FIREJAIL
+       Firejail  is  a SUID sandbox program that reduces the risk of security breaches by restricting the
+       running environment of untrusted applications using Linux namespaces, seccomp-bpf and Linux  capa‐
+       bilities.  It allows a process and all its descendants to have their own private view of the glob‐
+       ally shared kernel resources, such as the network stack, process table, mount table.  Firejail can
+       work in a SELinux or AppArmor environment, and it is integrated with Linux Control Groups.
+
+
+LICENSE
+       This program is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of  the  Li‐
+       cense, or (at your option) any later version.
+
+       Homepage: http://firejail.wordpress.com
+
+SEE ALSO
+       firejail(1), firejail-ui(1),
+`````
