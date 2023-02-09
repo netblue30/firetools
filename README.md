@@ -10,7 +10,6 @@ Download: http://sourceforge.net/projects/firejail/files/firetools/
 
 Travis-CI status: https://travis-ci.org/netblue30/firetools
 
-## Firejail GUI Demo
 
 <table><tr>
 
@@ -21,7 +20,7 @@ alt="Firetools Demo" width="240" height="142" border="10" /><br/>Firetools Demo<
 </td>
 
 <td>
-<a href=https://odysee.com/@netblue30:9/intro:ceb" target="_blank">
+<a href="https://odysee.com/@netblue30:9/intro:ceb" target="_blank">
 <img src="https://thumbs.odycdn.com/a909846bdce7992f1aacceb0dcc8898b.png"
 alt="Firejail Introduction" width="240" height="142" border="10" /><br/>Firejail Introduction</a>
 </td>
