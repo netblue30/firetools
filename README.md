@@ -15,15 +15,15 @@ Travis-CI status: https://travis-ci.org/netblue30/firetools
 <table><tr>
 
 <td>
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=7RMz7tePA98
-" target="_blank"><img src="http://img.youtube.com/vi/7RMz7tePA98/0.jpg"
-alt="Firejail Intro video" width="240" height="180" border="10" /><br/>Firejail Intro</a>
+<a href="https://odysee.com/@netblue30:9/firetools:6" target="_blank">
+<img src="https://thumbs.odycdn.com/f696288045a51bc504e00c35b0a3b206.png"
+alt="Firetools Demo" width="240" height="142" border="10" /><br/>Firetools Demo</a>
 </td>
 
 <td>
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=J1ZsXrpAgBU
-" target="_blank"><img src="http://img.youtube.com/vi/J1ZsXrpAgBU/0.jpg"
-alt="Firejail Intro video" width="240" height="180" border="10" /><br/>Firejail Demo</a>
+<a href=https://odysee.com/@netblue30:9/intro:ceb" target="_blank">
+<img src="https://thumbs.odycdn.com/a909846bdce7992f1aacceb0dcc8898b.png"
+alt="Firejail Introduction" width="240" height="142" border="10" /><br/>Firejail Introduction</a>
 </td>
 </tr></table>
 
