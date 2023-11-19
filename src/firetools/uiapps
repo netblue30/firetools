@@ -65,7 +65,7 @@ chromium;Chromium Web Browser;chromium
 chromium-browser;Chromium Web Browser;chromium-browser
 deluge;Deluge BitTorrent Client;deluge
 empathy;Empathy Messaging Client;empathy
-falcon;Falcon Web Browser;falcon
+falkon;Falkon Web Browser;falkon
 filezilla;FileZilla File Transfer Application;filezilla
 firefox;Mozilla Firefox;:resources/firefox
 hexchat;HexChat Messaging Client;hexchat
